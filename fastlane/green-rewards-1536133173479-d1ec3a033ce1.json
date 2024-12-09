@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "green-rewards-1536133173479",
+  "private_key_id": "d1ec3a033ce142aaaedeb35e574e84ec16ac67a3",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC005SuwGX2m+ru\n+X4CUQCYXSfs9laAgeBKVYUW+G3zkHkEDlDmRWXjhbiDEZ3OyRPGV+iEjH+vQypD\nzNZHy1QnGwyA6l4ITUnO2GaqptAeMbOIXaB5ZEZ8DmKUSNc5es7qoqnMn8uQ0UcR\nYsa5NbLnjV2e1hZS77aorbfJQApp2T3xDmBC36qha2HinTXBRtJSMYeYDn6QsokQ\nBepTqtIIyYQPYn8OhbVtScSVHx9je5C3HIuvJLO5AoGdls25RVKqj3QWzAVthH3l\nZ48atmCMHf0NQ5vlHGeU7BR5U2Pk3mVbKybyg1a9F6bl/VhQbLXdVcBgk3j7twrr\njvw/XF9LAgMBAAECggEABb9n75ftEHDJO4YpL/Ax/z9sproIt5Ytg2Sxs9J66HzV\nUk03QgQc9XJg3vkiTy98oNNF1racBoYxag85nX4xG7Zv7HDTdlagLNWTI7b10M/h\nno1r2FQ3CRGBlh+S3aBk07xS9gpQpr9uD5mcoftllA8Ed8trwDwOPQRW96OFJGqn\nL/XQ8iFkEZLC+6ToF8csjtXjhgkGCSldynAexYriR4QqV0LDJCfN6XjIQyeOyi/u\nqn0s21dG5FJFVyLFbXri9LtaNWpGsmqVb0L2ySuZwAxvuXUgwF9/ntajQGs/3ZKH\nNCSoAQnSn02OQ+812Fbd2rLKkh3jshHI4AzFxDIdgQKBgQDaPb8q0DkRGnJOnG53\nA+IpY6cXTLoGkgUGM6tERwSDccVnDVvJI9kmWvEXksSveP96TW7Ayji7zPd72bQn\nHe5hXmGCb9mtpb3VKaI1I8bKQWhNig6Ht53mEd2bOQEOZEXfNdkTD1YgRMsrQymU\nb4wgWdxw+SpviS2DxgZZD6MPwQKBgQDUHK0oqEOS2KjVEuSXek+FrVQiOfFzPq33\ntsSx43MRDcoiVpRY5dBxdB2fQuKoQ7a3fyvzpbKuMgOXnttMVRa9TcvofyCiftNi\natvu4GYyFG8kDTNAL2Wd9PQluAWuGsjp3iithfbH1/oRQg2LDzflNYfA9YXubKlM\nU4v4TAcyCwKBgHJcRN6EekLyHs/+vQv0pwCVTaux8xEaVzOmw6plpIHUjmKv51cB\nR/sHUKrPp+1jdEx8Yvr3fL88arslm3ecAZxYPrSBNAoAffdDd9JsyvCVUbjADVkk\n6ML0vbFnL5yBAvQyXWvVb4Y9RlGHQjScN0uEizVP++KyeX1BuXXV8daBAoGAVvPS\ngGJKIT60J3TxRK+dPd2KKeW691Vwl6XTCGGHYCxY+q6nbbH4OyowooMWy4fGtX5q\nlB0PHJ3gHx2+JJKVGdF0j8Ddrf9zxFquAkT3X/xEe3D125AShihOlc/UdEUCq+yo\nnEnYmqANIVoEl0cL0Oia2B1OZCkjVejB7m2sXXUCgYEAkFJgnz+feLtyQB+vCBfk\nkg2oosm/TbT4lpRCJ1PjpnKPePjjmDBbZl4CaZsZi5BnNHh33Ok031IPfiaVCTSX\nbqZEE1xvMruCUGHhKpuziMAXPi5JY07rkYJCDYNgAq2ViGTtELSsjGQ6ny0UrvQJ\nRuRaVZ4wLfqZmH9evkGrwz8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "fastlane-supply@green-rewards-1536133173479.iam.gserviceaccount.com",
+  "client_id": "112396898930836228774",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fastlane-supply%40green-rewards-1536133173479.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

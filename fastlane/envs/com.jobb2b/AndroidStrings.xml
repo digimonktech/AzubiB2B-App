@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ARUgreen</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">21pmL4giXISCMuvYfpS6U3boNVkWVaLMTu5bV</string>
+    <string name="facebook_app_id">1140146032838434</string>
+    <string name="fb_login_protocol_scheme">fb813025742975651</string>
+    <string name="facebook_client_token">07171f95bd18dcb8993dc63944daac9e</string>
+</resources>

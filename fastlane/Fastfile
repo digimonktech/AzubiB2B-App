@@ -1,0 +1,238 @@
+fastlane_require 'dotenv'
+fastlane_require 'spaceship'
+release_notes_command = "git log HEAD --pretty=format:\"%s\" -1"
+
+# Check Git Status
+
+lane :check_git_status do |options|
+  ensure_git_branch(
+    branch: "#{options[:name]}"
+  )
+end
+
+# JS Environments
+
+lane :generate_assets do |options|
+  sh "cp ./envs/#{ENV['ENV']}/app.env ../.env"
+  sh "cp ./envs/#{ENV['ENV']}/icon.png ../icon.png"
+  sh "cp ./envs/#{ENV['ENV']}/AndroidStrings.xml ../android/app/src/main/res/values/strings.xml"
+  sh "cp ./envs/#{ENV['ENV']}/AndroidManifest.xml ../android/app/src/main/AndroidManifest.xml"
+  sh "cp ./envs/#{ENV['ENV']}/fast.keystore ../android/app/fast.keystore"
+  sh "cp ./envs/#{ENV['ENV']}/splash.png ../assets/bootsplash_logo_original.png"
+  sh "npx react-native generate-bootsplash ../assets/bootsplash_logo_original.png --background=#{ENV['SPLASH_BG_COLOR']} --logo-width=200 --assets-output=../assets;"
+  sh "cd .. && npm run create-app-icon"
+end
+
+before_all do |lane|
+  environment = lane_context[SharedValues::ENVIRONMENT]
+  puts("Environment: #{environment}")
+  unless environment.nil?
+      puts "Load .env file of #{environment}"
+      Dotenv.overload './envs/' + environment + '/fastlane.env'
+  end
+  Dotenv.load("./envs/#{ENV['ENV']}/credentials.secret")
+  app_store_connect_api_key(
+    key_id: "RC54G4D9KW",
+    issuer_id: "69a6de81-97ea-47e3-e053-5b8c7c11a4d1",
+    key_filepath: "./fastlane/AuthKey_RC54G4D9KW.p8",
+    duration: 1200,
+    in_house: false 
+  )
+end
+
+
+# IOS
+
+platform :ios do
+  lane :restore_files do |options|
+    plist_path = "#{ENV['IOS_PROJECT_PATH']}/#{ENV['IOS_PLIST_PATH']}"
+    if File.exist?("../#{plist_path}.back")
+      restore_file(path: plist_path)
+    end
+    pbxproj_path="#{ENV['IOS_PROJECT_PATH']}/#{ENV['IOS_PROJECT_NAME']}.xcodeproj/project.pbxproj"
+    if File.exist?("../#{pbxproj_path}.back")
+      restore_file(path: pbxproj_path)
+    end
+    appcenter_plist_path="#{ENV['IOS_PROJECT_PATH']}/#{ENV['IOS_PROJECT_NAME']}/AppCenter-Config.plist"
+    if File.exist?("../#{appcenter_plist_path}.back")
+      restore_file(path: appcenter_plist_path)
+    end
+  end
+
+  error do |lane, exception, options|
+    restore_files
+  end
+
+  lane :setup do |options|
+    
+    match(
+      type: 'development',
+      shallow_clone: true,
+      clone_branch_directly: true,
+      force_for_new_devices: true
+    )
+    match(
+      shallow_clone: true,
+      clone_branch_directly: true,
+      force_for_new_devices: true
+    )
+  end
+
+  lane :build do |options|
+    plist_full_path = "#{ENV['IOS_PROJECT_PATH']}/#{ENV['IOS_PLIST_PATH']}"
+    backup_file(path: plist_full_path)
+    xcodeproj = "#{ENV['IOS_PROJECT_PATH']}/#{ENV['IOS_PROJECT_NAME']}.xcodeproj"
+    xcworkspace = "#{ENV['IOS_PROJECT_PATH']}/#{ENV['IOS_PROJECT_NAME']}.xcworkspace"
+    pbxproj_full_path="#{xcodeproj}/project.pbxproj"
+    backup_file(path: pbxproj_full_path)
+    update_info_plist(
+      xcodeproj: xcodeproj,
+      plist_path: ENV['IOS_PLIST_PATH'],
+      block: lambda { |plist|
+        plist['CFBundleName'] = ENV['IOS_APP_NAME']
+        plist['CFBundleDisplayName'] = ENV['IOS_APP_NAME']
+        plist['CFBundleShortVersionString'] = ENV['IOS_VERSION']
+        plist['CFBundleVersion'] = ENV['IOS_VERSION_BUILD_NUMBER']
+      },
+    )
+    set_info_plist_value(
+      path: "./ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework/Info.plist",
+      key: "MinimumOSVersion",
+      value: "13.4"
+    )
+    set_info_plist_value(
+      path: "./ios/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework/ios-arm64/hermes.framework/Info.plist",
+      key: "MinimumOSVersion",
+      value: "13.4"
+    )
+    if ENV['IOS_CODEPUSH_DEPLOYMENT_KEY'] then
+      set_info_plist_value(path: plist_full_path, key:'CodePushDeploymentKey', value: ENV['IOS_CODEPUSH_DEPLOYMENT_KEY'])
+    end
+    if ENV['IOS_APPCENTER_APP_SECRET'] then
+      appcenter_plist_full_path = "#{ENV['IOS_PROJECT_PATH']}/#{ENV['IOS_PROJECT_NAME']}/AppCenter-Config.plist"
+      backup_file(path: appcenter_plist_full_path)
+      set_info_plist_value(path: appcenter_plist_full_path, key:'AppSecret', value: ENV['IOS_APPCENTER_APP_SECRET'])
+    end
+    update_app_identifier(
+      xcodeproj: xcodeproj,
+      plist_path: ENV['IOS_PLIST_PATH'],
+      app_identifier: ENV['IOS_APP_ID']
+    )
+    profile_env_name = "sigh_#{ENV['IOS_APP_ID']}_#{ENV['MATCH_TYPE']}_profile-name"
+    gymOptions = ({
+      silent: true,
+      xcargs: "PROVISIONING_PROFILE_SPECIFIER='#{ENV[profile_env_name]}' DEVELOPMENT_TEAM='#{ENV['IOS_TEAM_ID']}'"
+    }).merge(
+      File.directory?("../#{xcworkspace}") ?
+        {workspace: xcworkspace} :
+        {project: xcodeproj}
+    )
+    gym(gymOptions)
+    restore_files
+  end
+
+  lane :deploy_appCenter do |options|
+    appcenter_upload(
+      api_token: ENV['FL_APPCENTER_API_TOKEN'],
+      owner_name: ENV['APPCENTER_USERNAME'],
+      app_name: ENV['IOS_APPCENTER_APP_ID'],
+      ipa: ENV['IOS_IPA_PATH'],
+      release_notes: %x[#{release_notes_command}]
+    )
+  end
+
+  lane :deploy do |options|
+    generate_assets
+    if options[:codepush] then
+      release_notes = %x[#{release_notes_command}]
+      sh "cd .. && appcenter codepush release-react -d #{ENV['IOS_CODEPUSH_DEPLOYMENT_NAME']} -a #{ENV['APPCENTER_USERNAME']}/#{ENV['IOS_APPCENTER_APP_ID']} --target-binary-version \"#{ENV['IOS_VERSION']}\" --description \"#{release_notes}\" --disable-duplicate-release-error"
+    else
+      match(
+        shallow_clone: true,
+        clone_branch_directly: true,
+        readonly: true
+      )
+      build
+      if ENV['DEPLOYMENT_PLATFORM'] === 'appcenter' then
+        deploy_appCenter
+      else
+        pilot(
+          app_identifier: ENV['IOS_APP_ID'],
+          distribute_external: false,
+          skip_waiting_for_build_processing: true
+        )
+      end
+    end
+  end
+
+end
+
+#  ANDROID
+
+platform :android do
+  lane :restore_files do |options|
+    appcenter_config_path = "#{ENV['ANDROID_PROJECT_DIR']}/app/src/main/assets/appcenter-config.json"
+    if File.exist?("../#{appcenter_config_path}.back")
+      restore_file(path: appcenter_config_path)
+    end
+    android_strings_path = "#{ENV['ANDROID_PROJECT_DIR']}/app/src/main/res/values/strings.xml"
+    if File.exist?("../#{android_strings_path}.back")
+      restore_file(path: android_strings_path)
+    end
+  end
+
+  error do |lane, exception, options|
+    restore_files
+  end
+
+  lane :set_keys do |options|
+    if ENV['ANDROID_APPCENTER_APP_SECRET'] then
+      appcenter_config_path = "#{ENV['ANDROID_PROJECT_DIR']}/app/src/main/assets/appcenter-config.json"
+      backup_file(path: appcenter_config_path)
+      appcenter_config = load_json(json_path: appcenter_config_path)
+      appcenter_config['app_secret'] = ENV['ANDROID_APPCENTER_APP_SECRET']
+      File.open("../#{appcenter_config_path}","w") do |f|
+        f.write(appcenter_config.to_json)
+      end
+    end
+  end
+
+  lane :build do |options|
+    set_keys
+    gradle(
+      task: "assembleRelease",
+      project_dir: ENV['ANDROID_PROJECT_DIR']
+    )
+    gradle(
+      task: "bundleRelease",
+      project_dir: ENV['ANDROID_PROJECT_DIR']
+    )
+    restore_files
+  end
+
+  lane :deploy_appCenter do |options|
+    appcenter_upload(
+      api_token: ENV['FL_APPCENTER_API_TOKEN'],
+      owner_name: ENV['APPCENTER_USERNAME'],
+      app_name: ENV['ANDROID_APPCENTER_APP_ID'],
+      apk: ENV['ANDROID_APK_PATH'],
+      release_notes: %x[#{release_notes_command}]
+    )
+  end
+
+  lane :deploy do |options|
+    generate_assets
+    if options[:codepush]
+      release_notes = %x[#{release_notes_command}]
+      sh "cd .. && appcenter codepush release-react -d #{ENV['ANDROID_CODEPUSH_DEPLOYMENT_NAME']} -a #{ENV['APPCENTER_USERNAME']}/#{ENV['ANDROID_APPCENTER_APP_ID']} --target-binary-version \"#{ENV['ANDROID_VERSION_NAME']}\" --description \"#{release_notes}\" --disable-duplicate-release-error"
+    else
+      build
+      sh "cp ../android/app/build/outputs/bundle/release/app-release.aab ./results/#{ENV['GRADLE_APP_IDENTIFIER']}.aab"
+      sh "cp ../android/app/build/outputs/apk/release/app-release.apk ./results/#{ENV['GRADLE_APP_IDENTIFIER']}.apk"
+      # upload_to_play_store(release_status:"draft", json_key: "./fastlane/green-rewards-1536133173479-d1ec3a033ce1.json")
+      if ENV['DEPLOYMENT_PLATFORM'] == 'appcenter'
+        deploy_appCenter
+      end
+    end
+  end
+end
