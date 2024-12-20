@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Text, TouchableHighlight, Image, ImageBackground, SafeAreaView, StyleSheet, TouchableOpacity, FlatList, ScrollView, ActivityIndicator, RefreshControl, Dimensions } from 'react-native';
 import { Images } from '@/assets/images/images';
-import { color, fontFamily } from '@/utils/configuration';
+import { fontFamily, reCol } from '@/utils/configuration';
 import { Icon, Input } from 'native-base';
 import Loader from '@/component/Loader';
 import MainHeader from '@/component/MainHeader';
@@ -22,6 +22,9 @@ const Jobs = (props) => {
     const id = useSelector(
         (state) => state.deviceId?.deviceId
     );
+    const comId = useSelector(
+        (state) => state.companyId?.companyId
+    );
     const scrollViewRef = useRef(null);
     const [flatData, setFlatData] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -30,7 +33,7 @@ const Jobs = (props) => {
     const [visibleLocation, setVisibleLocation] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const refRBSheet = React.useRef();
-    const [jobType, setJobType] = useState('Alles anzeigen');
+    const [jobType, setJobType] = useState('Alle anzeigen');
     const [isRefresh, setIsRefresh] = useState(false);
     const [jobTypeId, setJobTypeId] = useState('');
     const [jobTypeData, setJobTypeData] = useState([]);
@@ -39,8 +42,9 @@ const Jobs = (props) => {
     const [industryData, setIndustryData] = useState([]);
     const [selectedIndustries, setSelectedIndustries] = useState([]);
     const [selectedIndustryName, setSelectedIndustryName] = useState([]);
-    const { selectedCityId } = useCity();
+    const { selectedCityId, showCity } = useCity();
     const [jobDetails, setJobDetails] = useState([]);
+    const [showIndustry, setShowIndustry] = useState(false);
     const [loader, setLoader] = useState(false);
     const [savedJobs, setSavedJobs] = useState([]);
     const onRefresh = () => {
@@ -55,15 +59,13 @@ const Jobs = (props) => {
     }, [searchValue]);
 
     const getJobDetailsSearchApi = async () => {
-        let repeatCityParams = ''
-        let repeatIndustryParams = ''
         try {
             if (searchValue.length >= 3 || searchValue.length == 0) {
 
                 setLoading(true);
-                let res = await getApiCall({ url: 'job/?filter=DSC&' + repeatIndustryParams + '&pageNo=100&recordPerPage=&searchValue=' + searchValue + '&isFrontend=true&jobType=' + jobTypeId + '&' + repeatCityParams });
+                let res = await getApiCall({ url: `admin/jobs?companyId=${comId}` + '&searchValue=' + searchValue });
                 if (res.status == 200) {
-                    setFlatData(res.data.jobs);
+                    setFlatData(res.data);
                 }
             }
         } catch (e) {
@@ -113,32 +115,46 @@ const Jobs = (props) => {
         }
     }
     const getAllJobs = async () => {
-        let repeatCityParams
-        let repeatIndustryParams
-        if (selectedCityId && selectedCityId.length > 0) {
-            repeatCityParams = selectedCityId.map(cityId => `slectedCity=${cityId}`).join('&');
-        }
-        if (selectedIndustries && selectedIndustries.length > 0) {
-            repeatIndustryParams = selectedIndustries.map(industryId => `isFillter=${industryId}`).join('&');
-        }
         try {
             setLoading(true);
-            let res = await getApiCall({
-                url: 'job/?filter=DSC&' + repeatIndustryParams +
-                    '&pageNo=100&recordPerPage=&searchValue=&isFrontend=true&jobType=' + jobTypeId +
-                    '&' + repeatCityParams
-            });
 
-            if (res.status == 200) {
-                setFlatData(res.data.jobs);
+            // Prepare query parameters
+            let selectedCityParams = selectedCityId && selectedCityId.length > 0
+                ? `selectedCities=${encodeURIComponent(JSON.stringify(selectedCityId))}`
+                : '';
+            let industryParams = selectedIndustries && selectedIndustries.length > 0
+                ? `industry=${encodeURIComponent(JSON.stringify(selectedIndustries))}`
+                : '';
+            let jobTypeParams = jobTypeId
+                ? `jobType=${encodeURIComponent(JSON.stringify([jobTypeId]))}`  // Wrap jobType in an array and stringify
+                : '';
+
+            // Combine all query parameters
+            const queryParams = [selectedCityParams, industryParams, jobTypeParams]
+                .filter(Boolean) // Remove empty parameters
+                .join('&');
+
+            // Construct the full URL
+            const url = `admin/jobs?companyId=${comId}&${queryParams}`;
+
+            console.log('Final URL:', url);
+
+            // Make the API call
+            let res = await getApiCall({ url });
+
+            if (res.status === 200) {
+                console.log('Response:', res.data);
+                setFlatData(res.data);
             }
         } catch (e) {
+            console.error('Error:', e);
             alert(e);
         } finally {
             setIsRefresh(false);
             getAllIndustry();
         }
     };
+
     const RenderImageComponent = ({ item, navigation }) => {
         const [showLoadImage, setShowLoadImage] = useState(true);
         const handleLoad = () => {
@@ -157,23 +173,25 @@ const Jobs = (props) => {
                                         <ActivityIndicator size="small" color="gray" />
                                     </View>
                                 )}
-                                <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + item?.companyLogo }} onLoad={handleLoad} />
+                                <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + item?.companyId.profileIcon }} onLoad={handleLoad} />
                             </View>
-                            <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]} numberOfLines={2}>{item?.company}</Text>
+                            <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]} numberOfLines={2}>{item?.companyId.companyname}</Text>
                         </View>
-                        <View style={[styles.locView, { width: '85%' }]}>
+                        {showCity && <View style={[styles.locView, { width: '85%' }]}>
                             <Image source={Images.location} style={styles.locImage} resizeMode='contain' />
-                            <Text style={styles.locTxt}>{item?.city.join(', ')}</Text>
-                        </View>
+                            <Text style={styles.locTxt}>
+                                {item.city.map((city) => city.name).join(', ')}
+                            </Text>
+                        </View>}
                         <View style={styles.locView}>
                             <View style={{ backgroundColor: '#95A000', borderRadius: 2, height: 20, paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.jobType}</Text>
+                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.jobType?.jobTypeName}</Text>
                             </View>
-                            {/* <View style={{ backgroundColor: '#007F9D', borderRadius: 2, height: 20, width: '25%', paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center', left: 5 }}>
-                                {item?.industryName.length > 9 ?
-                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.slice(0, 9) + '...'}</Text> :
-                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName}</Text>}
-                            </View> */}
+                            {showIndustry && <View style={{ backgroundColor: '#007F9D', borderRadius: 2, height: 20, width: '25%', paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center', left: 5 }}>
+                                {item?.industryName.industryName.length > 9 ?
+                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.industryName.slice(0, 9) + '...'}</Text> :
+                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.industryName}</Text>}
+                            </View>}
                             <Text style={styles.mwdTxt}>(m/w/d)</Text>
                         </View>
 
@@ -182,10 +200,10 @@ const Jobs = (props) => {
 
 
                     <View style={{ width: '100%' }}>
-                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: color.EMLCLR, borderTopRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => { getJobsDetails(item._id) }}>
+                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: reCol().color.EMLCLR, borderTopRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => { getJobsDetails(item._id) }}>
                             <Image style={{ height: 20, width: 24 }} resizeMode='contain' source={require('../../assets/images/sms-tracking.png')} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: color.HRTCLR, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => saveJob(item)}>
+                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: reCol().color.HRTCLR, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => saveJob(item)}>
                             <Image style={{ height: 20, width: 24 }} resizeMode='contain' source={isSaved ? require('../../assets/images/heartFill.png') : require('../../assets/images/heartEmpty.png')} />
                         </TouchableOpacity>
                     </View>
@@ -246,9 +264,10 @@ const Jobs = (props) => {
 
     const getJobType = async () => {
         try {
-            let res = await getApiCall({ url: 'job-type/get_all_JobType?searchValue=&pageNo=1&recordPerPage=100' });
+            let res = await getApiCall({ url: 'admin/job-types', params: { companyId: comId } });
             if (res.status == 200) {
-                setJobTypeData(res?.data?.data);
+                const newArr = [{ _id: '', jobTypeName: "Alle anzeigen" }, ...res?.data.jobTypes]
+                setJobTypeData(newArr);
             }
 
         } catch (e) {
@@ -281,10 +300,11 @@ const Jobs = (props) => {
 
     const getAllIndustry = async () => {
         try {
-            let res = await getApiCall({ url: 'industries/get_all_Industry?searchValue=&pageNo=1&recordPerPage=100' });
+            let res = await getApiCall({ url: 'admin/industries', params: { companyId: comId } });
             if (res.status == 200) {
-                const newArr = [{ _id: '', industryName: "Alle" }, ...res?.data.data]
+                const newArr = [{ _id: '', industryName: "Alle" }, ...res?.data.industries]
                 setIndustryData(newArr);
+                setShowIndustry(res?.data?.industries[0].companyId?.industryStatus);
             }
         } catch (e) {
             alert(e);
@@ -305,7 +325,7 @@ const Jobs = (props) => {
     const getJobsDetails = async (id) => {
         try {
             setLoader(true);
-            let res = await getApiCall({ url: 'job/' + id });
+            let res = await getApiCall({ url: 'admin/job/' + id });
             if (res.status == 200) {
                 setJobDetails(res.data)
             }
@@ -395,7 +415,7 @@ const Jobs = (props) => {
                                                 <Icon ml="2" size="5" marginRight={2}
                                                     as={<Image source={Images.modalClose} />}
                                                 /></TouchableOpacity> : null}
-                                    bgColor={color.WHITE}
+                                    bgColor={reCol().color.WHITE}
                                     marginTop={5}
                                 />
                             </View>
@@ -404,7 +424,7 @@ const Jobs = (props) => {
                         <View style={styles.infoMainView}>
                             <Text style={styles.jobsNumberText}>{flatData?.length} {'Jobs gefunden'}</Text>
                             <View style={styles.touchView}>
-                                <TouchableOpacity style={[styles.sortTouch,
+                                {showIndustry && <TouchableOpacity style={[styles.sortTouch,
                                 {}]} onPress={() => { OpenIndustryMenu() }}>
                                     <View style={styles.sortView}>
                                         <Text style={[styles.sortText, {}]}>
@@ -415,8 +435,8 @@ const Jobs = (props) => {
                                                         : selectedIndustryName[0].length > 12
                                                             ? selectedIndustryName[0].slice(0, 5) + '...'
                                                             : selectedIndustryName[0] + ` +${selectedIndustryName?.length - 1}`
-                                                    : selectedIndustryName[0].length > 12
-                                                        ? selectedIndustryName[0].slice(0, 5) + '...'
+                                                    : selectedIndustryName[0].length > 6
+                                                        ? selectedIndustryName[0].slice(0, 3) + '...'
                                                         : selectedIndustryName[0]
                                                 : 'Branche'
                                             }
@@ -424,7 +444,7 @@ const Jobs = (props) => {
 
                                         <Image source={Images.downArrow} style={styles.sortDownImage} />
                                     </View>
-                                </TouchableOpacity>
+                                </TouchableOpacity>}
                                 <TouchableOpacity style={[styles.sortTouch, { left: 5 }]} onPress={() => { OpenMenu() }}>
                                     <View style={styles.sortView}>
                                         <Text style={styles.sortText}>
@@ -481,7 +501,7 @@ const Jobs = (props) => {
                                 backgroundColor: '#fff',
                             }
                         }}
-                        height={100 * jobTypeData?.length}
+                        height={500}
                     >
                         <View style={styles.flexView}>
                             <Text style={styles.headingText}>{'Nach was suchst du'}</Text>
@@ -492,11 +512,19 @@ const Jobs = (props) => {
                         <FlatList
                             data={jobTypeData}
                             renderItem={({ item }) =>
-                                <TouchableOpacity style={styles.industryTouch}
+                                <TouchableOpacity style={{
+                                    height: 50,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    backgroundColor:
+                                        jobType === item?.jobTypeName ?
+                                            '#EFEFEF' : '#fff',
+                                }}
                                     onPress={() => CloseMenu(item)}>
                                     <Text style={[styles.jobTypeText, {
-                                        color: jobType === item.jobTypeName ?
-                                            color.BDRCLR : '#000'
+                                        color: jobType === item.jobTypeName
+                                            ?
+                                            reCol().color.BDRCLR : '#000'
                                     }]} >{item.jobTypeName}</Text>
                                 </TouchableOpacity>
                             }
@@ -553,7 +581,7 @@ const Jobs = (props) => {
                                     </View>
                                 }
                                 <Button
-                                    bgColor={color.BTNCOLOR}
+                                    bgColor={reCol().color.BTNCOLOR}
                                     _text={{ fontFamily: fontFamily.poppinsBold, fontWeight: 'bold' }}
                                     size={'lg'}
                                     onPress={() => CloseIndustryMenu(selectedIndustries)}
@@ -590,7 +618,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
         marginHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 10,
     },
     fieldView: {
@@ -609,14 +637,14 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     jobsNumberText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsSeBold,
         marginBottom: 10,
         fontSize: 15,
     },
     sortView: {
         flexDirection: 'row',
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
@@ -625,7 +653,7 @@ const styles = StyleSheet.create({
     },
     sortTouch: {
         flexDirection: 'row',
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 5,
         marginBottom: 10,
         justifyContent: 'center',
@@ -640,7 +668,7 @@ const styles = StyleSheet.create({
 
     },
     sortText: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontWeight: '200',
         fontSize: 12,
@@ -656,7 +684,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 5,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '90%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -675,20 +703,20 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     nameTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsSeBold,
         fontSize: 14,
         width: '100%'
     },
     locTxt: {
         left: 5,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontSize: 10,
         top: 3
     },
     mwdTxt: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontSize: 10,
         paddingHorizontal: 10
@@ -700,7 +728,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '90%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -728,7 +756,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     headingText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 20,
         fontWeight: 'bold'
@@ -736,7 +764,7 @@ const styles = StyleSheet.create({
     closeImg: {
         height: 30,
         width: 30,
-        tintColor: color.BDRCLR,
+        tintColor: reCol().color.BDRCLR,
         alignSelf: 'flex-end'
     },
     indicatorView: {

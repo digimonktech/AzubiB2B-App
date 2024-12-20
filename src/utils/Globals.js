@@ -1,8 +1,8 @@
 export default {
     WEBSITE_URL_LIVE: '',
-    API_URL: 'https://api.azubiregional.de/api/v1/',
-
-    BASE_URL: 'https://api.azubiregional.de/',
+    API_URL: 'http://digimonk.net:2751/api/v1/',
+    API_URL1: 'https://api.azubiregional.de/api/v1/',
+    BASE_URL: 'http://digimonk.net:2751/',
     ApiVersion: 8,
     TopBanner: '',
     TERMS_AND_CONDITIONS_URL: 'information/terms-and-condition?mobile=yes',

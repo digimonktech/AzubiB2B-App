@@ -2,7 +2,7 @@ import React from "react";
 import { Image, ImageBackground, Platform, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Dimensions } from 'react-native';
 import { Images } from '@/assets/images/images';
 import { Header as HeaderElement } from 'react-native-elements';
-import { color, fontFamily, screenName } from '@/utils/configuration'
+import { fontFamily, reCol, screenName } from '@/utils/configuration'
 import MaterialIcons from 'react-native-vector-icons/FontAwesome6';
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Globals from "@/utils/Globals";
@@ -50,18 +50,18 @@ export default function BackHeader({ title, press }) {
                     <TouchableOpacity style={styles.leftComponentLogo} activeOpacity={0.5} onPress={() => {
                         navigation.goBack();
                     }}>
-                        <MaterialIcons name='chevron-left' size={20} color={color.BDRCLR} underlayColor={'#FFFFFF'} />
+                        <MaterialIcons name='chevron-left' size={20} color={reCol().color.BDRCLR} underlayColor={'#FFFFFF'} />
                     </TouchableOpacity>
                     {title.length > 12 ? <Text style={{
                         left: 20,
-                        color: color.BDRCLR,
+                        color: reCol().color.BDRCLR,
                         fontFamily: fontFamily.poppinsSeBold,
                         fontSize: 14,
                         width: selectedCity.length > 0 ? width / 2.5 : width / 2.4
                     }}>{title.slice(0, 12) + '...'}</Text> :
                         <Text style={{
                             left: 20,
-                            color: color.BDRCLR,
+                            color: reCol().color.BDRCLR,
                             fontFamily: fontFamily.poppinsSeBold,
                             fontSize: 14,
                             width: selectedCity.length > 0 ? width / 2.5 : width / 2.4
@@ -71,7 +71,7 @@ export default function BackHeader({ title, press }) {
                 <TouchableOpacity style={[styles.rightComponent, { width: '35%' }]} activeOpacity={0.5} onPress={press}>
                     <Image style={{ height: 20, width: 20 }} source={require('../assets/images/location.png')} />
                     <Text style={{
-                        color: color.BDRCLR,
+                        color: reCol().color.BDRCLR,
                         fontSize: 10,
                         fontFamily: fontFamily.poppinsRegular,
                         paddingLeft: 5,
@@ -153,14 +153,14 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 20,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontWeight: 'bold',
         marginLeft: 10,
         fontFamily: fontFamily.poppinsBold,
     },
     centerTitle: {
         fontSize: 20,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontWeight: 'bold',
         fontFamily: fontFamily.poppinsBold,
     },

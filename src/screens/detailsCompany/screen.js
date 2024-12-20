@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, ImageBackground, SafeAreaView, ScrollView, StyleSheet, FlatList, TouchableHighlight, Linking, ActivityIndicator } from 'react-native';
 import { Images } from '@/assets/images/images';
-import { color, fontFamily } from '@/utils/configuration';
+import { fontFamily, reCol } from '@/utils/configuration';
 import { ModalApply, ModalAppointment, ModalIndustry, ModalJobPic } from '@/component/Modal';
 import BackHeader from '@/component/BackHeader';
 import { getApiCall } from '@/utils/ApiHandler';
@@ -39,6 +39,9 @@ const DetailsCompany = ({ navigation, route }) => {
     const handleLoad = () => {
         setShowLoadImage(false);
     };
+    const comId = useSelector(
+            (state) => state.companyId?.companyId
+        );
     const getCompaniesIcons = async () => {
         try {
             setLoading(true);
@@ -135,10 +138,10 @@ const DetailsCompany = ({ navigation, route }) => {
 
                     </TouchableOpacity>
                     <View style={{ width: '100%' }}>
-                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: color.EMLCLR, borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => { getJobsDetails(item._id) }}>
+                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: reCol().color.EMLCLR, borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => { getJobsDetails(item._id) }}>
                             <Image style={{ height: 20, width: 24 }} resizeMode='contain' source={require('../../assets/images/sms-tracking.png')} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: color.HRTCLR, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => saveJob(item)}>
+                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: reCol().color.HRTCLR, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => saveJob(item)}>
                             <Image style={{ height: 20, width: 24 }} resizeMode='contain' source={isSaved ? require('../../assets/images/heartFill.png') : require('../../assets/images/heartEmpty.png')} />
                         </TouchableOpacity>
                     </View>
@@ -167,9 +170,9 @@ const DetailsCompany = ({ navigation, route }) => {
     const getCompaniesDetails = async () => {
         try {
             setLoading(true);
-            let res = await getApiCall({ url: 'employer/company-detail/' + item._id });
+            let res = await getApiCall({ url: `admin/company/${comId}` });
             if (res.status == 200) {
-                setFlatData(res.data);
+                setFlatData([res.data]);
             }
         } catch (e) {
             alert(e);
@@ -343,16 +346,16 @@ const DetailsCompany = ({ navigation, route }) => {
         return (
             <View style={[styles.jobDetailBox, styles.jobDetailBox1]}>
                 <Text style={styles.titleText}>{'E-Mail'}</Text>
-                <TouchableOpacity onPress={() => shareEmail(item?.email)}>
+                <TouchableOpacity>
                     <Text style={styles.aboutComText}>{item?.email}</Text>
                 </TouchableOpacity>
-                <Text style={styles.titleText}>{'Webseite'}</Text>
+                {/* <Text style={styles.titleText}>{'Webseite'}</Text>
                 <TouchableOpacity onPress={() => Linking.openURL(item?.website)}>
                     <Text style={styles.aboutComText}>{item?.website}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <Text style={styles.titleText}>{'Telefonnummer'}</Text>
-                <TouchableOpacity onPress={() => Linking.openURL(`tel:${item?.phoneNo}`)}>
-                    <Text style={styles.aboutComText}>{item?.phoneNo}</Text>
+                <TouchableOpacity>
+                    <Text style={styles.aboutComText}>{item?.phoneNumber}</Text>
                 </TouchableOpacity>
                 <RenderHTML
                     style={styles.aboutComText}
@@ -375,7 +378,7 @@ const DetailsCompany = ({ navigation, route }) => {
                     />
                 }
 
-                <TouchableOpacity style={{ width: '100%', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', height: 50, backgroundColor: color.BTNCOLOR, borderRadius: 10, top: 15, flexDirection: 'row' }} activeOpacity={0.5} onPress={() => { setVisibleAppointments(true) }}>
+                <TouchableOpacity style={{ width: '100%', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', height: 50, backgroundColor: reCol().color.BTNCOLOR, borderRadius: 10, top: 15, flexDirection: 'row' }} activeOpacity={0.5} onPress={() => { setVisibleAppointments(true) }}>
                     <Image source={require('../../assets/images/sms-tracking.png')} style={{ height: 20, width: 20 }} resizeMode='contain' tintColor={'#fff'} />
                     <Text style={{ fontFamily: fontFamily.poppinsSeBold, fontSize: 16, color: '#fff', left: 5 }}>{'Direktbewerbung absenden'}</Text>
                 </TouchableOpacity>
@@ -433,21 +436,21 @@ const DetailsCompany = ({ navigation, route }) => {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.jobDetailBox}>
                         <View style={styles.mainFlexView}>
-                            <Text style={styles.nameTxt}>{item?.companyName}</Text>
+                            <Text style={styles.nameTxt}>{item?.companyname}</Text>
                             <View style={styles.locView}>
                                 <Image
                                     source={require('../../assets/images/locationDetail.png')}
                                     style={styles.locImage}
                                 />
-                                <Text style={styles.locTxt}>{item?.location}</Text>
+                                <Text style={styles.locTxt}>{item?.city.name}</Text>
                             </View>
                             <View style={styles.locView}>
                                 <Image source={require('../../assets/images/contactDetail.png')} style={styles.locImage} />
-                                <Text style={styles.locTxt}>{flatData?.contactPerson}</Text>
+                                <Text style={styles.locTxt}>{flatData[0]?.contactPerson}</Text>
                             </View>
                             <View style={styles.locView}>
                                 <Image source={require('../../assets/images/serachDetail.png')} style={styles.locImage} />
-                                <Text style={styles.locTxt}>{item?.industryName}</Text>
+                                <Text style={styles.locTxt}>{item?.industryName?.industryName}</Text>
                             </View>
                         </View>
                         <View style={styles.mainFlexView1}>
@@ -457,7 +460,7 @@ const DetailsCompany = ({ navigation, route }) => {
                                 </View>
                             )}
                             <Image
-                                source={{ uri: Globals.BASE_URL + item?.companyLogo }}
+                                source={{ uri: Globals.BASE_URL + item?.profileIcon }}
                                 style={styles.headingImage}
                                 onLoad={handleLoad}
                                 resizeMode='contain'
@@ -505,17 +508,17 @@ const DetailsCompany = ({ navigation, route }) => {
                     {loading ?
                         <FlatList data={[1]} renderItem={renderSeketon} showsVerticalScrollIndicator={false} keyExtractor={index => index.toString()} />
                         :
-                        <FlatList data={[flatData]} renderItem={renderCompanyDetails} showsVerticalScrollIndicator={false} keyExtractor={index => index.toString()} />
+                        <FlatList data={flatData} renderItem={renderCompanyDetails} showsVerticalScrollIndicator={false} keyExtractor={index => index.toString()} />
                     }
 
 
 
-                    {companyJobs?.length > 0 &&
+                    {/* {companyJobs?.length > 0 &&
                         <Text style={[styles.titleText, { marginHorizontal: 15 }]}>{'Aktuelle Jobs'}</Text>
                     }
                     <FlatList data={companyJobs} renderItem={renderItem} showsVerticalScrollIndicator={false} keyExtractor={index => index.toString()} ListHeaderComponent={() => {
 
-                    }} />
+                    }} /> */}
                 </ScrollView>
             </ImageBackground>
             {loader && <Loader />}
@@ -538,7 +541,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginVertical: 15,
         paddingVertical: 15,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 10,
         flexDirection: 'row',
         elevation: 10,
@@ -563,7 +566,7 @@ const styles = StyleSheet.create({
         width: '80%',
     },
     nameTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontWeight: 'bold',
         fontSize: 13,
@@ -571,7 +574,7 @@ const styles = StyleSheet.create({
     locTxt: {
         marginTop: 5,
         marginLeft: 5,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontWeight: '300',
         fontSize: 12,
@@ -591,13 +594,13 @@ const styles = StyleSheet.create({
         borderRadius: 20
     },
     aboutComText: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         paddingTop: 5,
         fontFamily: fontFamily.poppinsRegular,
         fontSize: 13,
     },
     titleText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         paddingTop: 10,
         fontWeight: 'bold',
         fontSize: 13,
@@ -623,7 +626,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         shadowRadius: 2,
         elevation: 5,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
     },
     editCalTaskImage: {
         height: 20,
@@ -640,7 +643,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 5,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '90%',
         alignSelf: 'center',
         justifyContent: 'space-between',

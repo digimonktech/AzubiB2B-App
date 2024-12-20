@@ -1,7 +1,7 @@
 import { FlatList, Image, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useState } from 'react'
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import { color, fontFamily } from '@/utils/configuration';
+import { fontFamily, reCol } from '@/utils/configuration';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ModalApply } from '@/component/Modal';
 import { useSelector } from 'react-redux';
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '90%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 5,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '90%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     nameTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsSeBold,
         fontSize: 14,
         width: '100%'
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     },
     locTxt: {
         left: 5,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontSize: 10,
         top: 3

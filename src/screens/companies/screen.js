@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, ImageBackground, SafeAreaView, StyleSheet, FlatList, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl, Platform, Dimensions } from 'react-native';
 import { Images } from '@/assets/images/images';
-import { color, fontFamily } from '@/utils/configuration';
+import { fontFamily, reCol } from '@/utils/configuration';
 import { Icon, Input } from 'native-base';
 import Loader from '@/component/Loader';
 import MainHeader from '@/component/MainHeader';
@@ -14,6 +14,7 @@ import { Button } from "native-base";
 import RenderHtml from 'react-native-render-html';
 import { ModalLocation } from '@/component/ModalLocation';
 import { useCity } from '@/Context/CityProvider';
+import { useSelector } from 'react-redux';
 
 const Companies = (props) => {
     const { height, width } = Dimensions.get('screen');
@@ -37,68 +38,76 @@ const Companies = (props) => {
     const onRefresh = () => {
         setIsRefresh(true);
     };
+    const comId = useSelector(
+        (state) => state.companyId?.companyId
+    );
     useEffect(() => {
         if (scrollTop && scrollViewRef.current) {
             scrollViewRef.current.scrollTo({ y: 0, animated: true });
             setScrollTop(false); // Reset the scrollTop state
         }
     }, [scrollTop]);
+    // useEffect(() => {
+    //     getAllCompanies();
+    // }, [!searchValue, IndustryType, selectedCityId, isRefresh]);
     useEffect(() => {
         getAllCompanies();
-    }, [!searchValue, IndustryType, selectedCityId, isRefresh]);
+    }, []);
+
+    // useEffect(() => {
+    //     getCompanySearchApi();
+    // }, [searchValue]);
 
 
-    useEffect(() => {
-        getCompanySearchApi();
-    }, [searchValue]);
+    // const getCompanySearchApi = async () => {
+    //     let repeatIndustryParams
+    //     let repeatCityParams
 
-
-    const getCompanySearchApi = async () => {
-        let repeatIndustryParams
-        let repeatCityParams
-
-        try {
-            if (searchValue.length >= 3 || searchValue.length == 0) {
-                setLoading(true);
-                let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
-                if (res.status == 200) {
-                    setFlatData(res.data);
-                }
-            }
-        } catch (e) {
-            alert(e);
-        } finally {
-            setLoading(false);
-        }
-    };
+    //     try {
+    //         if (searchValue.length >= 3 || searchValue.length == 0) {
+    //             setLoading(true);
+    //             let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
+    //             if (res.status == 200) {
+    //                 setFlatData(res.data);
+    //             }
+    //         }
+    //     } catch (e) {
+    //         alert(e);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
 
 
     const getAllCompanies = async () => {
-        let repeatIndustryParams
-        let repeatCityParams
-        if (selectedCityId && selectedCityId.length > 0) {
-            repeatCityParams = selectedCityId.map(cityId => `slectedCity=${cityId}`).join('&');
-        }
-        if (selectedIndustries && selectedIndustries.length > 0) {
-            repeatIndustryParams = selectedIndustries.map(industryId => `isFillter=${industryId}`).join('&');
-        }
+        // let repeatIndustryParams
+        // let repeatCityParams
+        // if (selectedCityId && selectedCityId.length > 0) {
+        //     repeatCityParams = selectedCityId.map(cityId => `slectedCity=${cityId}`).join('&');
+        // }
+        // if (selectedIndustries && selectedIndustries.length > 0) {
+        //     repeatIndustryParams = selectedIndustries.map(industryId => `isFillter=${industryId}`).join('&');
+        // }
         try {
             setLoading(true);
-            let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
+            // let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
+            let res = await getApiCall({ url: `admin/company/${comId}`});
             if (res.status == 200) {
-                setFlatData(res.data);
+                console.log('ResponseCompany',res.data)
+                setFlatData([res.data]);
             }
         } catch (e) {
             alert(e);
         } finally {
-            setIsRefresh(false);
-            getAllIndustry();
+            // setIsRefresh(false);
+            setLoading(false);
+            // getAllIndustry();
         }
     };
 
     const RenderImageComponent = ({ item }) => {
-        const { companyName, industryName, companyLogo } = item;
+        const { companyname, industryName, profileIcon } = item;
         const truncateHtml = (htmlString, maxLength) => {
             // Convert HTML string to plain text
             const plainText = htmlString.replace(/<[^>]*>?/gm, '');
@@ -119,14 +128,14 @@ const Companies = (props) => {
                                 <ActivityIndicator size="small" color="gray" />
                             </View>
                         )}
-                        <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + companyLogo }} onLoad={handleLoad} />
+                        <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + profileIcon }} onLoad={handleLoad} />
                     </View>
                     <TouchableOpacity style={{ width: '60%', paddingHorizontal: 10, paddingVertical: 10 }} onPress={() => navigation.navigate('DetailsCompany', { item: item })}>
-                        <Text style={styles.nameTxt} numberOfLines={2}>{companyName}</Text>
-                        <Text style={[styles.nameTxt, { color: '#646464', fontFamily: fontFamily.poppinsRegular, marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>{industryName}</Text>
+                        <Text style={styles.nameTxt} numberOfLines={2}>{companyname}</Text>
+                        <Text style={[styles.nameTxt, { color: '#646464', fontFamily: fontFamily.poppinsRegular, marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>{industryName.industryName}</Text>
                         <View style={[styles.locView, { marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>
                             <Image source={Images.location} style={styles.locImage} resizeMode='contain' />
-                            <Text style={styles.locTxt}>{item?.location}</Text>
+                            <Text style={styles.locTxt}>{item?.city.name}</Text>
                         </View>
                         {/* <View style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}>
                             <RenderHtml
@@ -136,9 +145,9 @@ const Companies = (props) => {
                         </View> */}
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{ height: '100%', width: '20%', borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'lightblue' }} onPress={() => { getCompaniesDetails(item._id) }}>
-                        <Image style={{ height: 24, width: 24 }} resizeMode='contain' source={require('../../assets/images/sms-tracking.png')} />
-                        <Text style={{ color: '#646464', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{'E-Mail'}</Text>
+                    <TouchableOpacity style={{ height: '100%', width: '20%', borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
+                        {/* <Image style={{ height: 24, width: 24 }} resizeMode='contain' source={require('../../assets/images/sms-tracking.png')} />
+                        <Text style={{ color: '#646464', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{'E-Mail'}</Text> */}
                     </TouchableOpacity>
                 </View>
             </View>
@@ -188,32 +197,32 @@ const Companies = (props) => {
         });
     }, [navigation]);
 
-    function OpenIndustryMenu() {
-        refIndustrySheet.current.open();
-    }
+    // function OpenIndustryMenu() {
+    //     refIndustrySheet.current.open();
+    // }
 
 
-    const CloseIndustryMenu = (selectedIndustries) => {
-        // Handle the selected industries as needed
-        // console.log('Selected Industries:', selectedIndustries);
-        setIndustryType(selectedIndustries)
-        // Additional logic, e.g., close the bottom sheet
-        refIndustrySheet.current.close();
-    };
+    // const CloseIndustryMenu = (selectedIndustries) => {
+    //     // Handle the selected industries as needed
+    //     // console.log('Selected Industries:', selectedIndustries);
+    //     setIndustryType(selectedIndustries)
+    //     // Additional logic, e.g., close the bottom sheet
+    //     refIndustrySheet.current.close();
+    // };
 
-    const getAllIndustry = async () => {
-        try {
-            let res = await getApiCall({ url: 'industries/get_all_Industry?searchValue=&pageNo=1&recordPerPage=100' });
-            if (res.status == 200) {
-                const newArr = [{ _id: '', industryName: "Alle" }, ...res?.data.data]
-                setIndustryData(newArr);
-            }
-        } catch (e) {
-            alert(e);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const getAllIndustry = async () => {
+    //     try {
+    //         let res = await getApiCall({ url: 'industries/get_all_Industry?searchValue=&pageNo=1&recordPerPage=100' });
+    //         if (res.status == 200) {
+    //             const newArr = [{ _id: '', industryName: "Alle" }, ...res?.data.data]
+    //             setIndustryData(newArr);
+    //         }
+    //     } catch (e) {
+    //         alert(e);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
 
 
@@ -235,35 +244,35 @@ const Companies = (props) => {
 
 
 
-    const handleIndustryCheckboxChange = (item, isChecked) => {
-        if (item?._id === '') {
-            // Check or uncheck all other items based on the special item's state
-            const allIndustryIds = industryData.map((item) => item._id);
-            const allIndustryName = industryData.map((item) => item.industryName);
-            setSelectedIndustries(isChecked ? allIndustryIds : []);
-            setSelectedIndustryName(isChecked ? allIndustryName : []);
-        }
-        else {
-            setSelectedIndustries((pre) => {
-                if (isChecked) {
-                    return [...pre, item._id]
-                } else {
-                    return pre.filter((id) => id !== item._id)
-                }
-            })
-            setSelectedIndustryName((pre) => {
-                if (isChecked) {
-                    return [...pre, item.industryName]
-                } else {
-                    return pre.filter((id) => id != item.industryName);
-                }
-            })
-        }
-    };
-    const resetFilter = () => {
-        setSelectedIndustries([]);
-        setSelectedIndustryName([]);
-    }
+    // const handleIndustryCheckboxChange = (item, isChecked) => {
+    //     if (item?._id === '') {
+    //         // Check or uncheck all other items based on the special item's state
+    //         const allIndustryIds = industryData.map((item) => item._id);
+    //         const allIndustryName = industryData.map((item) => item.industryName);
+    //         setSelectedIndustries(isChecked ? allIndustryIds : []);
+    //         setSelectedIndustryName(isChecked ? allIndustryName : []);
+    //     }
+    //     else {
+    //         setSelectedIndustries((pre) => {
+    //             if (isChecked) {
+    //                 return [...pre, item._id]
+    //             } else {
+    //                 return pre.filter((id) => id !== item._id)
+    //             }
+    //         })
+    //         setSelectedIndustryName((pre) => {
+    //             if (isChecked) {
+    //                 return [...pre, item.industryName]
+    //             } else {
+    //                 return pre.filter((id) => id != item.industryName);
+    //             }
+    //         })
+    //     }
+    // };
+    // const resetFilter = () => {
+    //     setSelectedIndustries([]);
+    //     setSelectedIndustryName([]);
+    // }
     const renderItemIndustry = (item) => {
         const isChecked = selectedIndustries.includes(item.item._id);
         return (
@@ -293,7 +302,7 @@ const Companies = (props) => {
                 scrollsToTop={scrollTop}>
 
                 <ImageBackground style={styles.container} source={Images.bgImage}>
-                    <View style={[styles.whiteBox, { marginTop: 5 }]}>
+                    {/* <View style={[styles.whiteBox, { marginTop: 5 }]}>
                         <View style={styles.fieldView}>
                             <Input
                                 placeholder={'Berufsbezeichnung, Stichwörter oder Unternehmen'}
@@ -307,7 +316,7 @@ const Companies = (props) => {
                                     ml="2"
                                     size="5"
                                     as={<Image source={Images.search} />}
-                                />} bgColor={color.WHITE} marginTop={5}
+                                />} bgColor={reCol().color.WHITE} marginTop={5}
                                 InputRightElement={
                                     searchValue ?
                                         <TouchableOpacity onPress={() => setSearchValue('')}>
@@ -315,8 +324,8 @@ const Companies = (props) => {
                                                 as={<Image source={Images.modalClose} />}
                                             /></TouchableOpacity> : null} />
                         </View>
-                    </View>
-                    <View style={styles.infoMainView}>
+                    </View> */}
+                    {/* <View style={styles.infoMainView}>
                         <Text style={styles.jobsNumberText}>{flatData?.length} {'Unternehmen gefunden'}</Text>
                         <TouchableOpacity style={[styles.sortTouch,
                         { width: '32%' }]}
@@ -341,7 +350,7 @@ const Companies = (props) => {
                                 <Image source={Images.downArrow} style={styles.sortDownImage} />
                             </View>
                         </TouchableOpacity>
-                    </View>
+                    </View> */}
                     {loading ?
                         <FlatList
                             data={[1, 1, 1]}
@@ -430,7 +439,7 @@ const Companies = (props) => {
                             </View>
                         }
                         <Button
-                            bgColor={color.BTNCOLOR}
+                            bgColor={reCol().color.BTNCOLOR}
                             _text={{ fontFamily: fontFamily.poppinsBold, fontWeight: 'bold' }}
                             size={'lg'}
                             onPress={() => { CloseIndustryMenu(selectedIndustries) }}
@@ -460,7 +469,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
         marginHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 10,
     },
     fieldView: {
@@ -469,12 +478,12 @@ const styles = StyleSheet.create({
     dropdown: {
         paddingHorizontal: 10,
         marginTop: 10,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
     },
     iconStyle: {
         height: 30,
         width: 30,
-        tintColor: color.BLACK
+        tintColor: reCol().color.BLACK
     },
     renderRightStyle: {
         height: 20, width: 20
@@ -498,7 +507,7 @@ const styles = StyleSheet.create({
         fontWeight: '200'
     },
     jobsNumberText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsSeBold,
         fontWeight: '400',
         marginBottom: 10,
@@ -514,7 +523,7 @@ const styles = StyleSheet.create({
         // width: '50%'
     },
     sortTouch: {
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 5,
         marginBottom: 10,
         justifyContent: 'center',
@@ -528,7 +537,7 @@ const styles = StyleSheet.create({
         // width: '20%'
     },
     sortText: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontWeight: '200',
         fontSize: 12
@@ -548,7 +557,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 5,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '90%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -583,14 +592,14 @@ const styles = StyleSheet.create({
         width: 20,
     },
     nameTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         // fontSize: 13
     },
     locTxt: {
         marginTop: 5,
         marginLeft: 5,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontWeight: '100',
         fontSize: 12
@@ -602,7 +611,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '90%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -630,14 +639,14 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     headingText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 20,
         fontWeight: 'bold'
     },
     closeImg: {
         height: 30,
-        tintColor: color.BDRCLR,
+        tintColor: reCol().color.BDRCLR,
         width: 30,
         alignSelf: 'flex-end'
     },

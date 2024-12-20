@@ -16,11 +16,13 @@ const createMobileOtp = () => {
     const companyApi = (params) => instanceMobile.get(endPoint.company, params);
     const applyJob = (payload) => instanceMobile.post(endPoint.applyJob, payload);
     const addAppointment = (payload) => instanceMobile.post(endPoint.appointment, payload);
+    const registerData = (payload) => instanceMobile.post(endPoint.register, payload);
     return {
         jobApi,
         companyApi,
         applyJob,
         addAppointment,
+        registerData,
     }
 }
 export default { createMobileOtp }

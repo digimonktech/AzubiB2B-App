@@ -1,7 +1,7 @@
 import { Alert, FlatList, Image, ImageBackground, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Images } from '@/assets/images/images'
-import { color, fontFamily } from '@/utils/configuration'
+import { fontFamily, reCol } from '@/utils/configuration'
 import { getApiCall } from '@/utils/ApiHandler'
 import Globals from '@/utils/Globals'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -75,7 +75,7 @@ const SaveJobListing = () => {
     const getJobsDetails = async (id) => {
         try {
             setLoader(true);
-            let res = await getApiCall({ url: 'job/' + id });
+            let res = await getApiCall({ url: 'admin/job/' + id });
             if (res.status == 200) {
                 setJobDetails(res.data)
             }
@@ -89,6 +89,7 @@ const SaveJobListing = () => {
     const renderItem = ({ item }) => {
         const { jobTitle, city, startDate, companyLogo } = item;
         const isSaved = savedJobs.includes(item._id);
+        console.log('item', item);
         return (
             <TouchableHighlight underlayColor={'none'}>
                 <View style={styles.renderMainView}>
@@ -100,23 +101,26 @@ const SaveJobListing = () => {
                         <Text style={styles.nameTxt} numberOfLines={2}>{item?.jobTitle}</Text>
                         <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center', width: '85%' }}>
                             <View style={{ backgroundColor: '#fff', borderRadius: 5, height: 30, width: 30, alignItems: 'center', justifyContent: 'center', }}>
-                                <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + item?.companyLogo }} />
+                                <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + item?.companyId.profileIcon }} />
                             </View>
-                            <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]} numberOfLines={2}>{item?.company}</Text>
+                            <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]} numberOfLines={2}>{item?.companyId.companyname}</Text>
                         </View>
                         <View style={styles.locView}>
                             <Image source={Images.location} style={styles.locImage} resizeMode='contain' />
-                            <Text style={styles.locTxt}>{item?.city.join(', ')}</Text>
+                            <Text style={styles.locTxt}>
+                            {item.city.map((city) => city.name).join(', ')}
+                             </Text>
                         </View>
                         <View style={styles.locView}>
                             <View style={{ backgroundColor: '#95A000', borderRadius: 2, height: 20, paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.jobType}</Text>
+                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.jobType?.jobTypeName}</Text>
                             </View>
-                            {/* <View style={{ backgroundColor: '#007F9D', borderRadius: 2, height: 20, width: '25%', alignItems: 'center', justifyContent: 'center', left: 5 }}>
-                                {item?.industryName.length > 9 ?
-                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.slice(0, 9) + '...'}</Text> :
-                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName}</Text>}
-                            </View> */}
+                            <View style={{ backgroundColor: '#007F9D', borderRadius: 2, height: 20, width: '25%', paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center', left: 5 }}>
+                            {item?.industryName.industryName.length > 9 ?
+                            <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.industryName.slice(0, 9) + '...'}</Text> :
+                            <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.industryName}</Text>}
+                            </View>
+                            <Text style={styles.mwdTxt}>(m/w/d)</Text>
                         </View>
 
 
@@ -124,10 +128,10 @@ const SaveJobListing = () => {
 
 
                     <View style={{ width: '100%' }}>
-                        <TouchableOpacity style={{ height: '50%', width: '17%', backgroundColor: color.EMLCLR, borderTopRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => { getJobsDetails(item._id) }}>
+                        <TouchableOpacity style={{ height: '50%', width: '17%', backgroundColor: reCol().color.EMLCLR, borderTopRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => { getJobsDetails(item._id) }}>
                             <Image style={{ height: 20, width: 24 }} resizeMode='contain' source={require('../../assets/images/sms-tracking.png')} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ height: '50%', width: '17%', backgroundColor: color.HRTCLR, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => { removeAlert(item) }}>
+                        <TouchableOpacity style={{ height: '50%', width: '17%', backgroundColor: reCol().color.HRTCLR, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => { removeAlert(item) }}>
                             <Image style={{ height: 20, width: 24 }} resizeMode='contain' source={require('../../assets/images/heartFill.png')} />
                         </TouchableOpacity>
                     </View>
@@ -179,14 +183,14 @@ const styles = StyleSheet.create({
         fontSize: 15,
         paddingTop: 10,
         fontFamily: fontFamily.NunitoBold,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontWeight: '700'
     },
     suText: {
         fontSize: 13,
         paddingTop: 5,
         fontFamily: fontFamily.poppinsLight,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         textAlign: 'center'
     },
     renderMainView: {
@@ -200,7 +204,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 5,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '92%',
         alignSelf: 'center',
         flex: 1,
@@ -219,16 +223,22 @@ const styles = StyleSheet.create({
         marginTop: 5
     },
     nameTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsSeBold,
         fontSize: 14,
         width: '100%'
     },
     locTxt: {
         left: 5,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontSize: 10,
         top: 3
+    },
+    mwdTxt: {
+        color: reCol().color.BLACK,
+        fontFamily: fontFamily.poppinsLight,
+        fontSize: 10,
+        paddingHorizontal: 10
     },
 })

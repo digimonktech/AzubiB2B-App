@@ -1,8 +1,8 @@
 import { Images } from "@/assets/images/images";
 import BackHeader from "@/component/BackHeader";
 import { ModalLocation } from "@/component/ModalLocation";
-import { getApiCall } from "@/utils/ApiHandler";
-import { color, fontFamily } from "@/utils/configuration";
+import { getApiCall, getApiCall1 } from "@/utils/ApiHandler";
+import { fontFamily, reCol } from "@/utils/configuration";
 import React, { useState } from "react";
 import { StyleSheet, View, FlatList, Text, SafeAreaView, ImageBackground } from "react-native";
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
@@ -21,7 +21,7 @@ export default function ApplicationTips({ navigation, route }) {
     const getApplicationTips = async () => {
         try {
             setLoading(true);
-            let res = await getApiCall({ url: 'tips/get_all_tips?searchValue=&pageNo=1&recordPerPage=100' });
+            let res = await getApiCall1({ url: 'tips/get_all_tips?searchValue=&pageNo=1&recordPerPage=100' });
             if (res.success == true) {
                 setData(res?.data?.data);
             }
@@ -97,14 +97,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginHorizontal: 20,
         paddingVertical: 15,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 10,
     },
     main1: {
         width: '90%',
         padding: 5,
         borderWidth: 1,
-        borderColor: color.BDRCLR,
+        borderColor: reCol().color.BDRCLR,
         alignSelf: "center",
         borderRadius: 10,
         marginBottom: 10
@@ -132,15 +132,15 @@ const styles = StyleSheet.create({
     },
     landText: {
         marginTop: 5,
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsRegular,
         fontSize: 14,
     },
     fTxt: {
-        color: color.BTNCOLOR,
+        color: reCol().color.BTNCOLOR,
     },
     azubiTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
     },
     detailTxt: {
         marginTop: 5,

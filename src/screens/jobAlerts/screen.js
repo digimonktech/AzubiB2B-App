@@ -2,9 +2,9 @@ import { Alert, Dimensions, FlatList, Image, ImageBackground, Keyboard, Keyboard
 import React, { useEffect, useState } from 'react'
 import MainHeader from '@/component/MainHeader';
 import { Images } from '@/assets/images/images';
-import { color, fontFamily } from '@/utils/configuration';
+import { fontFamily, reCol } from '@/utils/configuration';
 import { Button, Checkbox, Divider, Input } from 'native-base';
-import { getApiCall, postApiCall } from '@/utils/ApiHandler';
+import { getApiCall, getApiCall1, postApiCall } from '@/utils/ApiHandler';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { ModalLocationAlert } from '@/component/ModalLocationAlert';
 import RenderHTML from 'react-native-render-html';
@@ -15,6 +15,7 @@ import JobAlertListing from './jobAlertListing';
 import SaveJobAlert from './saveJobAlert';
 import BackHeader from '@/component/BackHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 
 const JobAlerts = ({ navigation }) => {
     const [visibleLocation, setVisibleLocation] = useState(false);
@@ -36,7 +37,9 @@ const JobAlerts = ({ navigation }) => {
         refIndustrySheet.current.open();
     }
     const { width } = Dimensions.get('screen');
-
+    const comId = useSelector(
+        (state) => state.companyId?.companyId
+    );
     const CloseIndustryMenu = (selectedIndustries) => {
         // Handle the selected industries as needed
         console.log('Selected Industries:', selectedIndustries);
@@ -67,7 +70,7 @@ const JobAlerts = ({ navigation }) => {
         }
         try {
             // setLoading(false);
-            let res = await postApiCall({
+            let res = await postApiCall1({
                 url: 'alert/job-alarm', json: info
             });
 
@@ -89,7 +92,7 @@ const JobAlerts = ({ navigation }) => {
         }
         try {
             setLoading(false);
-            let res = await getApiCall({
+            let res = await getApiCall1({
                 url: 'job/?filter=DSC&' + repeatIndustryParams +
                     '&pageNo=100&recordPerPage=&searchValue=&isFrontend=true&date=' + moment().format('YYYY-MM-DD') +
                     '&' + repeatCityParams
@@ -110,9 +113,9 @@ const JobAlerts = ({ navigation }) => {
     };
     const getAllIndustry = async () => {
         try {
-            let res = await getApiCall({ url: 'industries/get_all_Industry?searchValue=&pageNo=1&recordPerPage=100' });
+            let res = await getApiCall({ url: 'admin/industries', params: { companyId: comId } });
             if (res.status == 200) {
-                const newArr = [{ _id: '', industryName: "Alle" }, ...res?.data.data]
+                const newArr = [{ _id: '', industryName: "Alle" }, ...res?.data.industries]
                 setIndustryData(newArr);
             }
         } catch (e) {
@@ -123,10 +126,10 @@ const JobAlerts = ({ navigation }) => {
     };
     const getAlertsAdminData = async () => {
         try {
-            let res = await getApiCall({ url: 'alert' });
+            let res = await getApiCall1({ url: 'alert' });
             if (res.status == 200) {
                 setSubHeading(res.data.subheading);
-                setImageTop(res.data.image);
+                setImageTop(Images.banner);
                 setHeading(res.data.heading);
             }
         } catch (e) {
@@ -253,7 +256,7 @@ const JobAlerts = ({ navigation }) => {
 
                     <View style={{ marginHorizontal: 15, flex: 1 }}>
                         <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                            <Image source={{ uri: Globals.BASE_URL + imagetop }} style={styles.img}
+                            <Image source={imagetop} style={styles.img}
                                 resizeMode='cover' borderRadius={15} />
                             {/* <Text style={styles.headingText1}>Lass dich uber passende neue Jobs direkt informieren!</Text> */}
                             <RenderHTML
@@ -270,7 +273,7 @@ const JobAlerts = ({ navigation }) => {
                                 tagsStyles={tagStyle1}
                             />
                             <TouchableOpacity style={{ marginTop: 0, width: '100%' }} onPress={() => setVisibleLocation(true)}>
-                                <View style={{ height: 60, backgroundColor: color.WHITE, borderRadius: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <View style={{ height: 60, backgroundColor: reCol().color.WHITE, borderRadius: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Image source={Images.notification} style={{ height: 50, width: 50 }} />
                                         <Text style={[styles.subHeadingText, { paddingTop: 0 }]}>
@@ -290,7 +293,7 @@ const JobAlerts = ({ navigation }) => {
                             <TouchableOpacity style={{ marginTop: 15, width: '100%' }} onPress={() => { OpenIndustryMenu() }}>
                                 <View style={{
                                     height: 60,
-                                    backgroundColor: color.WHITE,
+                                    backgroundColor: reCol().color.WHITE,
                                     borderRadius: 10, flexDirection: 'row',
                                     alignItems: 'center', paddingHorizontal: 15, justifyContent: 'space-between'
                                 }}>
@@ -319,7 +322,7 @@ const JobAlerts = ({ navigation }) => {
                                         borderRadius={10}
                                         value={email}
                                         placeholder={'Geben Sie Ihre E-Mail-Adresse ein'}
-                                        borderColor={color.BDRCLR}
+                                        borderColor={reCol().color.BDRCLR}
                                         onChangeText={setEmail}
                                     />
                                 </View>
@@ -330,13 +333,13 @@ const JobAlerts = ({ navigation }) => {
                                     height: 50,
                                     justifyContent: 'center',
                                     width: '100%',
-                                    backgroundColor: email ? color.BTNCOLOR : 'gray',
+                                    backgroundColor: email ? reCol().color.BTNCOLOR : 'gray',
                                     borderRadius: 20, flexDirection: 'row',
                                     alignItems: 'center', paddingHorizontal: 15
                                 }} onPress={() => { jobAlertsSave(), getAllAlertsJobs() }}
                                     disabled={email ? false : true}>
                                     <Text style={{
-                                        color: color.WHITE, fontWeight: 'bold',
+                                        color: reCol().color.WHITE, fontWeight: 'bold',
                                         fontFamily: fontFamily.NunitoBold,
                                         fontSize: 18,
                                     }}>{'Job Alarm absenden'}</Text>
@@ -406,7 +409,7 @@ const JobAlerts = ({ navigation }) => {
                                 >{'Filter zurücksetzen'}</Button> */}
                                 <TouchableOpacity onPress={() => resetFilter()} style={{
                                     height: 50, alignItems: 'center',
-                                    justifyContent: 'center', width: '97%'
+                                    justifyContent: 'centers', width: '97%'
                                 }}>
                                     <Text style={{ fontFamily: fontFamily.poppinsMedium, fontSize: 16, color: 'black' }}>{'Filter zurücksetzen'}</Text>
                                 </TouchableOpacity>
@@ -467,7 +470,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     headingText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 20,
         fontWeight: 'bold'
@@ -475,7 +478,7 @@ const styles = StyleSheet.create({
     closeImg: {
         height: 30,
         width: 30,
-        tintColor: color.BDRCLR,
+        tintColor: reCol().color.BDRCLR,
         alignSelf: 'flex-end'
     },
     main: {
@@ -493,7 +496,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.3,
         height: 50,
         alignItems: 'center',
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         justifyContent: 'space-around',
         borderBottomColor: 'gray'
     },

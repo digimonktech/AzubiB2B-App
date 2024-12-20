@@ -1,8 +1,8 @@
-import { Alert, Dimensions, Image, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, FlatList, Image, ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Header from '@/component/Header'
 import { Images } from '@/assets/images/images'
-import { color, fontFamily } from '@/utils/configuration'
+import { fontFamily, reCol } from '@/utils/configuration'
 import FormInput from '@/component/FormInput'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -10,7 +10,7 @@ import { registerSchema } from './schema'
 import TextAreaInput from '@/component/FormArea'
 import { Button, Checkbox } from 'native-base'
 import MainHeader from '@/component/MainHeader'
-import { getApiCall, postApiCall } from '@/utils/ApiHandler'
+import { getApiCall, getApiCall1, postApiCall } from '@/utils/ApiHandler'
 import RenderHtml, { RenderHTML } from 'react-native-render-html';
 import { ModalLocation } from '@/component/ModalLocation'
 import Loader from '@/component/Loader'
@@ -21,7 +21,10 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { selectDeviceId } from '@/redux/reducers/deviceIdSlice'
 import moment from 'moment'
 import * as ImagePicker from 'react-native-image-picker';
+import { selectCompanyId } from '@/redux/reducers/companyIdSlice'
+import networkWithoutToken from '@/networkApi/networkWithoutToken'
 const { width, height } = Dimensions.get('screen');
+
 const Register = ({ navigation }) => {
     const dispatch = useDispatch();
     const { control, handleSubmit, setValue } = useForm({
@@ -37,13 +40,15 @@ const Register = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const [contentHead, setContentHead] = useState();
     const [date, setDate] = useState();
-    const [selImage, setSelImage] = useState();
+    const [selectedImage, setSelectedImage] = useState([]);
+    const [selectedImageShow, setSelectedImageShow] = useState([]);
     const [month, setMonth] = useState();
     const [year, setYear] = useState();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [contentSubHead, setContentSubHead] = useState();
     const [contentTxt, setContentTxt] = useState();
     const [isChecked, setIsChecked] = useState(false);
+    const [comId, setComId] = useState();
     DeviceInfo.getUniqueId().then((id) => {
         dispatch(selectDeviceId(id));
     })
@@ -54,7 +59,7 @@ const Register = ({ navigation }) => {
     }, [navigation]);
     const updateDate = (selectedDate) => {
         setDate(moment(selectedDate).format('DD'));
-        setMonth(moment(selectedDate).format('MMM'));
+        setMonth(moment(selectedDate).format('MM'));
         setYear(moment(selectedDate).format('YYYY'));
     }
     const showDatePicker = () => {
@@ -69,10 +74,22 @@ const Register = ({ navigation }) => {
         updateDate(date);
         hideDatePicker();
     };
+    const getCompany = async () => {
+        try {
+            setLoading(true);
+            let res = await getApiCall({ url: 'admin/companies' });
+            if (res?.status == 200) {
+                dispatch(selectCompanyId(res.data.companies.companies[1]._id));
+                setComId(res.data.companies.companies[1]._id);
+            }
+        } catch (error) {
+            alert(error);
+        }
+    }
     const welcomeData = async () => {
         try {
             setLoading(true);
-            let res = await getApiCall({ url: 'manage_content/home-page-v2' });
+            let res = await getApiCall1({ url: 'manage_content/home-page-v2' });
             if (res.status == 200) {
                 setContentHead(res.data.welcomeMessageForApp.heading)
                 setContentSubHead(res.data.welcomeMessageForApp.subHeading)
@@ -89,10 +106,12 @@ const Register = ({ navigation }) => {
     useEffect(() => {
         welcomeData();
         retrieveData();
+        getCompany();
     }, []);
     const launchImageLibrary = async () => {
         let options = {
             // includeBase64: true,
+            selectionLimit: 3 - selectedImageShow.length,
             storageOptions: {
                 skipBackup: true,
                 path: 'images',
@@ -107,16 +126,49 @@ const Register = ({ navigation }) => {
                 console.log('User tapped custom button: ', response.customButton);
                 alert(response.customButton);
             } else {
-                setSelImage({
-                    name: response?.assets[0]?.fileName,
-                    uri: response?.assets[0]?.uri,
-                    type: response?.assets[0]?.type,
-                });
+                const newImages = [];
+                const newImagesBase64 = [];
+                response.assets.forEach((image) => {
+                    console.log('Image', image);
+                    newImages.push(image);
+                    newImagesBase64.push({
+                        name: image.fileName,
+                        type: image.type,
+                        uri: image.uri
+                    });
+                })
+                setSelectedImage((prev) => [...prev, ...newImages]);
+                setSelectedImageShow((prev) => [...prev, ...newImagesBase64]);
             }
         });
     };
 
-
+    async function apiContact(values) {
+        // console.log('dob', date,month,year)
+        try {
+            const data = new FormData();
+            data.append('companyId', comId);
+            data.append('name', values.Name);
+            data.append('email', values.Email);
+            data.append('phoneNumber', values.Mobile);
+            data.append('message', values.About);
+            data.append('dateOfBirth', `${date}-${month}-${year}`);
+            // { selImage ? data.append('image', selImage) : null }
+            if (selectedImageShow.length > 0) {
+                selectedImageShow.forEach((image) => {
+                    data.append('image', image);
+                });
+            }
+            const response = await networkWithoutToken.createMobileOtp().registerData(data);
+            if (response.status === 200) {
+                retrieveData()
+            } else {
+                console.log('Error')
+            }
+        } catch (error) {
+            alert(error)
+        }
+    }
     async function contactApi(values) {
 
         try {
@@ -130,9 +182,9 @@ const Register = ({ navigation }) => {
             alert(e)
         }
         finally {
-            retrieveData();
+            apiContact(values);
             Alert.alert('Herzlich Willkommen!', 'Deine Daten sind erfolgreich gespeichert.');
-
+            setLoading(false);
         }
     }
 
@@ -159,7 +211,39 @@ const Register = ({ navigation }) => {
     const onSubmit = async (values) => {
         contactApi(values);
     }
-
+    const renderItemImage = (item) => {
+        const { uri } = item.item;
+        const removeImage = (uriToRemove) => {
+            // Use the filter method to remove the image at the specified index
+            const updatedImageList = selectedImageShow.filter((image) => image.uri !== uriToRemove);
+            const updatedbase64List = selectedImage.filter((image) => image.uri !== uriToRemove);
+            setSelectedImageShow(updatedImageList);
+            setSelectedImage(updatedbase64List);
+        };
+        return (
+            <View style={{
+                height: 200, width: width / 3.8,
+                paddingLeft: 5, marginTop: 20
+            }}>
+                <Image source={{ uri: uri }}
+                    style={{ height: '100%', width: '100%' }}
+                    borderRadius={15}
+                />
+                <TouchableOpacity style={{
+                    position: 'absolute',
+                    alignSelf: 'flex-end',
+                    top: -10,
+                    right: -5
+                }} onPress={() => removeImage(uri)}>
+                    <Image source={Images.modalClose}
+                        style={{
+                            height: 20,
+                            width: 20,
+                        }} />
+                </TouchableOpacity>
+            </View>
+        )
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -170,7 +254,7 @@ const Register = ({ navigation }) => {
                         <FormInput
                             name='Name'
                             control={control}
-                            borderColor={color.BDRCLR}
+                            borderColor={reCol().color.BDRCLR}
                             placeholder={'NAME/NACHNAME (erforderlich)'}
                             style={styles.txtSize}
                         />
@@ -178,7 +262,7 @@ const Register = ({ navigation }) => {
                             <FormInput
                                 name='Email'
                                 control={control}
-                                borderColor={color.BDRCLR}
+                                borderColor={reCol().color.BDRCLR}
                                 placeholder={'E-MAIL (erforderlich)'}
                                 style={styles.txtSize}
                             />
@@ -186,7 +270,7 @@ const Register = ({ navigation }) => {
                         <View style={styles.midSpace}>
                             <FormInput
                                 name='Mobile'
-                                borderColor={color.BDRCLR}
+                                borderColor={reCol().color.BDRCLR}
                                 control={control}
                                 placeholder={'Telefonnummer (optional)'}
                                 style={styles.txtSize}
@@ -198,7 +282,7 @@ const Register = ({ navigation }) => {
                             <TextAreaInput
                                 name='About'
                                 height={180}
-                                borderColor={color.BDRCLR}
+                                borderColor={reCol().color.BDRCLR}
                                 backgroundColor='white'
                                 control={control}
                                 placeholder={'Über mich (optional)'}
@@ -220,17 +304,44 @@ const Register = ({ navigation }) => {
                             onCancel={hideDatePicker}
                         />
                         <TouchableOpacity
-                            style={selImage ?
+                            style={selectedImage.length > 0 ?
                                 styles.pickerTouch1 :
                                 styles.pickerTouch}
                             onPress={() => launchImageLibrary()}>
-                            {selImage ?
-                                <Image source={{ uri: selImage.uri }}
-                                    style={styles.imagePickerStyle}
-                                    borderRadius={15} /> :
+                            {selectedImage.length > 0 ?
+                                <FlatList
+                                    data={selectedImageShow}
+                                    renderItem={renderItemImage}
+                                    numColumns={3}
+                                />
+                                :
                                 <Image
                                     source={Images.imagePicker}
                                     style={styles.imagePickerStyle} />}
+                            {selectedImage.length < 3 && selectedImage.length != 0 &&
+                                <TouchableOpacity
+                                    style={{
+                                        alignSelf: "center",
+                                        marginRight: selectedImage.length === 1 ? '40%' : '10%'
+                                    }}
+                                    onPress={() => launchImageLibrary()}>
+                                    <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
+                                </TouchableOpacity>
+                            }
+                            {(selectedImage.length >= 3 && selectedImage.length < 3) &&
+                                <TouchableOpacity
+                                    style={{
+                                        alignSelf: "flex-end",
+                                        position: 'absolute',
+                                        left: selectedImage.length === 4 ? '40%' :
+                                            selectedImage.length === 3 ? '8%' : '75%',
+                                        bottom: selectedImage.length === 3 ? '-40%' : '15%'
+                                        // marginRight: selectedImage.length === 4 ? '40%' : '10%'
+                                    }}
+                                    onPress={() => launchImageLibrary()}>
+                                    <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
+                                </TouchableOpacity>
+                            }
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.checkboxTouch}
@@ -245,12 +356,14 @@ const Register = ({ navigation }) => {
                             <Text style={styles.labelText}>{`Ich akzeptiere die elektronische Speicherung meiner Daten gemäß der `}
                             </Text>
                         </TouchableOpacity>
-                        <View style={styles.buttonView}>
+                        <View style={[styles.buttonView,
+                        { backgroundColor: isChecked ? '#8C65A3' : 'grey' }]}>
                             <Button
                                 size={'lg'}
                                 variant={'solid'}
+                                disabled={isChecked ? false : true}
                                 _text={styles.btnText}
-                                colorScheme={color.BTNCOLOR}
+                                colorScheme={isChecked ? reCol().color.BTNCOLOR : 'grey'}
                                 style={styles.buttonStyle}
                                 onPress={() => { handleSubmit(onSubmit)() }}
                             >
@@ -292,7 +405,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginHorizontal: 20,
         paddingVertical: 15,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 10,
     },
     main1: {
@@ -322,15 +435,15 @@ const styles = StyleSheet.create({
     },
     landText: {
         marginTop: 15,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 25,
     },
     fTxt: {
-        color: color.BTNCOLOR,
+        color: reCol().color.BTNCOLOR,
     },
     azubiTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
     },
     detailTxt: {
         marginTop: 15,
@@ -344,7 +457,7 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     dobView: {
-        borderColor: color.BDRCLR,
+        borderColor: reCol().color.BDRCLR,
         borderWidth: 1,
         borderRadius: 15,
         marginVertical: 10,
@@ -369,14 +482,16 @@ const styles = StyleSheet.create({
     },
     pickerTouch: {
         height: height * 0.08,
-        width: width * 0.8
+        width: width * 0.8,
+        flexDirection: 'row'
     },
     pickerTouch1: {
-        height: height * 0.3,
-        width: width * 0.8
+        height: height * 0.26,
+        width: width * 0.8,
+        flexDirection: 'row'
     },
     labelText: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsBold,
         fontWeight: '500',
         marginLeft: 10,

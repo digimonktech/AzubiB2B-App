@@ -2,7 +2,7 @@ import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Linking, Platfor
 import React, { useEffect, useRef, useState } from 'react'
 import MainHeader from '@/component/MainHeader';
 import { ModalLocation } from '@/component/ModalLocation';
-import { color, fontFamily } from '@/utils/configuration';
+import { fontFamily, reCol } from '@/utils/configuration';
 import { Images } from '@/assets/images/images';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { getApiCall } from '@/utils/ApiHandler';
@@ -13,6 +13,8 @@ import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { useCity } from '@/Context/CityProvider';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import LottieView from 'lottie-react-native';
+import { useSelector } from 'react-redux';
+import Share from 'react-native-share';
 const { height, width } = Dimensions.get('screen');
 const Gallery = ({ navigation }) => {
     const scrollViewRef = useRef(null);
@@ -20,13 +22,14 @@ const Gallery = ({ navigation }) => {
     const refIndustrySheet = React.useRef();
     const refImgSheet = React.useRef();
     const [jobTypeData, setJobTypeData] = useState([]);
-    const { selectedCityId } = useCity();
+    const { selectedCityId, showCity } = useCity();
     const [IndustryType, setIndustryType] = useState([]);
     const [scrollTop, setScrollTop] = useState(false);
     // const [flatData, setFlatData] = useState([]);
     const [industryData, setIndustryData] = useState([]);
     const [isRefresh, setIsRefresh] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showIndustry, setShowIndustry] = useState(false);
     const [loadingImage, setLoadingImage] = useState(false);
     const [jobTypeId, setJobTypeId] = useState('');
     const [zoomImage, setZoomImage] = useState('');
@@ -39,32 +42,36 @@ const Gallery = ({ navigation }) => {
     const [showLoadImageZoom, setShowLoadImageZoom] = useState(true);
     const LoaderAnimation = require('../../assets/images/Animation - 1713529999054.json');
     const { height, width } = Dimensions.get('screen');
-    const flatData = [
-        {
-            image: Images.demoJobWall, cityName: 'Bamberg', txt: [
-                { text: 'Rödinghausen' },
-                { text: 'Rödinghausen' },
-                { text: 'Rödinghausen' },
-                { text: 'Rödinghausen' },
-                { text: 'Rödinghausen' }
-            ]
-        },
-        {
-            image: Images.demoJobWall, cityName: 'Paris', txt: [
-                { text: 'Rödinghausen' },
-                { text: 'Rödinghausen' },
-                { text: 'Rödinghausen' },
-                { text: 'Rödinghausen' }
-            ]
-        },
-        {
-            image: Images.demoJobWall, cityName: 'USA', txt: [
-                { text: 'Rödinghausen' },
-                { text: 'Rödinghausen' },
-                { text: 'Rödinghausen' }
-            ]
-        }
-    ]
+    const comId = useSelector(
+        (state) => state.companyId?.companyId
+    );
+    // const flatData = [
+    //     {
+    //         image: Images.demoJobWall, cityName: 'Bamberg', txt: [
+    //             { text: 'Rödinghausen' },
+    //             { text: 'Rödinghausen' },
+    //             { text: 'Rödinghausen' },
+    //             { text: 'Rödinghausen' },
+    //             { text: 'Rödinghausen' }
+    //         ]
+    //     },
+    //     {
+    //         image: Images.demoJobWall, cityName: 'Paris', txt: [
+    //             { text: 'Rödinghausen' },
+    //             { text: 'Rödinghausen' },
+    //             { text: 'Rödinghausen' },
+    //             { text: 'Rödinghausen' }
+    //         ]
+    //     },
+    //     {
+    //         image: Images.demoJobWall, cityName: 'USA', txt: [
+    //             { text: 'Rödinghausen' },
+    //             { text: 'Rödinghausen' },
+    //             { text: 'Rödinghausen' }
+    //         ]
+    //     }
+    // ]
+    const [flatData, setFlatData] = useState([]);
     useEffect(() => {
         if (scrollTop && scrollViewRef.current) {
             scrollViewRef.current.scrollTo({ y: 0, animated: true });
@@ -97,9 +104,9 @@ const Gallery = ({ navigation }) => {
     }
     const getJobType = async () => {
         try {
-            let res = await getApiCall({ url: 'job-type/get_all_JobType?searchValue=&pageNo=1&recordPerPage=100' });
+            let res = await getApiCall({ url: 'admin/job-types', params: { companyId: comId } });
             if (res.status == 200) {
-                setJobTypeData(res?.data?.data);
+                setJobTypeData(res?.data?.jobTypes);
             }
 
         } catch (e) {
@@ -110,34 +117,71 @@ const Gallery = ({ navigation }) => {
     };
 
     useEffect(() => { getAllIndustry(), getJobType() }, []);
-    // useEffect(() => { getAllBanners() }, [IndustryType, isRefresh, selectedCityId, jobType]);
-    // const getAllBanners = async () => {
-    //     let repeatCityParams
-    //     let repeatIndustryParams
-    //     if (selectedCityId && selectedCityId.length > 0) {
-    //         repeatCityParams = selectedCityId.map(cityId => `selectedCity=${cityId}`).join('&');
-    //     }
-    //     if (selectedIndustries && selectedIndustries.length > 0) {
-    //         repeatIndustryParams = selectedIndustries.map(industryId => `industries=${industryId}`).join('&');
-    //     }
-    //     try {
-    //         setLoading(true);
-    //         let res = await getApiCall({
-    //             url: 'banner/app?' +
-    //                 'pageNo=1&recordPerPage=100&search=&jobType=' + jobTypeId + '&' + repeatIndustryParams +
-    //                 '&' + repeatCityParams
-    //         });
+    useEffect(() => { getAllBanners() }, [IndustryType, isRefresh, selectedCityId, jobType]);
+    const getAllBanners = async () => {
+        // let repeatCityParams
+        // let repeatIndustryParams
+        // if (selectedCityId && selectedCityId.length > 0) {
+        //     repeatCityParams = selectedCityId.map(cityId => `selectedCity=${cityId}`).join('&');
+        // }
+        // if (selectedIndustries && selectedIndustries.length > 0) {
+        //     repeatIndustryParams = selectedIndustries.map(industryId => `industries=${industryId}`).join('&');
+        // }
+        // try {
+        //     setLoading(true);
+        //     let res = await getApiCall({
+        //         url: 'banner/app?' +
+        //             'pageNo=1&recordPerPage=100&search=&jobType=' + jobTypeId + '&' + repeatIndustryParams +
+        //             '&' + repeatCityParams
+        //     });
 
-    //         if (res.status == 200) {
-    //             setFlatData(res.data);
-    //         }
-    //     } catch (e) {
-    //         alert(e);
-    //     } finally {
-    //         getAllIndustry();
-    //         setIsRefresh(false);
-    //     }
-    // };
+        //     if (res.status == 200) {
+        //         setFlatData(res.data);
+        //     }
+        // } catch (e) {
+        //     alert(e);
+        // } finally {
+        //     getAllIndustry();
+        //     setIsRefresh(false);
+        // }
+        try {
+            setLoading(true);
+
+            // Prepare query parameters
+            let selectedCityParams = selectedCityId && selectedCityId.length > 0
+                ? `selectedCities=${encodeURIComponent(JSON.stringify(selectedCityId))}`
+                : '';
+            let industryParams = selectedIndustries && selectedIndustries.length > 0
+                ? `industry=${encodeURIComponent(JSON.stringify(selectedIndustries))}`
+                : '';
+            let jobTypeParams = jobTypeId
+                ? `jobType=${encodeURIComponent(JSON.stringify([jobTypeId]))}`  // Wrap jobType in an array and stringify
+                : '';
+
+            // Combine all query parameters
+            const queryParams = [selectedCityParams, industryParams, jobTypeParams]
+                .filter(Boolean) // Remove empty parameters
+                .join('&');
+
+            // Construct the full URL
+            const url = `admin/job-banners?companyId=${comId}&${queryParams}`;
+
+            console.log('Final URL:', url);
+
+            // Make the API call
+            let res = await getApiCall({ url });
+
+            if (res.status === 200) {
+                setFlatData(res.data);
+            }
+        } catch (e) {
+            console.error('Error:', e);
+            alert(e);
+        } finally {
+            setIsRefresh(false);
+            getAllIndustry();
+        }
+    };
     const CloseIndustryMenu = (selectedIndustries) => {
         // Handle the selected industries as needed
         // console.log('Selected Industries:', selectedIndustries);
@@ -191,10 +235,11 @@ const Gallery = ({ navigation }) => {
     }
     const getAllIndustry = async () => {
         try {
-            let res = await getApiCall({ url: 'industries/get_all_Industry?searchValue=&pageNo=1&recordPerPage=100' });
+            let res = await getApiCall({ url: 'admin/industries', params: { companyId: comId } });
             if (res.status == 200) {
-                const newArr = [{ _id: '', industryName: "Alle" }, ...res?.data.data]
+                const newArr = [{ _id: '', industryName: "Alle" }, ...res?.data.industries]
                 setIndustryData(newArr);
+                setShowIndustry(res?.data?.industries[0].companyId?.industryStatus);
             }
         } catch (e) {
             alert(e);
@@ -219,16 +264,19 @@ const Gallery = ({ navigation }) => {
         }
     }
     const renderTxt = (item) => {
-        const { text } = item.item;
         return (
             <View>
-                <Text style={{ color: 'black' }}>{text}</Text>
+                <Text style={{
+                    color: 'black',
+                    fontFamily: fontFamily.poppinsRegular,
+                    fontSize: 18
+                }}>{item.item}</Text>
             </View>
         )
 
     }
     const RenderImageComponent = ({ item, navigation }) => {
-        const { image, cityName, txt } = item;
+        const { images, city, addLine } = item;
 
         return (
             <TouchableHighlight underlayColor={'none'}
@@ -237,7 +285,7 @@ const Gallery = ({ navigation }) => {
                 <View style={styles.boxImg}>
                     <View style={styles.imgViewSty}>
                         <Image
-                            source={image}
+                            source={{ uri: Globals.BASE_URL + images }}
                             style={styles.imgSty}
                             resizeMode='cover'
                             borderRadius={15}
@@ -245,20 +293,20 @@ const Gallery = ({ navigation }) => {
                     </View>
                     <View style={styles.descView}>
                         <FlatList
-                            data={txt}
+                            data={addLine}
                             renderItem={renderTxt}
                             scrollEnabled={false}
                             showsVerticalScrollIndicator={false}
                         />
                         <TouchableOpacity
-                            onPress={() => { }}>
+                            onPress={() => downloadImage(item.bannerTitle, images)}>
                             <Image
                                 source={Images.downloadIcon}
                                 style={{ height: 25, width: 25 }}
                             />
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.locView}>
+                    {showCity && <View style={styles.locView}>
                         <View style={styles.locView1}>
                             <View>
                                 <Image source={Images.location} style={{
@@ -275,10 +323,10 @@ const Gallery = ({ navigation }) => {
                                         left: 5,
                                         fontFamily: fontFamily.poppinsRegular
                                     }}
-                                >{cityName}</Text>
+                                >{city.name}</Text>
                             </View>
                         </View>
-                    </View>
+                    </View>}
                 </View>
             </TouchableHighlight>
         );
@@ -315,6 +363,55 @@ const Gallery = ({ navigation }) => {
             header: () => <MainHeader title={'JobWall'} press={() => { setVisibleLocation(true) }} />,
         });
     }, [navigation]);
+    const downloadImage = async (imageName, imagePath) => {
+        setLoadingImage(true);
+        const fileExtension = imagePath.split('.').pop();
+        const imageUrl = Globals.BASE_URL + imagePath;
+        const imageFilePath = Platform.OS === 'ios'
+            ? `${RNFS.DocumentDirectoryPath}/${imageName}.${fileExtension}`
+            : `${RNFS.DownloadDirectoryPath}/${imageName}.${fileExtension}`;
+        try {
+            const res = await RNFS.downloadFile({
+                fromUrl: imageUrl,
+                toFile: imageFilePath,
+                background: true,
+                discretionary: true,
+            }).promise
+            // console.log('Resultofdownloadimage', res);
+            if (res.statusCode === 200) {
+                try {
+                    // const result = await CameraRoll.saveAsset(imageFilePath + '/' + imageName, { type: 'photo' });
+                    // console.log('Result', result);
+                    // if (result) {
+                    //     Alert.alert('Glückwunsch!', 'Bild erfolgreich heruntergeladen')
+                    // } else {
+                    //     alert('Failed to download image, Please try again later');
+                    // }
+                    const fileExists = await RNFS.exists(imageFilePath);
+                    // console.log('File Exists:', fileExists);
+                    if (fileExists) {
+                        await Share.open({
+                            title: 'Share Image',
+                            url: Platform.OS === 'ios'
+                                ? `file://${imageFilePath}`  // iOS requires file:// prefix
+                                : imageFilePath,
+                            type: 'image/jpeg',
+                            failOnCancel: false, // Avoid error if user cancels
+                        });
+                        Alert.alert('Glückwunsch!', 'Bild erfolgreich heruntergeladen')
+                    }
+                } catch (error1) {
+                    console.log('error1', error1);
+                }
+            } else {
+                alert('Failed to download image Locally');
+            }
+        } catch (error) {
+            console.log('error', error)
+        } finally {
+            setLoadingImage(false)
+        }
+    }
     const renderItemIndustry = (item) => {
         const isChecked = selectedIndustries.includes(item.item._id);
         return (
@@ -361,7 +458,7 @@ const Gallery = ({ navigation }) => {
                                     />
                                 </View>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.sortTouch,
+                            {showIndustry && <TouchableOpacity style={[styles.sortTouch,
                             { left: jobType?.length > 0 ? 0 : 0, width: '52%' }]}
                                 underlayColor={'#fff'} activeOpacity={0.5}
                                 onPress={() => { OpenIndustryMenu() }}>
@@ -384,7 +481,7 @@ const Gallery = ({ navigation }) => {
                                         style={styles.sortDownImage}
                                     />
                                 </View>
-                            </TouchableOpacity>
+                            </TouchableOpacity>}
                         </View>
                     </View>
                     <View style={{ marginTop: 15 }}>
@@ -552,7 +649,7 @@ const Gallery = ({ navigation }) => {
                                 backgroundColor: '#fff',
                             }
                         }}
-                        height={100 * jobTypeData?.length}
+                        height={500}
                     >
                         <View style={styles.flexView}>
                             <Text style={styles.headingText}>{'Nach was suchst du'}</Text>
@@ -568,7 +665,7 @@ const Gallery = ({ navigation }) => {
                                 }}
                                     onPress={() => CloseMenu(item)}>
                                     <Text style={{
-                                        fontSize: 15, color: jobType === item.jobTypeName ? color.BDRCLR : '#000',
+                                        fontSize: 15, color: jobType === item.jobTypeName ? reCol().color.BDRCLR : '#000',
                                         textAlign: "center", fontFamily: fontFamily.poppinsBold
                                     }} >{item.jobTypeName}</Text>
                                 </TouchableOpacity>
@@ -631,7 +728,7 @@ const styles = StyleSheet.create({
     },
     sortView: {
         flexDirection: 'row',
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
@@ -639,7 +736,7 @@ const styles = StyleSheet.create({
     },
     sortTouch: {
         flexDirection: 'row',
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 5,
         marginBottom: 10,
         justifyContent: 'center',
@@ -654,7 +751,7 @@ const styles = StyleSheet.create({
 
     },
     sortText: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontWeight: '200',
         fontSize: 12,
@@ -680,7 +777,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     headingText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 20,
         fontWeight: 'bold'
@@ -688,7 +785,7 @@ const styles = StyleSheet.create({
     closeImg: {
         height: 30,
         width: 30,
-        tintColor: color.BDRCLR,
+        tintColor: reCol().color.BDRCLR,
         alignSelf: 'flex-end'
     },
     main: {
@@ -709,7 +806,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.5,
         shadowRadius: 2,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '45%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -724,7 +821,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 5,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '45%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -732,7 +829,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     jobsNumberText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsSeBold,
         fontWeight: '400',
         marginBottom: 10,

@@ -3,17 +3,18 @@ import { Alert, Image, ImageBackground, Modal, SafeAreaView, ScrollView, StyleSh
 import React, { useEffect, useState } from 'react'
 import Header from '@/component/Header'
 import { Images } from '@/assets/images/images'
-import { color, fontFamily } from '@/utils/configuration'
+import { fontFamily, reCol } from '@/utils/configuration'
 import FormInput from '@/component/FormInput'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { registerSchema } from './schema'
 import TextAreaInput from '@/component/FormArea'
 import { Button, Checkbox, Row } from 'native-base'
-import { getApiCall, postApiCall } from "@/utils/ApiHandler";
+import { getApiCall, getApiCall1, postApiCall } from "@/utils/ApiHandler";
 import { ModalLocation } from "@/component/ModalLocation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RenderHTML from "react-native-render-html";
+import { useSelector } from "react-redux";
 
 
 export default function Contact({ navigation, route }) {
@@ -32,7 +33,9 @@ export default function Contact({ navigation, route }) {
     const [content, setContent] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isChecked, setIsChecked] = useState(false);
-
+    const comId = useSelector(
+        (state) => state.companyId?.companyId
+    );
     React.useLayoutEffect(() => {
         navigation.setOptions({
             header: () => <BackHeader title={headerName} press={() => setVisibleLocation(true)} />,
@@ -52,13 +55,14 @@ export default function Contact({ navigation, route }) {
             "name": values.Name,
             "phoneNumber": values.Mobile || "",
             "email": values.Email,
-            "message": values.About
+            "message": values.About,
+            "companyId": comId
         };
         console.log(info);
         try {
             setLoading(true);
-            let res = await postApiCall({ url: 'contacts', json: info })
-            console.log(":::::::::::::::::::::", res)
+            let res = await postApiCall({ url: 'admin/contact-form', json: info })
+            // console.log(":::::::::::::::::::::", res)
             if (res.success) {
                 Alert.alert('Nachricht erfolgreich gesendet.', 'Wir melden uns in Kürze zurück.')
             }
@@ -72,7 +76,7 @@ export default function Contact({ navigation, route }) {
     }
     const ContentData = async () => {
         try {
-            let res = await getApiCall({ url: 'manage_content' });
+            let res = await getApiCall1({ url: 'manage_content' });
             if (res.status == 200) {
                 setContent(res?.data?.termsConditions)
             }
@@ -139,7 +143,7 @@ export default function Contact({ navigation, route }) {
                         <FormInput
                             name='Name'
                             control={control}
-                            borderColor={color.BDRCLR}
+                            borderColor={reCol().color.BDRCLR}
                             placeholder={'NAME/NACHNAME (erforderlich)'}
                             style={styles.txtSize}
                         />
@@ -149,7 +153,7 @@ export default function Contact({ navigation, route }) {
                             <FormInput
                                 name="Email"
                                 control={control}
-                                borderColor={color.BDRCLR}
+                                borderColor={reCol().color.BDRCLR}
                                 placeholder={'E-Mail'}
                                 style={styles.txtSize}
 
@@ -160,7 +164,7 @@ export default function Contact({ navigation, route }) {
 
                             <FormInput
                                 name='Mobile'
-                                borderColor={color.BDRCLR}
+                                borderColor={reCol().color.BDRCLR}
                                 control={control}
                                 placeholder={'Telefonnummer (optional)'}
                                 style={styles.txtSize}
@@ -175,7 +179,7 @@ export default function Contact({ navigation, route }) {
                             <TextAreaInput
                                 name='About'
                                 height={180}
-                                borderColor={color.BDRCLR}
+                                borderColor={reCol().color.BDRCLR}
                                 backgroundColor='white'
                                 control={control}
                                 placeholder={'Nachricht'}
@@ -218,15 +222,15 @@ export default function Contact({ navigation, route }) {
                                 variant={'solid'}
                                 _text={styles.btnText}
                                 disabled={isChecked ? false : true}
-                                colorScheme={isChecked ? color.BTNCOLOR : 'gray'}
+                                colorScheme={isChecked ? reCol().color.BTNCOLOR : 'gray'}
                                 style={styles.buttonStyle}
                                 onPress={() => { handleSubmit(onSubmit)() }} >{'Absenden'}
                             </Button>
                             <View style={{
                                 marginTop: 15,
-                                backgroundColor: color.WHITE,
+                                backgroundColor: reCol().color.WHITE,
                                 borderWidth: 1,
-                                borderColor: color.BDRCLR,
+                                borderColor: reCol().color.BDRCLR,
                                 padding: 10,
                                 borderRadius: 10
                             }}>
@@ -282,15 +286,15 @@ const styles = StyleSheet.create({
     },
     landText: {
         marginTop: 15,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 25,
     },
     fTxt: {
-        color: color.BTNCOLOR,
+        color: reCol().color.BTNCOLOR,
     },
     azubiTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
     },
     detailTxt: {
         marginTop: 15,
@@ -302,7 +306,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: fontFamily.poppinsRegular,
         color: '#000',
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
     },
     modalBgView: {
         flex: 1,
@@ -310,7 +314,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#00000050"
     },
     modalMainView: {
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         height: '92%',
         width: '100%',
         borderRadius: 20,
@@ -323,7 +327,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     headingText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 20,
         fontWeight: 'bold'

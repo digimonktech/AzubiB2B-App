@@ -1,8 +1,8 @@
 import { Images } from "@/assets/images/images";
 import BackHeader from "@/component/BackHeader";
 import { ModalLocation } from "@/component/ModalLocation";
-import { getApiCall, postApiCall } from "@/utils/ApiHandler";
-import { color, fontFamily } from "@/utils/configuration";
+import { getApiCall, getApiCall1, postApiCall } from "@/utils/ApiHandler";
+import { fontFamily, reCol } from "@/utils/configuration";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, FlatList, Text, ImageBackground } from "react-native";
 import RenderHtml from 'react-native-render-html';
@@ -39,7 +39,7 @@ export default function PrivacyPolicy({ navigation, route }) {
     const ContentData = async () => {
         try {
             setLoading(true);
-            let res = await getApiCall({ url: 'manage_content' });
+            let res = await getApiCall1({ url: 'manage_content' });
             if (res.status == 200) {
                 setContent(res?.data)
             }
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginHorizontal: 20,
         paddingVertical: 15,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 10,
     },
     main1: {
@@ -140,15 +140,15 @@ const styles = StyleSheet.create({
     },
     landText: {
         marginTop: 15,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 25,
     },
     fTxt: {
-        color: color.BTNCOLOR,
+        color: reCol().color.BTNCOLOR,
     },
     azubiTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
     },
     detailTxt: {
         marginTop: 15,

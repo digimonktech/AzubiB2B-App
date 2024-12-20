@@ -1,19 +1,32 @@
 import React from "react";
 import { View, StyleSheet, ImageBackground, Image } from "react-native";
 import LottieView from "lottie-react-native";
+import { getApiCall } from "@/utils/ApiHandler";
 
 const LoaderAnimation = require('../assets/images/animation_lmzwwr3b.json');
-
+export let colorDynamic1 = '#003285';
+export let colorDynamic2 = '#8C65A3';
 export default function SplashScreen({ navigation }) {
 
 
 
     React.useEffect(() => {
+        getCompany();
         setTimeout(() => {
             navigation.replace('DrawerDashboard');
         }, 3000);
     }, [navigation]);
-
+    const getCompany = async () => {
+        try {
+            let res = await getApiCall({ url: 'admin/companies' });
+            if (res?.status == 200) {
+                colorDynamic1 = res.data.companies.companies[1].headingOneColor;
+                colorDynamic2 = res.data.companies.companies[1].headingTwoColor;
+            }
+        } catch (error) {
+            alert(error);
+        }
+    }
 
     return (
         <ImageBackground style={styles.Container} resizeMode="cover" source={require('../assets/images/Onboarding.png')}>

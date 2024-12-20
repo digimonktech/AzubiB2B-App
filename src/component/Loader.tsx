@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { Spinner } from 'native-base'
-import { color, fontFamily } from '@/utils/configuration'
+import { fontFamily, reCol } from '@/utils/configuration'
 
 const Loader = () => {
     return (
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     txt: {
         fontFamily: fontFamily.poppinsRegular,
         fontWeight: '400',
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontSize: 15,
         paddingLeft: 10
     }

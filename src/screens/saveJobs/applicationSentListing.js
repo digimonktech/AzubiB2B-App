@@ -1,10 +1,10 @@
 import { Alert, FlatList, Image, ImageBackground, StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Images } from '@/assets/images/images'
-import { color, fontFamily } from '@/utils/configuration'
+import { fontFamily, reCol } from '@/utils/configuration'
 import Globals from '@/utils/Globals'
 import { useSelector } from 'react-redux'
-import { getApiCall, postApiCall } from '@/utils/ApiHandler'
+import { delApiCall, getApiCall, postApiCall } from '@/utils/ApiHandler'
 import Loader from '@/component/Loader'
 import { ModalSaveApply } from '@/component/Modal'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
@@ -14,16 +14,18 @@ const ApplicationSentListing = () => {
     const [flatData, setFlatData] = useState([]);
     const [visibleApply, setVisibleApply] = useState(false);
     const isFocused = useIsFocused();
+    const comId = useSelector(
+            (state) => state.companyId?.companyId
+        );
     const getAllJobs = async () => {
         try {
             let res = await getApiCall({
-                url: 'job/?deviceId=' + id +
-                    '&pageNo=100&recordPerPage=&searchValue=&isFrontend=true'
+                url: 'admin/applications?pageNo=1&recordPerPage=10&companyId=' + comId
             });
 
             if (res.status == 200) {
-                console.log('ResponseDataofapplylistings', res.data.jobs)
-                setFlatData(res.data.jobs);
+                console.log('ResponseDataofapplylistings', res.data)
+                setFlatData(res.data);
             }
         } catch (e) {
             alert(e);
@@ -39,13 +41,17 @@ const ApplicationSentListing = () => {
     const [jobDetails, setJobDetails] = useState([]);
     const [loader, setLoader] = useState(false);
     const removeJobApply = async (jobId) => {
+        console.log('JobId', jobId);
         try {
             setLoader(true);
-            let res = await postApiCall({
-                url: 'job/revert-application', json: {
-                    jobId: jobId,
-                    deviceId: id
-                }
+            // let res = await postApiCall({
+            //     url: 'job/revert-application', json: {
+            //         jobId: jobId,
+            //         deviceId: id
+            //     }
+            // });
+             let res = await delApiCall({
+                url: 'admin/application/' + jobId
             });
             if (res.status == 200) {
                 getAllJobs();
@@ -60,7 +66,7 @@ const ApplicationSentListing = () => {
     const getJobsDetails = async (id) => {
         try {
             setLoader(true);
-            let res = await getApiCall({ url: 'job/' + id });
+            let res = await getApiCall({ url: 'admin/job/' + id });
             if (res.status == 200) {
                 setJobDetails(res.data)
             }
@@ -99,25 +105,25 @@ const ApplicationSentListing = () => {
                         }}
                         activeOpacity={0.5}
                         onPress={() => navigation.navigate('DetailsJobs', { item: item })}>
-                        <Text style={styles.nameTxt} numberOfLines={2}>{item?.jobTitle}</Text>
+                        <Text style={styles.nameTxt} numberOfLines={2}>{item?.jobId.jobTitle}</Text>
                         <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center', width: '85%' }}>
                             <View style={{ backgroundColor: '#fff', borderRadius: 5, height: 30, width: 30, alignItems: 'center', justifyContent: 'center', }}>
-                                <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + item?.companyLogo }} />
+                                <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + item?.companyId?.profileIcon }} />
                             </View>
-                            <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]} numberOfLines={2}>{item?.company}</Text>
+                            <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]} numberOfLines={2}>{item?.companyId?.companyname }</Text>
                         </View>
                         <View style={styles.locView}>
                             <Image source={Images.location} style={styles.locImage} resizeMode='contain' />
-                            <Text style={styles.locTxt}>{item?.city.join(', ')}</Text>
+                            <Text style={styles.locTxt}>{item?.jobId.city?.name}</Text>
                         </View>
                         <View style={styles.locView}>
                             <View style={{ backgroundColor: '#95A000', borderRadius: 2, height: 20, paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center' }}>
-                                <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{item?.jobType}</Text>
+                                <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{item?.jobId?.jobType?.jobTypeName}</Text>
                             </View>
                             <View style={{ backgroundColor: '#007F9D', borderRadius: 2, height: 20, width: '25%', alignItems: 'center', justifyContent: 'center', left: 5 }}>
-                                {item?.industryName.length > 9 ?
-                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.slice(0, 9) + '...'}</Text> :
-                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName}</Text>}
+                                {item?.jobId?.industryName?.industryName?.length > 9 ?
+                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.jobId?.industryName.industryName.slice(0, 9) + '...'}</Text> :
+                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.jobId?.industryName.industryName}</Text>}
                             </View>
                         </View>
 
@@ -129,13 +135,13 @@ const ApplicationSentListing = () => {
                         <TouchableOpacity style={{
                             height: '50%',
                             width: '18.2%',
-                            backgroundColor: color.EMLCLR,
+                            backgroundColor: reCol().color.EMLCLR,
                             borderTopRightRadius: 10,
                             borderBottomRightRadius: 10,
                             justifyContent: 'center',
                             alignItems: 'center'
                         }}
-                            onPress={() => { getJobsDetails(item._id) }}>
+                            onPress={() => { getJobsDetails(item?.jobId?._id) }}>
                             <Image style={{ height: 20, width: 24 }}
                                 resizeMode='contain'
                                 source={require('../../assets/images/sms-tracking.png')}
@@ -144,7 +150,7 @@ const ApplicationSentListing = () => {
                         <TouchableOpacity style={{
                             height: '50%',
                             width: '18.2%',
-                            backgroundColor: color.HRTCLR,
+                            backgroundColor: reCol().color.HRTCLR,
                             borderBottomRightRadius: 10,
                             justifyContent: 'center',
                             alignItems: 'center'
@@ -189,7 +195,7 @@ const styles = StyleSheet.create({
     heText: {
         fontSize: 15,
         fontFamily: fontFamily.NunitoBold,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontWeight: '700'
     },
     renderMainView: {
@@ -203,7 +209,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 5,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '92%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -212,14 +218,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     nameTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsSeBold,
         fontSize: 14,
         width: '100%'
     },
     locTxt: {
         left: 5,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontSize: 10,
         top: 3

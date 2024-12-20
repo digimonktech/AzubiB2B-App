@@ -2,7 +2,7 @@ import { FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, View } from 
 import React from 'react'
 import { Images } from '@/assets/images/images'
 import Header from '@/component/Header'
-import { color, fontFamily } from '@/utils/configuration'
+import { fontFamily, reCol } from '@/utils/configuration'
 import { Divider } from 'native-base'
 
 const Notification = () => {
@@ -65,21 +65,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     renderName: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsSeBold,
         fontWeight: '400',
         marginBottom: 10,
         fontSize: 15
     },
     renderDesc: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsRegular,
         fontWeight: '300',
         marginBottom: 10,
         fontSize: 12
     },
     renderDate: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsRegular,
         fontWeight: '300',
         marginBottom: 10,

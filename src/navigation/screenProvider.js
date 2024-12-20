@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react'
-import { color, fontFamily, screenName } from '@/utils/configuration';
+import { fontFamily, reCol, screenName } from '@/utils/configuration';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image, StyleSheet, Text } from 'react-native';
 import { Images } from '@/assets/images/images';
@@ -52,7 +52,7 @@ const Tabs = () => {
     <Tab.Navigator
       initialRouteName={TAB}
       screenOptions={{
-        tabBarActiveTintColor: color.WHITE,
+        tabBarActiveTintColor: reCol().color.WHITE,
         tabBarInactiveTintColor: '#3D0061',
         tabBarOptions: {
           contentStyle: { backgroundColor: "#000" },
@@ -60,7 +60,7 @@ const Tabs = () => {
         },
         tabBarStyle: {
           height: 100,
-          backgroundColor: color.BTNCOLOR,
+          backgroundColor: reCol().color.BTNCOLOR,
           contentStyle: { backgroundColor: "#000" },
           sceneContainerStyle: { backgroundColor: "#00" },
         },

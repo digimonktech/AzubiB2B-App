@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect, useEffect, useCallback } from 'react';
 import { View, Text, Image, ImageBackground, TouchableOpacity, ScrollView, TouchableHighlight, Dimensions, FlatList, SafeAreaView, StyleSheet, Linking, ActivityIndicator, Platform } from 'react-native';
 import { Images } from '@/assets/images/images';
-import { color, fontFamily } from '@/utils/configuration';
+import { fontFamily, reCol } from '@/utils/configuration';
 import { Divider } from 'native-base';
 import { ModalApply, ModalIndustry, ModalJobPic, } from '@/component/Modal';
 import BackHeader from '@/component/BackHeader';
@@ -83,7 +83,7 @@ const DetailsJobs = ({ navigation, route }) => {
     const getJobsDetails = async (id) => {
         try {
             setLoading(true);
-            let res = await getApiCall({ url: 'job/' + id });
+            let res = await getApiCall({ url: 'admin/job/' + id });
             if (res.status == 200) {
                 setJobDetails(res.data)
             }
@@ -179,10 +179,10 @@ const DetailsJobs = ({ navigation, route }) => {
                         </View>
                     </TouchableOpacity>
                     <View style={{ width: '100%' }}>
-                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: color.EMLCLR, borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} activeOpacity={0.5} onPress={() => { getJobsDetails(item._id); setVisibleApply(true) }}>
+                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: reCol().color.EMLCLR, borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} activeOpacity={0.5} onPress={() => { getJobsDetails(item._id); setVisibleApply(true) }}>
                             <Image style={{ height: 20, width: 24 }} resizeMode='contain' source={require('../../assets/images/sms-tracking.png')} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: color.HRTCLR, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => saveJob(item)}>
+                        <TouchableOpacity style={{ height: '50%', width: '20%', backgroundColor: reCol().color.HRTCLR, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={() => saveJob(item)}>
                             <Image style={{ height: 20, width: 24 }} resizeMode='contain' source={isSaved ? require('../../assets/images/heartFill.png') : require('../../assets/images/heartEmpty.png')} />
                         </TouchableOpacity>
                     </View>
@@ -364,7 +364,7 @@ const DetailsJobs = ({ navigation, route }) => {
 
 
     const renderJobsDetails = ({ item, index }) => {
-        const originalDateString = item.startDate;
+        const originalDateString = item.createdAt;
         const formattedDate = formatDate(originalDateString);
         const cleanHtmlContent = (html) => {
             return html?.replace(/<p><br><\/p>/g, '');
@@ -383,31 +383,31 @@ const DetailsJobs = ({ navigation, route }) => {
                 <View style={styles.jobDetailBox}>
                     <View style={styles.mainFlexView}>
                         <Text style={styles.nameTxt}>{`Kontakt`}</Text>
-                        {/* <Text style={[styles.locTxt, { fontSize: 12, fontFamily: fontFamily.poppinsRegular }]}>{item?.industryName?.industryName}</Text>
+                        <Text style={[styles.locTxt, { fontSize: 12, fontFamily: fontFamily.poppinsRegular }]}>{item?.industryName?.industryName}</Text>
                         <View style={styles.locView}>
-                            <Image source={Images.location} style={[styles.locImage, { tintColor: color.BTNCOLOR }]} />
+                            <Image source={Images.location} style={[styles.locImage, { tintColor: reCol().color.BTNCOLOR }]} />
                             <Text style={styles.locTxt}>{item?.city?.map(city => city.name).join(', ')}</Text>
-                        </View> */}
+                        </View>
                         <View style={styles.locView}>
                             <Image source={Images.callingIcn} style={styles.locImage} />
-                            <TouchableOpacity onPress={() => Linking.openURL(`tel:${item?.company?.phoneNo}`)}>
-                                <Text style={styles.locTxt}>{item?.company?.phoneNo}</Text>
+                            <TouchableOpacity>
+                                <Text style={styles.locTxt}>{item?.companyId?.phoneNumber}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.locView}>
                             <Image source={Images.smsIcn} style={styles.locImage} />
-                            <TouchableOpacity onPress={() => shareEmail(item?.company?.email)}>
-                                <Text style={styles.locTxt}>{item?.company?.email}</Text>
+                            <TouchableOpacity>
+                                <Text style={styles.locTxt}>{item?.companyId?.email}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.locView}>
+                        {/* <View style={styles.locView}>
                             <Image source={Images.globalIcn} style={styles.locImage} />
-                            <TouchableOpacity onPress={() => Linking.openURL(item?.company?.website)}>
+                            <TouchableOpacity>
                                 <Text style={styles.locTxt}>{item?.company?.website}</Text>
                             </TouchableOpacity>
-                        </View>
-                        {item?.company?.additionalData.length > 0 &&
-                            item?.company?.additionalData.map((itemMap) => {
+                        </View> */}
+                        {item?.additionalData?.length > 0 &&
+                            item?.additionalData?.map((itemMap) => {
                                 return (
                                     <View style={styles.locView}>
                                         <Image source={{ uri: Globals.BASE_URL + itemMap?.image?.filepath }} style={styles.locImage} />
@@ -428,7 +428,7 @@ const DetailsJobs = ({ navigation, route }) => {
                         <Image
                             source={{
                                 uri: Globals.BASE_URL +
-                                    item?.company?.companyLogo?.filepath
+                                item?.companyId?.profileIcon
                             }}
                             style={styles.headingImage}
                             onLoad={handleLoad1}
@@ -523,9 +523,9 @@ const DetailsJobs = ({ navigation, route }) => {
                         enableExperimentalMarginCollapsing={true}
                         source={{ html: cleanedData }}
                     />
-                    <Text style={styles.titleText}>{'Über das Unternehmen'}</Text>
+                    {/* <Text style={styles.titleText}>{'Über das Unternehmen'}</Text> */}
                     {/* <Text style={styles.aboutComText}>{item?.company?.companyDescription}</Text> */}
-                    <RenderHTML
+                    {/* <RenderHTML
                         tagsStyles={{
                             p: {
                                 marginVertical: 3, // Removes the vertical margin
@@ -533,7 +533,7 @@ const DetailsJobs = ({ navigation, route }) => {
                             }
                         }}
                         source={{ html: item?.company?.companyDescription }}
-                    />
+                    /> */}
                     <Text style={styles.titleText}>{'Berufsbezeichnung'}</Text>
                     <Text style={styles.aboutComText}>{item?.jobTitle}</Text>
                     {/* <Text style={styles.titleText}>{'Ihre Aufgaben'}</Text>
@@ -600,7 +600,7 @@ const DetailsJobs = ({ navigation, route }) => {
                     </View>
                     <Image source={Images.dividerLine} style={styles.lineDivider} />
 
-                    <TouchableOpacity style={{ width: '100%', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', height: 50, backgroundColor: color.BTNCOLOR, borderRadius: 10, top: 15, }} activeOpacity={0.5} onPress={() => { setVisibleApply(true) }}>
+                    <TouchableOpacity style={{ width: '100%', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', height: 50, backgroundColor: reCol().color.BTNCOLOR, borderRadius: 10, top: 15, }} activeOpacity={0.5} onPress={() => { setVisibleApply(true) }}>
                         <Text style={{ fontFamily: fontFamily.poppinsSeBold, fontSize: 16, color: '#fff' }}>{'Jetzt bewerben'}</Text>
                     </TouchableOpacity>
                     <View style={{ height: 40 }} />
@@ -675,7 +675,7 @@ const DetailsJobs = ({ navigation, route }) => {
                         <TouchableHighlight underlayColor={'none'}>
                             <View style={[styles.renderMainView, { width: '93%', flex: 1 }]}>
                                 <View style={{ width: '80%', paddingHorizontal: 10, paddingVertical: 10 }}>
-                                    <Text style={styles.nameTxt} numberOfLines={2}>{jobDetails?.jobTitle}</Text>
+                                    <Text style={styles.nameTxt} numberOfLines={2}>{item?.jobTitle}</Text>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5, width: '85%' }}>
                                         <View style={{ backgroundColor: '#fff', borderRadius: 5, height: 25, width: 25, alignItems: 'center', justifyContent: 'center' }}>
                                             {showLoadImage && (
@@ -683,22 +683,25 @@ const DetailsJobs = ({ navigation, route }) => {
                                                     <ActivityIndicator size="small" color="gray" />
                                                 </View>
                                             )}
-                                            <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + jobDetails?.company?.companyLogo?.filepath }} onLoad={handleLoad} />
+                                            <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + item?.companyId?.profileIcon }} onLoad={handleLoad} />
                                         </View>
-                                        <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]}>{jobDetails?.company?.companyName}</Text>
+                                        <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]}>{item?.companyId?.companyname}</Text>
                                     </View>
                                     <View style={styles.locView}>
                                         <Image source={Images.location} style={styles.locImage} resizeMode='contain' />
-                                        <Text style={styles.locTxt}>{jobDetails?.city?.map(city => city.name).join(', ')}</Text>
+                                        <Text style={styles.locTxt}>{item?.city?.map((city) => city.name).join(', ')}</Text>
 
                                     </View>
                                     <View style={styles.locView}>
                                         <View style={{ backgroundColor: '#95A000', borderRadius: 2, height: 20, paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center' }}>
-                                            <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{jobDetails?.jobTypeName}</Text>
+                                            <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{item?.jobType?.jobTypeName}</Text>
                                         </View>
                                         <View style={{ backgroundColor: '#007F9D', borderRadius: 2, height: 20, width: '25%', paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center', left: 5 }}>
-                                            {jobDetails?.industryName?.industryName.length > 9 ? <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{jobDetails?.industryName?.industryName.slice(0, 9) + '...'}</Text> :
-                                                <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{jobDetails?.industryName?.industryName}</Text>}
+                                            {/* {item?.industryName?.industryName.length > 9 ? <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName.slice(0, 9) + '...'}</Text> :
+                                                <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName}</Text>} */}
+                                            {item?.industryName?.industryName?.length > 9 ?
+                                                                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName?.slice(0, 9) + '...'}</Text> :
+                                                                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName}</Text>}
                                         </View>
                                         <Text style={styles.mwdTxt}>(m/w/d)</Text>
                                     </View>
@@ -721,10 +724,10 @@ const DetailsJobs = ({ navigation, route }) => {
                         <FlatList data={[jobDetails]} renderItem={renderJobsDetails} showsVerticalScrollIndicator={false} keyExtractor={index => index.toString()} />
 
                     }
-                    {jobListing?.length > 0 &&
+                    {/* {jobListing?.length > 0 &&
                         <Text style={{ marginTop: 30, fontSize: 14, fontFamily: fontFamily.poppinsSeBold, color: '#2894A2', left: 20 }}>{'Aktuelle Jobs'}</Text>
-                    }
-                    <FlatList data={jobListing} renderItem={renderJobs} showsVerticalScrollIndicator={false} />
+                    } */}
+                    {/* <FlatList data={jobListing} renderItem={renderJobs} showsVerticalScrollIndicator={false} /> */}
                 </ScrollView>
             </ImageBackground>
             {ModalApply({ visibleApply, setVisibleApply, applyData: jobDetails, deviceId: id })}
@@ -746,7 +749,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginVertical: 15,
         paddingVertical: 15,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         borderRadius: 10,
         flexDirection: 'row-reverse',
         elevation: 10,
@@ -776,12 +779,12 @@ const styles = StyleSheet.create({
         width: '100%'
     },
     nameTxt: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 16
     },
     titleText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         paddingTop: 10,
         fontWeight: 'bold',
         fontSize: 16
@@ -829,7 +832,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     dotText: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         paddingTop: 2,
         paddingLeft: 5,
         fontFamily: fontFamily.poppinsThin,
@@ -853,7 +856,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 2,
         elevation: 5,
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         width: '90%',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -866,7 +869,7 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     mwdTxt: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsLight,
         fontSize: 12,
         paddingHorizontal: 10

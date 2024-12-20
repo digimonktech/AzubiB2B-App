@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Image, ImageBackground, Platform, StyleSheet, Text, TouchableOpacity, View, SafeAreaView, Dimensions } from 'react-native';
 import { Images } from '@/assets/images/images';
 import { Header as HeaderElement } from 'react-native-elements';
-import { color, fontFamily, screenName } from '@/utils/configuration'
+import { fontFamily, reCol, screenName } from '@/utils/configuration'
 import MaterialIcons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useTheme } from "@react-navigation/native";
 import Globals from "@/utils/Globals";
@@ -14,7 +14,7 @@ export default function MainHeader({ title, press }) {
     const { colors, dark } = useTheme();
     const navigation = useNavigation();
     const { width } = Dimensions.get('screen');
-    const { selectedCity, setCity } = useCity();
+    const { selectedCity, setCity, showCity } = useCity();
     // Function to reset selected locations
     const resetLocation = () => {
         setCity([], []); // Reset city in context
@@ -27,18 +27,18 @@ export default function MainHeader({ title, press }) {
                     <TouchableOpacity style={styles.leftComponentLogo} activeOpacity={0.5} onPress={() => {
                         navigation.openDrawer();
                     }}>
-                        <MaterialIcons name='menu' size={20} color={color.BDRCLR} underlayColor={'#FFFFFF'} />
+                        <MaterialIcons name='menu' size={20} color={reCol().color.BDRCLR} underlayColor={'#FFFFFF'} />
                     </TouchableOpacity>
                     <Text style={{
                         left: 20,
-                        color: color.BDRCLR,
+                        color: reCol().color.BDRCLR,
                         fontFamily: fontFamily.poppinsSeBold,
                         fontSize: 14,
                         // width: selectedCity.length > 0 ? 130 : 150,
                         width: selectedCity.length > 0 ? width / 2.8 : width / 2.4
                     }}>{title}</Text>
                 </SafeAreaView>
-                <TouchableOpacity style={[styles.rightComponent, {
+                { showCity && <TouchableOpacity style={[styles.rightComponent, {
                     borderColor: selectedCity.length > 0 ? '#48d1cc' : 'transparent',
                     borderWidth: selectedCity.length > 0 ? 1.2 : 0,
                     width: '35%'
@@ -48,7 +48,7 @@ export default function MainHeader({ title, press }) {
                     <Image style={{ height: 20, width: 20 }}
                         source={require('../assets/images/location.png')} />
                     <Text style={{
-                        color: color.BDRCLR,
+                        color: reCol().color.BDRCLR,
                         fontSize: 10,
                         width: '67%',
                         fontFamily: fontFamily.poppinsRegular,
@@ -65,7 +65,7 @@ export default function MainHeader({ title, press }) {
                     </Text>
                     <Image style={{ height: 20, width: 20, marginLeft: 0 }} source={require('../assets/images/downArrow.png')} />
 
-                </TouchableOpacity>
+                </TouchableOpacity>}
                 {selectedCity.length > 0 &&
                     <TouchableOpacity style={{ top: Platform.OS === 'ios' ? '6%' : 0 }} onPress={() => resetLocation()}>
                         <Image source={Images.modalClose} style={{ height: 25, width: 25 }} />
@@ -139,14 +139,14 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 20,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontWeight: 'bold',
         marginLeft: 10,
         fontFamily: fontFamily.poppinsBold,
     },
     centerTitle: {
         fontSize: 20,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontWeight: 'bold',
         fontFamily: fontFamily.poppinsBold,
     },

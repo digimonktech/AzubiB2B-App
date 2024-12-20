@@ -1,11 +1,12 @@
 
 import { Images } from "@/assets/images/images";
-import { color, fontFamily } from "@/utils/configuration";
+import { fontFamily, reCol } from "@/utils/configuration";
 import React, { useEffect, useState } from "react"
 import { FlatList, Image, Modal, Text, TouchableOpacity, View } from "react-native";
 import { getApiCall } from "@/utils/ApiHandler";
 import Loader from "./Loader";
 import { useCityAlerts } from "@/Context/CityProviderAlerts";
+import { useSelector } from "react-redux";
 
 
 export const ModalLocationAlert = ({ visibleLocation, setVisibleLocation }) => {
@@ -13,16 +14,18 @@ export const ModalLocationAlert = ({ visibleLocation, setVisibleLocation }) => {
     const [content, setContent] = useState([]);
     const [selectedLocationAlerts, setSelectedLocationAlerts] = useState([]);
     const [selectedLocationNameAlerts, setSelectedLocationNameAlerts] = useState([]);
-
+    const comId = useSelector(
+        (state) => state.companyId?.companyId
+    );
     const { setCityAlerts, selectedCityAlertsId } = useCityAlerts();
 
 
     const getLocation = async () => {
         try {
             setLoading(true);
-            let res = await getApiCall({ url: 'cities/get-city-frontend' });
+            let res = await getApiCall({ url: 'admin/cities', params: { companyId: comId } });
             if (res.status == 200) {
-                const newData = [{ _id: '', name: 'Alle' }, ...res?.data];
+                const newData = [{ _id: '', name: 'Alle' }, ...res?.data.cities];
                 setContent(newData);
             }
         } catch (e) {
@@ -145,7 +148,7 @@ export const ModalLocationAlert = ({ visibleLocation, setVisibleLocation }) => {
                                 </TouchableOpacity>
                             </View>
                         }
-                        <TouchableOpacity style={{ width: '95%', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', height: 50, backgroundColor: color.BTNCOLOR, borderRadius: 10, bottom: '5%', position: 'absolute' }} activeOpacity={0.5} onPress={() => { handleCitySelection() }}>
+                        <TouchableOpacity style={{ width: '95%', alignSelf: 'center', alignItems: 'center', justifyContent: 'center', height: 50, backgroundColor: reCol().color.BTNCOLOR, borderRadius: 10, bottom: '5%', position: 'absolute' }} activeOpacity={0.5} onPress={() => { handleCitySelection() }}>
                             <Text style={{ fontFamily: fontFamily.poppinsRegular, fontSize: 16, color: '#fff' }}>{'Auswahl speichern'}</Text>
                         </TouchableOpacity>
                     </View>
@@ -164,13 +167,13 @@ const styles = {
         backgroundColor: "#00000050"
     },
     modalMainView: {
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         height: '92%',
         width: '100%',
         borderRadius: 20,
     },
     modalIndustryView: {
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         height: '90%',
         width: '100%',
         borderTopLeftRadius: 20,
@@ -186,7 +189,7 @@ const styles = {
         alignSelf: 'center'
     },
     headingText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 20,
         fontWeight: 'bold'
@@ -194,7 +197,7 @@ const styles = {
     closeImg: {
         height: 30,
         width: 30,
-        tintColor: color.BDRCLR,
+        tintColor: reCol().color.BDRCLR,
         alignSelf: 'flex-end'
     },
     main: {
@@ -204,7 +207,7 @@ const styles = {
         alignSelf: 'center'
     },
     labelText: {
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 15,
         // fontWeight: '500',

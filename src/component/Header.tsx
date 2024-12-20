@@ -1,6 +1,6 @@
 import { Image, ImageBackground, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { color, fontFamily, screenName } from '@/utils/configuration'
+import { fontFamily, reCol, screenName } from '@/utils/configuration'
 import { useNavigation } from '@react-navigation/native';
 import { Header as HeaderElement } from 'react-native-elements';
 import { Images } from '@/assets/images/images';
@@ -142,14 +142,14 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 20,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontWeight: 'bold',
         marginLeft: 10,
         fontFamily: fontFamily.poppinsBold,
     },
     centerTitle: {
         fontSize: 20,
-        color: color.BLACK,
+        color: reCol().color.BLACK,
         fontWeight: 'bold',
         fontFamily: fontFamily.poppinsBold,
     },

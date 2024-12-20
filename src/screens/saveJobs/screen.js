@@ -1,6 +1,6 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { color, fontFamily } from '@/utils/configuration'
+import { fontFamily, reCol } from '@/utils/configuration'
 import { Images } from '@/assets/images/images'
 import SaveJobListing from './saveJobListing'
 import ApplicationSentListing from './applicationSentListing'
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 0.3,
         height: 50,
         alignItems: 'center',
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         justifyContent: 'space-around',
         borderBottomColor: 'gray'
     },

@@ -1,5 +1,5 @@
 import { Images } from "@/assets/images/images";
-import { color, fontFamily } from "@/utils/configuration";
+import { fontFamily, reCol } from "@/utils/configuration";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Checkbox } from "native-base";
 import React, { useEffect, useRef, useState } from "react"
@@ -12,12 +12,13 @@ import networkWithoutToken from "@/networkApi/networkWithoutToken";
 import { IApply } from "./interface";
 import Loader from "./Loader";
 import Globals from "@/utils/Globals";
-import { getApiCall } from "@/utils/ApiHandler";
+import { getApiCall, getApiCall1 } from "@/utils/ApiHandler";
 import { useIsFocused } from "@react-navigation/native";
 import { RichEditor } from "react-native-pell-rich-editor";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from 'react-native-image-picker';
 import RenderHTML from "react-native-render-html";
+import { useSelector } from "react-redux";
 const width = Dimensions.get('window').width;
 interface IndustryProps {
     id: number;
@@ -87,6 +88,7 @@ interface ModalIndustryProps {
     setVisibleIndustry: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisibleApply, applyData, deviceId }) => {
+    console.log('ApplySaveData', applyData);
     const [loading, setLoading] = useState(false);
     const [content, setContent] = useState<any>([]);
     const [selectedImage, setSelectedImage] = useState<any>([]);
@@ -95,6 +97,9 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
     const [coverLabel, setCoverLabel] = useState<any>([]);
     const [showPrivacy, setShowPrivacy] = useState<any>(false);
     const richRef: any = useRef();
+    const comId = useSelector(
+        (state:any) => state.companyId?.companyId
+    );
     const [selectedImageShow, setSelectedImageShow] = useState<any>([]);
     const isfocused = useIsFocused();
     const { control, handleSubmit, setValue } = useForm({
@@ -109,7 +114,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
     })
     const ContentData = async () => {
         try {
-            let res = await getApiCall({ url: 'manage_content' });
+            let res = await getApiCall1({ url: 'manage_content' });
             if (res.status == 200) {
                 setContent(res?.data?.jobCoverLetter)
                 setCoverLabel(res?.data.coverLetterFieldName)
@@ -155,16 +160,17 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
         // console.log('Called')
         const body: any = new FormData();
         body.append('jobId', applyData._id);
-        body.append('applicantName', values.Name);
+        body.append('name', values.Name);
         body.append('email', values.Email);
         body.append('phone', values.Mobile || "");
         body.append('aboutMe', values.About || "");
-        body.append('coverLetter', content);
-        body.append('deviceId', deviceId);
+        body.append('companyId', comId);
+        body.append('coverLetter', 'content job details');
+        // body.append('deviceId', deviceId);
         // { selectedImage ? body.append('attachment', selectedImage) : null }
         if (selectedImageShow.length > 0) {
             selectedImageShow.forEach((image: any) => {
-                body.append('attachment', image);
+                body.append('attachement', image);
             });
         }
         // console.log('deviceId', body);
@@ -287,14 +293,14 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
                                 <FormInput
                                     name="Name"
                                     placeholder={'Geben Sie Ihren Namen ein'}
-                                    borderColor={color.BDRCLR}
+                                    borderColor={reCol().color.BDRCLR}
                                     control={control}
                                 />
                                 <Text style={styles.labelText}>{'E-Mail'}</Text>
                                 <FormInput
                                     name="Email"
                                     placeholder={'Geben Sie Ihre E-Mail-Adresse ein'}
-                                    borderColor={color.BDRCLR}
+                                    borderColor={reCol().color.BDRCLR}
                                     control={control}
                                 />
                                 <Text style={styles.labelText}>{'Telefonnummer (optional)'}</Text>
@@ -302,7 +308,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
                                     name="Mobile"
                                     style={{ fontSize: 12 }}
                                     placeholder={'Hier eingeben'}
-                                    borderColor={color.BDRCLR}
+                                    borderColor={reCol().color.BDRCLR}
                                     control={control}
                                 />
                                 <Text style={styles.labelText}>{'Über mich (optional)'}</Text>
@@ -311,12 +317,12 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
                                     placeholder={'Hier eingeben'}
                                     control={control}
                                     height={100}
-                                    borderColor={color.BDRCLR}
+                                    borderColor={reCol().color.BDRCLR}
                                 />
                                 <TouchableOpacity onPress={() => blurContentEditor()}>
                                     <Text style={styles.labelText}>{coverLabel}</Text>
                                 </TouchableOpacity>
-                                <View style={{ height: '30%', borderWidth: 1, borderRadius: 3, borderColor: color.BDRCLR }}>
+                                <View style={{ height: '30%', borderWidth: 1, borderRadius: 3, borderColor: reCol().color.BDRCLR }}>
                                     <ScrollView showsVerticalScrollIndicator={true}
                                         style={{ height: 80 }}>
                                         <RichEditor
@@ -337,7 +343,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
                                             numColumns={3}
                                         />
                                         : <TouchableOpacity style={{ flexDirection: 'row', marginTop: 15 }} onPress={() => launchImageLibrary()}>
-                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: color.BDRCLR }} />
+                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
                                             <Text style={[styles.labelText, {
                                                 marginBottom: 0,
                                                 marginTop: 0,
@@ -351,7 +357,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
                                                 marginRight: selectedImage.length === 1 ? '40%' : '10%'
                                             }}
                                             onPress={() => launchImageLibrary()}>
-                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: color.BDRCLR }} />
+                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
                                         </TouchableOpacity>
                                     }
                                     {(selectedImage.length >= 3 && selectedImage.length < 6) &&
@@ -365,7 +371,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
                                                 // marginRight: selectedImage.length === 4 ? '40%' : '10%'
                                             }}
                                             onPress={() => launchImageLibrary()}>
-                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: color.BDRCLR }} />
+                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
                                         </TouchableOpacity>
                                     }
                                 </View>
@@ -407,7 +413,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({ visibleApply, setVis
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         height: 50,
-                                        backgroundColor: isChecked ? color.BTNCOLOR : 'gray',
+                                        backgroundColor: isChecked ? reCol().color.BTNCOLOR : 'gray',
                                         borderRadius: 10,
                                         top: 15,
                                         flexDirection: 'row',
@@ -438,6 +444,9 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
     const [isChecked, setIsChecked] = useState(false);
     const richRef: any = useRef();
     const isfocused = useIsFocused();
+    const comId = useSelector(
+        (state:any) => state.companyId?.companyId
+    );
     const { control, handleSubmit, setValue } = useForm({
         defaultValues: {
             Email: "",
@@ -450,7 +459,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
     })
     const ContentData = async () => {
         try {
-            let res = await getApiCall({ url: 'manage_content' });
+            let res = await getApiCall1({ url: 'manage_content' });
             if (res.status == 200) {
                 setContent(res?.data?.jobCoverLetter)
                 setCoverLabel(res?.data.coverLetterFieldName)
@@ -526,21 +535,22 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
         // console.log('Called')
         const body: any = new FormData();
         body.append('jobId', applyData._id);
-        body.append('applicantName', values.Name);
+        body.append('name', values.Name);
         body.append('email', values.Email);
         body.append('phone', values.Mobile || "");
         body.append('aboutMe', values.About || "");
-        body.append('coverLetter', content);
-        body.append('deviceId', deviceId);
+        body.append('companyId', comId);
+        body.append('coverLetter', 'Content job details');
+        // body.append('coverLetter', content);
         // { selectedImage ? body.append('attachment', selectedImage) : null }
         if (selectedImageShow.length > 0) {
             selectedImageShow.forEach((image: any) => {
-                body.append('attachment', image);
+                body.append('attachement', image);
             });
         }
         // console.log('deviceId', body);
         const response = await networkWithoutToken.createMobileOtp().applyJob(body);
-        // console.log('ResponseOfApplyApi', response);
+        console.log('ResponseOfApplyApi', response?.data);
         setLoading(false);
         setVisibleApply(false);
         Alert.alert('Herzlichen Glückwunsch!', 'Deine Bewerbung wurde erfolgreich versendet.')
@@ -629,14 +639,14 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
                                 <FormInput
                                     name="Name"
                                     placeholder={'Geben Sie Ihren Namen ein'}
-                                    borderColor={color.BDRCLR}
+                                    borderColor={reCol().color.BDRCLR}
                                     control={control}
                                 />
                                 <Text style={styles.labelText}>{'E-Mail'}</Text>
                                 <FormInput
                                     name="Email"
                                     placeholder={'Geben Sie Ihre E-Mail-Adresse ein'}
-                                    borderColor={color.BDRCLR}
+                                    borderColor={reCol().color.BDRCLR}
                                     control={control}
                                 />
                                 <Text style={styles.labelText}>{'Telefonnummer (optional)'}</Text>
@@ -644,7 +654,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
                                     name="Mobile"
                                     placeholder={'Hier eingeben'}
                                     style={{ fontSize: 12 }}
-                                    borderColor={color.BDRCLR}
+                                    borderColor={reCol().color.BDRCLR}
                                     control={control}
                                 />
                                 <Text style={styles.labelText}>{'Über mich (optional)'}</Text>
@@ -653,7 +663,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
                                     placeholder={'Hier eingeben'}
                                     control={control}
                                     height={100}
-                                    borderColor={color.BDRCLR}
+                                    borderColor={reCol().color.BDRCLR}
                                 />
                                 <TouchableOpacity onPress={() => blurContentEditor()}>
                                     <Text style={styles.labelText}>{coverLabel}</Text>
@@ -662,7 +672,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
                                     height: '30%',
                                     borderWidth: 1,
                                     borderRadius: 3,
-                                    borderColor: color.BDRCLR
+                                    borderColor: reCol().color.BDRCLR
                                 }}>
                                     <ScrollView showsVerticalScrollIndicator={true} style={{ height: 80 }}>
                                         <RichEditor
@@ -683,7 +693,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
                                             numColumns={3}
                                         />
                                         : <TouchableOpacity style={{ flexDirection: 'row', marginTop: 15 }} onPress={() => launchImageLibrary()}>
-                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: color.BDRCLR }} />
+                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
                                             <Text style={[styles.labelText, {
                                                 marginBottom: 0,
                                                 marginTop: 0,
@@ -697,7 +707,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
                                                 marginRight: selectedImage.length === 1 ? '40%' : '10%'
                                             }}
                                             onPress={() => launchImageLibrary()}>
-                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: color.BDRCLR }} />
+                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
                                         </TouchableOpacity>
                                     }
                                     {(selectedImage.length >= 3 && selectedImage.length < 6) &&
@@ -710,7 +720,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
                                                 bottom: selectedImage.length === 3 ? '-40%' : '15%'
                                             }}
                                             onPress={() => launchImageLibrary()}>
-                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: color.BDRCLR }} />
+                                            <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
                                         </TouchableOpacity>
                                     }
                                 </View>
@@ -752,7 +762,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({ visibleApply, setVisible
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         height: 50,
-                                        backgroundColor: isChecked ? color.BTNCOLOR : 'gray',
+                                        backgroundColor: isChecked ? reCol().color.BTNCOLOR : 'gray',
                                         borderRadius: 10,
                                         top: 15,
                                         flexDirection: 'row',
@@ -962,14 +972,14 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({ visibleAppoi
                                     <FormInput
                                         name="Name"
                                         placeholder={'Geben Sie Ihren Namen ein'}
-                                        borderColor={color.BDRCLR}
+                                        borderColor={reCol().color.BDRCLR}
                                         control={control}
                                     />
                                     <Text style={styles.labelText}>{'E-Mail'}</Text>
                                     <FormInput
                                         name="Email"
                                         placeholder={'Geben Sie Ihre E-Mail-Adresse ein'}
-                                        borderColor={color.BDRCLR}
+                                        borderColor={reCol().color.BDRCLR}
                                         control={control}
                                     />
                                     <Text style={styles.labelText}>{'Telefonnummer (optional)'}</Text>
@@ -977,7 +987,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({ visibleAppoi
                                         name="Mobile"
                                         placeholder="Hier eingeben"
                                         style={{ fontSize: 12 }}
-                                        borderColor={color.BDRCLR}
+                                        borderColor={reCol().color.BDRCLR}
                                         control={control}
                                     />
                                     <Text style={styles.labelText}>{'Über mich (optional)'}</Text>
@@ -986,12 +996,12 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({ visibleAppoi
                                         placeholder="Hier eingeben"
                                         control={control}
                                         height={100}
-                                        borderColor={color.BDRCLR}
+                                        borderColor={reCol().color.BDRCLR}
                                     />
                                     <TouchableOpacity onPress={() => blurContentEditor()}>
                                         <Text style={styles.labelText}>{coverLabel}</Text>
                                     </TouchableOpacity>
-                                    <View style={{ height: '30%', borderWidth: 1, borderRadius: 3, borderColor: color.BDRCLR }}>
+                                    <View style={{ height: '30%', borderWidth: 1, borderRadius: 3, borderColor: reCol().color.BDRCLR }}>
                                         <ScrollView showsVerticalScrollIndicator={true} style={{ height: 80 }}>
                                             <RichEditor
                                                 ref={richRef}
@@ -1011,7 +1021,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({ visibleAppoi
                                                 numColumns={3}
                                             />
                                             : <TouchableOpacity style={{ flexDirection: 'row', marginTop: 15 }} onPress={() => launchImageLibrary()}>
-                                                <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: color.BDRCLR }} />
+                                                <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
                                                 <Text style={[styles.labelText, {
                                                     marginBottom: 0,
                                                     marginTop: 0,
@@ -1025,7 +1035,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({ visibleAppoi
                                                     marginRight: selectedImage.length === 1 ? '40%' : '10%'
                                                 }}
                                                 onPress={() => launchImageLibrary()}>
-                                                <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: color.BDRCLR }} />
+                                                <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
                                             </TouchableOpacity>
                                         }
                                         {(selectedImage.length >= 3 && selectedImage.length < 6) &&
@@ -1038,7 +1048,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({ visibleAppoi
                                                     bottom: selectedImage.length === 3 ? '-40%' : '15%'
                                                 }}
                                                 onPress={() => launchImageLibrary()}>
-                                                <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: color.BDRCLR }} />
+                                                <Image source={Images.addGallery} style={{ height: 65, width: 65, tintColor: reCol().color.BDRCLR }} />
                                             </TouchableOpacity>
                                         }
                                     </View>
@@ -1080,7 +1090,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({ visibleAppoi
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             height: 50,
-                                            backgroundColor: isChecked ? color.BTNCOLOR : 'gray',
+                                            backgroundColor: isChecked ? reCol().color.BTNCOLOR : 'gray',
                                             borderRadius: 10,
                                             top: 15,
                                             flexDirection: 'row',
@@ -1275,13 +1285,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#00000050"
     },
     modalMainView: {
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         height: '92%',
         width: '100%',
         borderRadius: 20,
     },
     modalIndustryView: {
-        backgroundColor: color.WHITE,
+        backgroundColor: reCol().color.WHITE,
         height: '95%',
         width: '100%',
         borderTopLeftRadius: 20,
@@ -1295,7 +1305,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
     },
     headingText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 20,
         fontWeight: 'bold'
@@ -1304,14 +1314,14 @@ const styles = StyleSheet.create({
         height: 30,
         width: 30,
         alignSelf: 'flex-end',
-        tintColor: color.BDRCLR
+        tintColor: reCol().color.BDRCLR
     },
     main: {
         marginHorizontal: 20,
         paddingBottom: '50%'
     },
     labelText: {
-        color: color.BDRCLR,
+        color: reCol().color.BDRCLR,
         fontFamily: fontFamily.poppinsBold,
         fontSize: 15,
         fontWeight: '500',

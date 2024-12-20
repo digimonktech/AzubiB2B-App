@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity, SafeAreaView, Platform } from 'react-native';
+import { Dimensions, StyleSheet, Text, Image, TouchableOpacity, SafeAreaView, Platform, FlatList, Linking } from 'react-native';
 import { DrawerContentScrollView, DrawerItem, } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { color } from '@/utils/configuration';
 import { ModalLocation } from '@/component/ModalLocation';
 import Share from 'react-native-share';
 import { Images } from '@/assets/images/images';
 import { getApiCall } from '@/utils/ApiHandler';
+import { reCol } from '@/utils/configuration';
+import { useSelector } from 'react-redux';
+import Globals from '@/utils/Globals';
 
 
 
 export function DrawerContent(props) {
     const [visibleLocation, setVisibleLocation] = useState(false);
-    const [menu, setMenu] = useState('');
-    const [menu1, setMenu1] = useState('');
-    const [menu2, setMenu2] = useState('');
-    const [menu3, setMenu3] = useState('');
-    const [contentKontact, setContentKontact] = useState('');
+    const [flatData, setFlatData] = useState([]);
+    const [showTips, setShowTips] = useState(false);
+    const [showAlarm, setShowAlarm] = useState(false);
+    const [showRegion, setShowRegion] = useState(false);
+    const comId = useSelector(
+        (state) => state.companyId?.companyId
+    );
     const shareEmail = async () => {
         const shareOptions = {
             // social: Share.Social.EMAIL,
@@ -37,13 +41,12 @@ export function DrawerContent(props) {
     }
     const getDrawerContent = async () => {
         try {
-            let res = await getApiCall({ url: 'manage_content/side-bar-content' });
+            let res = await getApiCall({ url: 'admin/sidemenus?pageNo=1&recordPerPage=10&companyId=' + comId });
             if (res.status == 200) {
-                setMenu(res?.data?.menu_1);
-                setMenu1(res?.data?.menu_2);
-                setMenu2(res?.data?.menu_3);
-                setMenu3(res?.data?.menu_4);
-                setContentKontact(res?.data?.contact_below_content);
+                setFlatData(res?.data?.SideMenus);
+                setShowAlarm(res?.data?.SideMenus[0].jobAlarm);
+                setShowRegion(res?.data?.SideMenus[0].regionWahlen);
+                setShowTips(res?.data?.SideMenus[0].tips);
             }
 
         } catch (e) {
@@ -76,78 +79,101 @@ export function DrawerContent(props) {
                     <Image style={{ height: '100%', width: '100%', }} resizeMode='contain' source={require('../assets/images/azr-logo.png')} />
                 </TouchableOpacity>
             </SafeAreaView>
-            <SafeAreaView style={{ height: '100%', width: '100%', backgroundColor: '#2894A2' }}>
+            <SafeAreaView style={{ height: '90%', width: '100%', backgroundColor: '#2894A2' }}>
                 <DrawerContentScrollView {...props} style={{ top: Platform.OS === 'ios' ? '-6%' : -5 }}>
-                    {menu && (
+                    
                         <>
                             <DrawerItem icon={({ size }) => (
                                 <Image style={{ height: size, width: size }} resizeMode='contain' source={require('../assets/images/user-octagon.png')} />
 
-                            )} inactiveTintColor='white' label={menu} onPress={() => { props.navigation.navigate('AboutUs', { headerName: menu }); }} />
+                            )} inactiveTintColor='white' label={'Datenschutz & AGB'} onPress={() => { props.navigation.navigate('AboutUs', { headerName: 'Datenschutz & AGB' }); }} />
 
                             <Image style={{ height: 10, width: '100%' }} resizeMode='contain' source={require('../assets/images/Rectangleline.png')} />
                         </>
-                    )}
-                    {menu1 && (
+                   
+                    
                         <>
                             <DrawerItem icon={({ size }) => (
                                 <Image style={{ height: size, width: size }} resizeMode='contain' source={require('../assets/images/tabData.png')} />
 
-                            )} inactiveTintColor='white' label={menu1} onPress={() => { props.navigation.navigate('PrivacyPolicy', { headerName: menu1 }); }} />
+                            )} inactiveTintColor='white' label={'Impressum'} onPress={() => { props.navigation.navigate('PrivacyPolicy', { headerName: 'Impressum' }); }} />
 
                             <Image style={{ height: 10, width: '100%' }} resizeMode='contain' source={require('../assets/images/Rectangleline.png')} />
                         </>
-                    )}
-                    {menu2 && (
+                   
                         <>
                             <DrawerItem icon={({ size }) => (
                                 <Image style={{ height: size, width: size }} resizeMode='contain' source={require('../assets/images/personalcard.png')} />
 
-                            )} inactiveTintColor='white' label={menu2} onPress={() => { props.navigation.navigate('Contact', { headerName: menu2, contentAdmin: contentKontact }); }} />
+                        )} inactiveTintColor='white' label={'Konkakt'} onPress={() => { props.navigation.navigate('Contact', { headerName: 'Konkakt', contentAdmin: 'Testing' }); }} />
 
                             <Image style={{ height: 10, width: '100%' }} resizeMode='contain' source={require('../assets/images/Rectangleline.png')} />
                         </>
-                    )}
-                    {menu3 && (
-                        <>
+                    
+                        { showTips && <>
 
                             <DrawerItem icon={({ size }) => (
                                 <Image style={{ height: size, width: size }} resizeMode='contain' source={require('../assets/images/information.png')} />
 
-                            )} inactiveTintColor='white' label={menu3} onPress={() => { props.navigation.navigate('ApplicationTips', { headerName: menu3 }); }} />
+                            )} inactiveTintColor='white' label={'Bewerbungstipps'} onPress={() => { props.navigation.navigate('ApplicationTips', { headerName: 'Bewerbungstipps' }); }} />
 
                             <Image style={{ height: 10, width: '100%' }} resizeMode='contain' source={require('../assets/images/Rectangleline.png')} />
-                        </>
-                    )}
+                        </>}
+                    { showRegion && <>
                     <DrawerItem icon={({ size }) => (
-                        <Image style={{ height: size, width: size, tintColor: color.WHITE }} resizeMode='contain' source={require('../assets/images/location.png')} />
+                        <Image style={{ height: size, width: size, tintColor: reCol().color.WHITE }} resizeMode='contain' source={require('../assets/images/location.png')} />
 
                     )} inactiveTintColor='white' label={'Region wählen'} onPress={() => { props.navigation.closeDrawer(), setVisibleLocation(true) }} />
 
                     <Image style={{ height: 10, width: '100%' }} resizeMode='contain' source={require('../assets/images/Rectangleline.png')} />
-
+                    </>}
+                    { showAlarm && <>
                     <DrawerItem icon={({ size }) => (
-                        <Image style={{ height: size, width: size, tintColor: color.WHITE }} resizeMode='contain' source={Images.tabJobAlert} />
+                        <Image style={{ height: size, width: size, tintColor: reCol().color.WHITE }} resizeMode='contain' source={Images.tabJobAlert} />
 
                     )} inactiveTintColor='white' label={'Job Alarm'} onPress={() => { props.navigation.navigate('JobAlerts') }} />
 
                     <Image style={{ height: 10, width: '100%' }} resizeMode='contain' source={require('../assets/images/Rectangleline.png')} />
-
+                    </>}
                     <DrawerItem icon={({ size }) => (
-                        <Image style={{ height: size, width: size, tintColor: color.WHITE }} resizeMode='contain' source={require('../assets/images/share.png')} />
+                        <Image style={{ height: size, width: size, tintColor: reCol().color.WHITE }} resizeMode='contain' source={require('../assets/images/share.png')} />
 
                     )} inactiveTintColor='white' label={'App teilen'} onPress={() => shareEmail()} />
 
                     <Image style={{ height: 10, width: '100%' }} resizeMode='contain' source={require('../assets/images/Rectangleline.png')} />
 
                     <DrawerItem icon={({ size }) => (
-                        <Image style={{ height: size, width: size, tintColor: color.WHITE }} resizeMode='contain' source={require('../assets/images/rate.png')} />
+                        <Image style={{ height: size, width: size, tintColor: reCol().color.WHITE }} resizeMode='contain' source={require('../assets/images/rate.png')} />
 
                     )} inactiveTintColor='white' label={'Azubi Regional App bewerten'} />
 
                     <Image style={{ height: 10, width: '100%' }} resizeMode='contain' source={require('../assets/images/Rectangleline.png')} />
 
-
+                    <FlatList
+                        data={flatData}
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item }) => (
+                            <>
+                            <DrawerItem icon={({ size }) => (
+                                    <Image style={{
+                                        height: size,
+                                        width: size,
+                                    }} resizeMode='contain'
+                                        source={{ uri: Globals.BASE_URL + item.icon }} />
+        
+                                )} inactiveTintColor='white'
+                                    label={item.name}
+                                    onPress={() => Linking.openURL(item.url)} />
+        
+                                <Image style={{
+                                    height: 10,
+                                    width: '100%'
+                                }} resizeMode='contain'
+                                    source={require('../assets/images/Rectangleline.png')} />
+                                </>
+                        )}
+                        
+                    />
 
                 </DrawerContentScrollView>
             </SafeAreaView>
