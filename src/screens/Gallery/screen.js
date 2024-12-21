@@ -443,7 +443,7 @@ const Gallery = ({ navigation }) => {
                         marginTop: loading || flatData.length <= 0 ? '7%' : '3%'
                     }]}>
                         {flatData.length > 0 &&
-                            <Text style={styles.jobsNumberText}>{flatData?.length} {'Ergebnisse'}</Text>}
+                            <Text style={[styles.jobsNumberText, { color: reCol().color.BDRCLR }]}>{flatData?.length} {'Ergebnisse'}</Text>}
                         <View style={styles.boxMainView}>
                             <TouchableOpacity style={[styles.sortTouch, { right: 10 }]}
                                 onPress={() => { OpenMenu() }}>

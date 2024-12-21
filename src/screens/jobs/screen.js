@@ -165,7 +165,7 @@ const Jobs = (props) => {
             <TouchableHighlight underlayColor={'none'}>
                 <View style={styles.renderMainView}>
                     <TouchableOpacity style={{ width: '80%', paddingHorizontal: 10, paddingVertical: 10, }} activeOpacity={0.5} onPress={() => navigation.navigate('DetailsJobs', { item: item })}>
-                        <Text style={styles.nameTxt} numberOfLines={2}>{item?.jobTitle}</Text>
+                        <Text style={[styles.nameTxt, { color: reCol().color.BDRCLR }]} numberOfLines={2}>{item?.jobTitle}</Text>
                         <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center', width: '85%' }}>
                             <View style={{ backgroundColor: '#fff', borderRadius: 5, height: 30, width: 30, alignItems: 'center', justifyContent: 'center', }}>
                                 {showLoadImage && (
@@ -422,7 +422,7 @@ const Jobs = (props) => {
 
                         </View>
                         <View style={styles.infoMainView}>
-                            <Text style={styles.jobsNumberText}>{flatData?.length} {'Jobs gefunden'}</Text>
+                            <Text style={[styles.jobsNumberText, { color: reCol().color.BDRCLR }]}>{flatData?.length} {'Jobs gefunden'}</Text>
                             <View style={styles.touchView}>
                                 {showIndustry && <TouchableOpacity style={[styles.sortTouch,
                                 {}]} onPress={() => { OpenIndustryMenu() }}>

@@ -4,8 +4,8 @@ import LottieView from "lottie-react-native";
 import { getApiCall } from "@/utils/ApiHandler";
 
 const LoaderAnimation = require('../assets/images/animation_lmzwwr3b.json');
-export let colorDynamic1 = '#003285';
-export let colorDynamic2 = '#8C65A3';
+export let colorDynamic1 = '';
+export let colorDynamic2 = '';
 export default function SplashScreen({ navigation }) {
 
 
@@ -18,10 +18,10 @@ export default function SplashScreen({ navigation }) {
     }, [navigation]);
     const getCompany = async () => {
         try {
-            let res = await getApiCall({ url: 'admin/companies' });
+            let res = await getApiCall({ url: 'admin/company/6745d20181461ac7a3c48fba' });
             if (res?.status == 200) {
-                colorDynamic1 = res.data.companies.companies[1].headingOneColor;
-                colorDynamic2 = res.data.companies.companies[1].headingTwoColor;
+                colorDynamic1 = res.data.headingOneColor;
+                colorDynamic2 = res.data.headingTwoColor;
             }
         } catch (error) {
             alert(error);

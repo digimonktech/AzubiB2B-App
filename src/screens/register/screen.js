@@ -77,11 +77,8 @@ const Register = ({ navigation }) => {
     const getCompany = async () => {
         try {
             setLoading(true);
-            let res = await getApiCall({ url: 'admin/companies' });
-            if (res?.status == 200) {
-                dispatch(selectCompanyId(res.data.companies.companies[1]._id));
-                setComId(res.data.companies.companies[1]._id);
-            }
+            dispatch(selectCompanyId('6745d20181461ac7a3c48fba'));
+            setComId('6745d20181461ac7a3c48fba');
         } catch (error) {
             alert(error);
         }
@@ -357,7 +354,7 @@ const Register = ({ navigation }) => {
                             </Text>
                         </TouchableOpacity>
                         <View style={[styles.buttonView,
-                        { backgroundColor: isChecked ? '#8C65A3' : 'grey' }]}>
+                        { backgroundColor: isChecked ? reCol().color.BTNCOLOR : 'grey' }]}>
                             <Button
                                 size={'lg'}
                                 variant={'solid'}

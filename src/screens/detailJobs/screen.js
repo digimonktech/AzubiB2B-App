@@ -382,7 +382,7 @@ const DetailsJobs = ({ navigation, route }) => {
 
                 <View style={styles.jobDetailBox}>
                     <View style={styles.mainFlexView}>
-                        <Text style={styles.nameTxt}>{`Kontakt`}</Text>
+                        <Text style={[styles.nameTxt, { color: reCol().color.BDRCLR }]}>{`Kontakt`}</Text>
                         <Text style={[styles.locTxt, { fontSize: 12, fontFamily: fontFamily.poppinsRegular }]}>{item?.industryName?.industryName}</Text>
                         <View style={styles.locView}>
                             <Image source={Images.location} style={[styles.locImage, { tintColor: reCol().color.BTNCOLOR }]} />
@@ -428,7 +428,7 @@ const DetailsJobs = ({ navigation, route }) => {
                         <Image
                             source={{
                                 uri: Globals.BASE_URL +
-                                item?.companyId?.profileIcon
+                                    item?.companyId?.profileIcon
                             }}
                             style={styles.headingImage}
                             onLoad={handleLoad1}
@@ -445,7 +445,7 @@ const DetailsJobs = ({ navigation, route }) => {
                     marginVertical: 0
                 }]}
                     onPress={() => { Linking.openURL(item.mapUrl) }}>
-                    <Text style={[styles.nameTxt, { alignSelf: 'center', paddingLeft: 15 }]}>Standort / Route anzeigen</Text>
+                    <Text style={[styles.nameTxt, { alignSelf: 'center', paddingLeft: 15, color: reCol().color.BDRCLR }]}>Standort / Route anzeigen</Text>
                     <View
                         style={{
                             height: 50,
@@ -470,7 +470,7 @@ const DetailsJobs = ({ navigation, route }) => {
                     marginVertical: 10
                 }]}
                     onPress={() => { Linking.openURL(item?.locationUrl) }}>
-                    <Text style={[styles.nameTxt, { alignSelf: 'center', paddingLeft: 15 }]}>{item?.locationField || 'Erfahre mehr über uns'}</Text>
+                    <Text style={[styles.nameTxt, { alignSelf: 'center', paddingLeft: 15, color: reCol().color.BDRCLR }]}>{item?.locationField || 'Erfahre mehr über uns'}</Text>
                     <View
                         style={{
                             height: 50,
@@ -511,7 +511,7 @@ const DetailsJobs = ({ navigation, route }) => {
                     </View> :
                     null}
                 <View style={[styles.jobDetailBox, styles.jobDetailBox1]}>
-                    <Text style={styles.titleText}>{'Jobbeschreibung'}</Text>
+                    <Text style={[styles.titleText, { color: reCol().color.BDRCLR }]}>{'Jobbeschreibung'}</Text>
                     {/* <Text style={styles.aboutComText}>{item.jobDescription}</Text> */}
                     <RenderHTML
                         tagsStyles={{
@@ -534,7 +534,7 @@ const DetailsJobs = ({ navigation, route }) => {
                         }}
                         source={{ html: item?.company?.companyDescription }}
                     /> */}
-                    <Text style={styles.titleText}>{'Berufsbezeichnung'}</Text>
+                    <Text style={[styles.titleText, { color: reCol().color.BDRCLR }]}>{'Berufsbezeichnung'}</Text>
                     <Text style={styles.aboutComText}>{item?.jobTitle}</Text>
                     {/* <Text style={styles.titleText}>{'Ihre Aufgaben'}</Text>
                     <FlatList
@@ -551,7 +551,7 @@ const DetailsJobs = ({ navigation, route }) => {
                         showsVerticalScrollIndicator={false}
                     /> */}
                     {item?.jobImages?.length > 0 && <>
-                        <Text style={styles.titleText}>{'Bilder-/Videogalerie'}</Text>
+                        <Text style={[styles.titleText, { color: reCol().color.BDRCLR }]}>{'Bilder-/Videogalerie'}</Text>
                         <FlatList
                             data={item?.jobImages}
                             renderItem={renderImage}
@@ -577,7 +577,7 @@ const DetailsJobs = ({ navigation, route }) => {
                         scrollEnabled={false}
                         showsVerticalScrollIndicator={false}
                     /> */}
-                    <Text style={styles.titleText}>{'Adresse'}</Text>
+                    <Text style={[styles.titleText, { color: reCol().color.BDRCLR }]}>{'Adresse'}</Text>
                     <Text style={styles.aboutComText}>{item.address} {item.zipCode}</Text>
                     <Image source={Images.dividerLine} style={styles.lineDivider} />
 
@@ -592,10 +592,10 @@ const DetailsJobs = ({ navigation, route }) => {
                     {/* <Image source={Images.dividerLine} style={styles.lineDivider} /> */}
 
                     <View style={[styles.locView, { paddingVertical: 20 }]}>
-                        <Text style={[styles.titleText, { paddingTop: 0, fontWeight: '400' }]}>{'ID'}:</Text>
+                        <Text style={[styles.titleText, { paddingTop: 0, fontWeight: '400', color: reCol().color.BDRCLR }]}>{'ID'}:</Text>
                         <Text style={[styles.aboutComText, { paddingTop: 2, fontWeight: '400', paddingLeft: 2, fontSize: 12 }]}>{(item?._id)?.slice(0, 8)}...</Text>
                         <Divider orientation='vertical' alignSelf={'center'} marginLeft={'25%'} />
-                        <Text style={[styles.titleText, { paddingTop: 0, fontWeight: '400', paddingLeft: '10%' }]}>{'Datum'}:</Text>
+                        <Text style={[styles.titleText, { paddingTop: 0, fontWeight: '400', paddingLeft: '10%', color: reCol().color.BDRCLR }]}>{'Datum'}:</Text>
                         <Text style={[styles.aboutComText, { paddingTop: 2, fontWeight: '400', paddingLeft: 5, fontSize: 12 }]}>{originalDateString ? formattedDate : ""}</Text>
                     </View>
                     <Image source={Images.dividerLine} style={styles.lineDivider} />
@@ -675,7 +675,7 @@ const DetailsJobs = ({ navigation, route }) => {
                         <TouchableHighlight underlayColor={'none'}>
                             <View style={[styles.renderMainView, { width: '93%', flex: 1 }]}>
                                 <View style={{ width: '80%', paddingHorizontal: 10, paddingVertical: 10 }}>
-                                    <Text style={styles.nameTxt} numberOfLines={2}>{item?.jobTitle}</Text>
+                                    <Text style={[styles.nameTxt, { color: reCol().color.BDRCLR }]} numberOfLines={2}>{item?.jobTitle}</Text>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 5, width: '85%' }}>
                                         <View style={{ backgroundColor: '#fff', borderRadius: 5, height: 25, width: 25, alignItems: 'center', justifyContent: 'center' }}>
                                             {showLoadImage && (
@@ -700,8 +700,8 @@ const DetailsJobs = ({ navigation, route }) => {
                                             {/* {item?.industryName?.industryName.length > 9 ? <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName.slice(0, 9) + '...'}</Text> :
                                                 <Text style={{ color: '#fff', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName}</Text>} */}
                                             {item?.industryName?.industryName?.length > 9 ?
-                                                                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName?.slice(0, 9) + '...'}</Text> :
-                                                                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName}</Text>}
+                                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName?.slice(0, 9) + '...'}</Text> :
+                                                <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName?.industryName}</Text>}
                                         </View>
                                         <Text style={styles.mwdTxt}>(m/w/d)</Text>
                                     </View>

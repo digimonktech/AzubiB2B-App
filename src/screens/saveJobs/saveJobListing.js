@@ -98,7 +98,7 @@ const SaveJobListing = () => {
 
                     <TouchableOpacity style={{ width: '83%', paddingHorizontal: 10, paddingVertical: 10, }}
                         activeOpacity={0.5} onPress={() => navigation.navigate('DetailsJobs', { item: item })}>
-                        <Text style={styles.nameTxt} numberOfLines={2}>{item?.jobTitle}</Text>
+                        <Text style={[styles.nameTxt, { color: reCol().color.BDRCLR }]} numberOfLines={2}>{item?.jobTitle}</Text>
                         <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center', width: '85%' }}>
                             <View style={{ backgroundColor: '#fff', borderRadius: 5, height: 30, width: 30, alignItems: 'center', justifyContent: 'center', }}>
                                 <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + item?.companyId.profileIcon }} />
@@ -108,17 +108,17 @@ const SaveJobListing = () => {
                         <View style={styles.locView}>
                             <Image source={Images.location} style={styles.locImage} resizeMode='contain' />
                             <Text style={styles.locTxt}>
-                            {item.city.map((city) => city.name).join(', ')}
-                             </Text>
+                                {item.city.map((city) => city.name).join(', ')}
+                            </Text>
                         </View>
                         <View style={styles.locView}>
                             <View style={{ backgroundColor: '#95A000', borderRadius: 2, height: 20, paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center' }}>
                                 <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.jobType?.jobTypeName}</Text>
                             </View>
                             <View style={{ backgroundColor: '#007F9D', borderRadius: 2, height: 20, width: '25%', paddingHorizontal: 5, alignItems: 'center', justifyContent: 'center', left: 5 }}>
-                            {item?.industryName.industryName.length > 9 ?
-                            <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.industryName.slice(0, 9) + '...'}</Text> :
-                            <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.industryName}</Text>}
+                                {item?.industryName.industryName.length > 9 ?
+                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.industryName.slice(0, 9) + '...'}</Text> :
+                                    <Text style={{ color: '#fff', fontSize: 11, fontFamily: fontFamily.poppinsRegular }}>{item?.industryName.industryName}</Text>}
                             </View>
                             <Text style={styles.mwdTxt}>(m/w/d)</Text>
                         </View>

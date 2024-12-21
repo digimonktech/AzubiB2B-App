@@ -92,9 +92,9 @@ const Companies = (props) => {
         try {
             setLoading(true);
             // let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
-            let res = await getApiCall({ url: `admin/company/${comId}`});
+            let res = await getApiCall({ url: `admin/company/${comId}` });
             if (res.status == 200) {
-                console.log('ResponseCompany',res.data)
+                console.log('ResponseCompany', res.data)
                 setFlatData([res.data]);
             }
         } catch (e) {
@@ -131,7 +131,7 @@ const Companies = (props) => {
                         <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + profileIcon }} onLoad={handleLoad} />
                     </View>
                     <TouchableOpacity style={{ width: '60%', paddingHorizontal: 10, paddingVertical: 10 }} onPress={() => navigation.navigate('DetailsCompany', { item: item })}>
-                        <Text style={styles.nameTxt} numberOfLines={2}>{companyname}</Text>
+                        <Text style={[styles.nameTxt, { color: reCol().color.BDRCLR }]} numberOfLines={2}>{companyname}</Text>
                         <Text style={[styles.nameTxt, { color: '#646464', fontFamily: fontFamily.poppinsRegular, marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>{industryName.industryName}</Text>
                         <View style={[styles.locView, { marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>
                             <Image source={Images.location} style={styles.locImage} resizeMode='contain' />

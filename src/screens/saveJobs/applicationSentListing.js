@@ -15,8 +15,8 @@ const ApplicationSentListing = () => {
     const [visibleApply, setVisibleApply] = useState(false);
     const isFocused = useIsFocused();
     const comId = useSelector(
-            (state) => state.companyId?.companyId
-        );
+        (state) => state.companyId?.companyId
+    );
     const getAllJobs = async () => {
         try {
             let res = await getApiCall({
@@ -50,7 +50,7 @@ const ApplicationSentListing = () => {
             //         deviceId: id
             //     }
             // });
-             let res = await delApiCall({
+            let res = await delApiCall({
                 url: 'admin/application/' + jobId
             });
             if (res.status == 200) {
@@ -105,12 +105,12 @@ const ApplicationSentListing = () => {
                         }}
                         activeOpacity={0.5}
                         onPress={() => navigation.navigate('DetailsJobs', { item: item })}>
-                        <Text style={styles.nameTxt} numberOfLines={2}>{item?.jobId.jobTitle}</Text>
+                        <Text style={[styles.nameTxt, { color: reCol().color.BDRCLR }]} numberOfLines={2}>{item?.jobId.jobTitle}</Text>
                         <View style={{ flexDirection: 'row', marginTop: 5, alignItems: 'center', width: '85%' }}>
                             <View style={{ backgroundColor: '#fff', borderRadius: 5, height: 30, width: 30, alignItems: 'center', justifyContent: 'center', }}>
                                 <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + item?.companyId?.profileIcon }} />
                             </View>
-                            <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]} numberOfLines={2}>{item?.companyId?.companyname }</Text>
+                            <Text style={[styles.nameTxt, { color: '#F1841D', left: 10 }]} numberOfLines={2}>{item?.companyId?.companyname}</Text>
                         </View>
                         <View style={styles.locView}>
                             <Image source={Images.location} style={styles.locImage} resizeMode='contain' />

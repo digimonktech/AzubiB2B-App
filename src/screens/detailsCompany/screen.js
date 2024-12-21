@@ -40,8 +40,8 @@ const DetailsCompany = ({ navigation, route }) => {
         setShowLoadImage(false);
     };
     const comId = useSelector(
-            (state) => state.companyId?.companyId
-        );
+        (state) => state.companyId?.companyId
+    );
     const getCompaniesIcons = async () => {
         try {
             setLoading(true);
@@ -345,7 +345,7 @@ const DetailsCompany = ({ navigation, route }) => {
 
         return (
             <View style={[styles.jobDetailBox, styles.jobDetailBox1]}>
-                <Text style={styles.titleText}>{'E-Mail'}</Text>
+                <Text style={[styles.titleText, { color: reCol().color.BDRCLR }]}>{'E-Mail'}</Text>
                 <TouchableOpacity>
                     <Text style={styles.aboutComText}>{item?.email}</Text>
                 </TouchableOpacity>
@@ -353,7 +353,7 @@ const DetailsCompany = ({ navigation, route }) => {
                 <TouchableOpacity onPress={() => Linking.openURL(item?.website)}>
                     <Text style={styles.aboutComText}>{item?.website}</Text>
                 </TouchableOpacity> */}
-                <Text style={styles.titleText}>{'Telefonnummer'}</Text>
+                <Text style={[styles.titleText, { color: reCol().color.BDRCLR }]}>{'Telefonnummer'}</Text>
                 <TouchableOpacity>
                     <Text style={styles.aboutComText}>{item?.phoneNumber}</Text>
                 </TouchableOpacity>
@@ -436,7 +436,7 @@ const DetailsCompany = ({ navigation, route }) => {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.jobDetailBox}>
                         <View style={styles.mainFlexView}>
-                            <Text style={styles.nameTxt}>{item?.companyname}</Text>
+                            <Text style={[styles.nameTxt, { color: reCol().color.BDRCLR }]}>{item?.companyname}</Text>
                             <View style={styles.locView}>
                                 <Image
                                     source={require('../../assets/images/locationDetail.png')}
@@ -470,7 +470,7 @@ const DetailsCompany = ({ navigation, route }) => {
                     {item.mapUrl && <TouchableOpacity style={[styles.jobDetailBox,
                     { flexDirection: 'row', height: 50, paddingVertical: 0, paddingHorizontal: 0, justifyContent: 'space-between' }]}
                         onPress={() => { Linking.openURL(item.mapUrl) }}>
-                        <Text style={[styles.nameTxt, { alignSelf: 'center', paddingLeft: 15 }]}>Standort / Route anzeigen</Text>
+                        <Text style={[styles.nameTxt, { alignSelf: 'center', paddingLeft: 15, color: reCol().color.BDRCLR }]}>Standort / Route anzeigen</Text>
                         <View
                             style={{
                                 height: 50,
@@ -489,7 +489,7 @@ const DetailsCompany = ({ navigation, route }) => {
                     {item.locationUrl && <TouchableOpacity style={[styles.jobDetailBox,
                     { flexDirection: 'row', height: 50, paddingVertical: 0, paddingHorizontal: 0, justifyContent: 'space-between' }]}
                         onPress={() => { Linking.openURL(item.locationUrl) }}>
-                        <Text style={[styles.nameTxt, { alignSelf: 'center', paddingLeft: 15 }]}>{`Erfahre mehr über uns`}</Text>
+                        <Text style={[styles.nameTxt, { alignSelf: 'center', paddingLeft: 15, color: reCol().color.BDRCLR }]}>{`Erfahre mehr über uns`}</Text>
                         <View
                             style={{
                                 height: 50,

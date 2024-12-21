@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, Text, Image, TouchableOpacity, SafeAreaView, Platform, FlatList, Linking } from 'react-native';
+import { Dimensions, StyleSheet, Text, Image, TouchableOpacity, SafeAreaView, Platform, FlatList, Linking, View } from 'react-native';
 import { DrawerContentScrollView, DrawerItem, } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ModalLocation } from '@/component/ModalLocation';
@@ -80,8 +80,8 @@ export function DrawerContent(props) {
                 </TouchableOpacity>
             </SafeAreaView>
             <SafeAreaView style={{ height: '90%', width: '100%', backgroundColor: '#2894A2' }}>
-                <DrawerContentScrollView {...props} style={{ top: Platform.OS === 'ios' ? '-6%' : -5 }}>
-                    
+                <DrawerContentScrollView {...props}>
+                    <View style={{top:Platform.OS==='ios'?'-6%':-5}}>
                         <>
                             <DrawerItem icon={({ size }) => (
                                 <Image style={{ height: size, width: size }} resizeMode='contain' source={require('../assets/images/user-octagon.png')} />
@@ -174,7 +174,7 @@ export function DrawerContent(props) {
                         )}
                         
                     />
-
+                    </View>
                 </DrawerContentScrollView>
             </SafeAreaView>
             {ModalLocation({ visibleLocation: visibleLocation, setVisibleLocation: setVisibleLocation })}
