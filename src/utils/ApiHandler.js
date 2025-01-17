@@ -1,6 +1,6 @@
 import Globals from '../utils/Globals';
 import axios from 'axios';
-import { Alert } from 'react-native';
+import {Alert} from 'react-native';
 // Call post Api
 export function postApiCall(param) {
   var url = param.url;
@@ -56,6 +56,7 @@ export function postCall(param) {
 export function getApiCall(param) {
   var url = param.url;
   var params = param.params;
+
   return axios
     .get(Globals.API_URL.concat(url), {
       headers: {
@@ -65,7 +66,6 @@ export function getApiCall(param) {
       params,
     })
     .then(response => {
-
       return response.data;
     })
     .catch(error => {
@@ -87,7 +87,6 @@ export function getApiCall1(param) {
       params,
     })
     .then(response => {
-
       return response.data;
     })
     .catch(error => {
@@ -129,7 +128,6 @@ export function delApiCall(param) {
       params,
     })
     .then(response => {
-
       return response.data;
     })
     .catch(error => {

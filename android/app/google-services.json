@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "190940709924",
+    "project_id": "azubib2b",
+    "storage_bucket": "azubib2b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190940709924:android:feb9d2d7ca0188478344b1",
+        "android_client_info": {
+          "package_name": "com.jobb2b"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC35Fr64li93TXI1S531H1fzayPvBUStzI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
