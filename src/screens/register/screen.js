@@ -394,6 +394,7 @@ const Register = ({navigation}) => {
                       height: 65,
                       width: 65,
                       tintColor: reCol().color.BDRCLR,
+                      color: reCol().color.BDRCLR,
                     }}
                   />
                 </TouchableOpacity>
@@ -403,6 +404,7 @@ const Register = ({navigation}) => {
               style={styles.checkboxTouch}
               onPress={() => setIsChecked(!isChecked)}>
               <Checkbox
+                colorScheme={'green'}
                 isChecked={isChecked}
                 alignSelf={'center'}
                 value="1"

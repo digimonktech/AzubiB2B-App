@@ -20,6 +20,7 @@ import {getApiCall} from '@/utils/ApiHandler';
 import {reCol} from '@/utils/configuration';
 import {useSelector} from 'react-redux';
 import Globals from '@/utils/Globals';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function DrawerContent(props) {
   const [visibleLocation, setVisibleLocation] = useState(false);
@@ -27,6 +28,7 @@ export function DrawerContent(props) {
   const [showTips, setShowTips] = useState(false);
   const [showAlarm, setShowAlarm] = useState(false);
   const [showRegion, setShowRegion] = useState(false);
+  const [dynamicLogo, setDynamicLogo] = useState('');
   const comId = useSelector(state => state.companyId?.companyId);
   const shareEmail = async () => {
     const shareOptions = {
@@ -46,6 +48,20 @@ export function DrawerContent(props) {
       // alert(error);
     }
   };
+
+  const fetchLogo = async () => {
+    try {
+      let res = await getApiCall({url: 'admin/sidebar-content'});
+      // console.log('ressss', res);
+      if (res.status == 200) {
+        // console.log('ressss', res.data.logo);
+        setDynamicLogo(res.data.logo);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const getDrawerContent = async () => {
     try {
       let res = await getApiCall({
@@ -64,6 +80,7 @@ export function DrawerContent(props) {
     }
   };
   useEffect(() => {
+    fetchLogo();
     getDrawerContent();
   }, []);
   return (
@@ -71,7 +88,7 @@ export function DrawerContent(props) {
       <SafeAreaView style={styles.userInfoSection}>
         <TouchableOpacity
           style={{
-            backgroundColor: '#2894A2',
+            backgroundColor: reCol().color.BDRCLR,
             width: 30,
             height: 30,
             borderRadius: 30,
@@ -99,12 +116,17 @@ export function DrawerContent(props) {
           <Image
             style={{height: '100%', width: '100%'}}
             resizeMode="contain"
-            source={require('../assets/images/azr-logo.png')}
+            // source={require('../assets/images/azr-logo.png')}
+            source={{uri: Globals.BASE_URL + dynamicLogo}}
           />
         </TouchableOpacity>
       </SafeAreaView>
       <SafeAreaView
-        style={{height: '90%', width: '100%', backgroundColor: '#2894A2'}}>
+        style={{
+          height: '90%',
+          width: '100%',
+          backgroundColor: reCol().color.BDRCLR,
+        }}>
         <DrawerContentScrollView {...props}>
           <View
             style={{
