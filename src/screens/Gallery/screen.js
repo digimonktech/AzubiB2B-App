@@ -335,8 +335,7 @@ const Gallery = ({navigation}) => {
               scrollEnabled={false}
               showsVerticalScrollIndicator={false}
             />
-            <TouchableOpacity
-              onPress={() => downloadImage(item.bannerTitle, images)}>
+            <TouchableOpacity onPress={() => downloadImage(item)}>
               <Image
                 source={Images.downloadIcon}
                 style={{height: 25, width: 25, tintColor: reCol().color.EMLCLR}}
@@ -412,7 +411,49 @@ const Gallery = ({navigation}) => {
       ),
     });
   }, [navigation]);
-  const downloadImage = async (imageName, imagePath) => {
+
+  const downloadImage = async item => {
+    console.log('ITEMMM', item);
+    const imageUrl = Globals.BASE_URL + item.images;
+    // Extract the file name from the URL
+    const fileName = `${item.bannerTitle}${imageUrl.substring(
+      imageUrl.lastIndexOf('.'),
+    )}`;
+    console.log('fileName', fileName);
+    // Set destination path (using the app's document directory)
+    // const downloadDest = `${RNFS.DocumentDirectoryPath}/${fileName}`
+    const downloadDest =
+      Platform.OS === 'android'
+        ? `${RNFS.DownloadDirectoryPath}/${fileName}`
+        : `${RNFS.DocumentDirectoryPath}/${fileName}`;
+
+    const options = {
+      fromUrl: imageUrl,
+      toFile: downloadDest,
+      background: true,
+      discretionary: true,
+    };
+
+    try {
+      const ret = RNFS.downloadFile(options);
+      const result = await ret.promise;
+      if (result.statusCode === 200) {
+        Alert.alert('Success', `Image downloaded to: ${downloadDest}`);
+        console.log('Image downloaded successfully to', downloadDest);
+      } else {
+        Alert.alert(
+          'Error',
+          `Server returned status code ${result.statusCode}`,
+        );
+        console.log('Server returned error code', result.statusCode);
+      }
+    } catch (error) {
+      Alert.alert('Download Error', error.message);
+      console.error('Error downloading image:', error);
+    }
+  };
+
+  const downloadImage1 = async (imageName, imagePath) => {
     setLoadingImage(true);
     const fileExtension = imagePath.split('.').pop();
     const imageUrl = Globals.BASE_URL + imagePath;

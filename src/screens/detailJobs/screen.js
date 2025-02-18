@@ -617,6 +617,16 @@ const DetailsJobs = ({navigation, route}) => {
     }
   };
 
+  const openGmail = gid => {
+    const emailid = gid;
+    if (emailid) {
+      const url = `mailto:${emailid}`;
+      Linking.openURL(url).catch(err =>
+        console.error('Error opening email', err),
+      );
+    }
+  };
+
   const renderJobsDetails = ({item, index}) => {
     // console.log('renderJobsDetails', item);
     const originalDateString = item.createdAt;
@@ -679,7 +689,8 @@ const DetailsJobs = ({navigation, route}) => {
             </View>
             <View style={styles.locView}>
               <Image source={Images.smsIcn} style={styles.locImage} />
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => openGmail(item?.companyId?.email)}>
                 <Text style={styles.locTxt}>{item?.companyId?.email}</Text>
               </TouchableOpacity>
             </View>
