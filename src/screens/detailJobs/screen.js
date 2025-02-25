@@ -628,7 +628,7 @@ const DetailsJobs = ({navigation, route}) => {
   };
 
   const renderJobsDetails = ({item, index}) => {
-    // console.log('renderJobsDetails', item);
+    console.log('renderJobsDetails', item);
     const originalDateString = item.createdAt;
     const formattedDate = formatDate(originalDateString);
     const cleanHtmlContent = html => {
@@ -692,6 +692,13 @@ const DetailsJobs = ({navigation, route}) => {
               <TouchableOpacity
                 onPress={() => openGmail(item?.companyId?.email)}>
                 <Text style={styles.locTxt}>{item?.companyId?.email}</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.locView}>
+              <Image source={Images.smsIcn} style={styles.locImage} />
+              <TouchableOpacity
+                onPress={() => openGmail(item?.additionalEmail)}>
+                <Text style={styles.locTxt}>{item?.additionalEmail}</Text>
               </TouchableOpacity>
             </View>
             {/* <View style={styles.locView}>

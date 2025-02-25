@@ -310,6 +310,7 @@ const Gallery = ({navigation}) => {
   };
   const RenderImageComponent = ({item, navigation}) => {
     const {images, city} = item;
+    // console.log('ITEM', item);
     const addLine = item?.addLine?.length
       ? JSON.parse(item.addLine[0].text)
       : [];
@@ -363,7 +364,7 @@ const Gallery = ({navigation}) => {
                       left: 5,
                       fontFamily: fontFamily.poppinsRegular,
                     }}>
-                    {city.name}
+                    {city?.name}
                   </Text>
                 </View>
               </View>
@@ -413,7 +414,7 @@ const Gallery = ({navigation}) => {
   }, [navigation]);
 
   const downloadImage = async item => {
-    console.log('ITEMMM', item);
+    // console.log('ITEMMM', item);
     const imageUrl = Globals.BASE_URL + item.images;
     // Extract the file name from the URL
     const fileName = `${item.bannerTitle}${imageUrl.substring(
