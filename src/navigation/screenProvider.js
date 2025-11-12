@@ -50,7 +50,8 @@ const DrawerDashboard = ({ navigation }) => {
 const Tabs = () => {
   return (
     <Tab.Navigator
-      initialRouteName={TAB}
+      // initialRouteName={TAB}
+      initialRouteName={'Meine Daten'}
       screenOptions={{
         tabBarActiveTintColor: reCol().color.WHITE,
         tabBarInactiveTintColor: '#3D0061',

@@ -4,42 +4,42 @@ import {
   FlatList,
   Image,
   ImageBackground,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '@/component/Header';
-import {Images} from '@/assets/images/images';
-import {fontFamily, reCol} from '@/utils/configuration';
+import { Images } from '@/assets/images/images';
+import { fontFamily, reCol } from '@/utils/configuration';
 import FormInput from '@/component/FormInput';
-import {useForm} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {registerSchema} from './schema';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { registerSchema } from './schema';
 import TextAreaInput from '@/component/FormArea';
-import {Button, Checkbox} from 'native-base';
+import { Button, Checkbox } from 'native-base';
 import MainHeader from '@/component/MainHeader';
-import {getApiCall, getApiCall1, postApiCall} from '@/utils/ApiHandler';
-import RenderHtml, {RenderHTML} from 'react-native-render-html';
-import {ModalLocation} from '@/component/ModalLocation';
+import { getApiCall, getApiCall1, postApiCall } from '@/utils/ApiHandler';
+import RenderHtml, { RenderHTML } from 'react-native-render-html';
+import { ModalLocation } from '@/component/ModalLocation';
 import Loader from '@/component/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DeviceInfo from 'react-native-device-info';
-import {useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {selectDeviceId} from '@/redux/reducers/deviceIdSlice';
+import { selectDeviceId } from '@/redux/reducers/deviceIdSlice';
 import moment from 'moment';
 import * as ImagePicker from 'react-native-image-picker';
-import {selectCompanyId} from '@/redux/reducers/companyIdSlice';
+import { selectCompanyId } from '@/redux/reducers/companyIdSlice';
 import networkWithoutToken from '@/networkApi/networkWithoutToken';
-const {width, height} = Dimensions.get('screen');
+import { SafeAreaView } from 'react-native-safe-area-context';
+const { width, height } = Dimensions.get('screen');
 
-const Register = ({navigation}) => {
+const Register = ({ navigation }) => {
   const dispatch = useDispatch();
-  const {control, handleSubmit, setValue} = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       Email: '',
       Name: '',
@@ -105,7 +105,7 @@ const Register = ({navigation}) => {
   const welcomeData = async () => {
     try {
       setLoading(true);
-      let res = await getApiCall1({url: 'manage_content/home-page-v2'});
+      let res = await getApiCall1({ url: 'manage_content/home-page-v2' });
       if (res.status == 200) {
         setContentHead(res.data.welcomeMessageForApp.heading);
         setContentSubHead(res.data.welcomeMessageForApp.subHeading);
@@ -230,7 +230,7 @@ const Register = ({navigation}) => {
     contactApi(values);
   };
   const renderItemImage = item => {
-    const {uri} = item.item;
+    const { uri } = item.item;
     const removeImage = uriToRemove => {
       // Use the filter method to remove the image at the specified index
       const updatedImageList = selectedImageShow.filter(
@@ -251,8 +251,8 @@ const Register = ({navigation}) => {
           marginTop: 20,
         }}>
         <Image
-          source={{uri: uri}}
-          style={{height: '100%', width: '100%'}}
+          source={{ uri: uri }}
+          style={{ height: '100%', width: '100%' }}
           borderRadius={15}
         />
         <TouchableOpacity
@@ -382,8 +382,8 @@ const Register = ({navigation}) => {
                       selectedImage.length === 4
                         ? '40%'
                         : selectedImage.length === 3
-                        ? '8%'
-                        : '75%',
+                          ? '8%'
+                          : '75%',
                     bottom: selectedImage.length === 3 ? '-40%' : '15%',
                     // marginRight: selectedImage.length === 4 ? '40%' : '10%'
                   }}
@@ -418,7 +418,7 @@ const Register = ({navigation}) => {
             <View
               style={[
                 styles.buttonView,
-                {backgroundColor: isChecked ? reCol().color.BTNCOLOR : 'grey'},
+                { backgroundColor: isChecked ? reCol().color.BTNCOLOR : 'grey' },
               ]}>
               <Button
                 size={'lg'}
@@ -436,9 +436,9 @@ const Register = ({navigation}) => {
           </View>
 
           <View style={styles.main1}>
-            <RenderHTML style={styles.welText} source={{html: contentHead}} />
-            <RenderHTML source={{html: contentSubHead}} />
-            <RenderHTML source={{html: contentTxt}} />
+            <RenderHTML style={styles.welText} source={{ html: contentHead }} />
+            <RenderHTML source={{ html: contentSubHead }} />
+            <RenderHTML source={{ html: contentTxt }} />
           </View>
         </ScrollView>
         {ModalLocation({
