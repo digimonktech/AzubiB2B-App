@@ -25,7 +25,7 @@ export default function SplashScreen({navigation}) {
 
     getToken();
     const timer = setTimeout(() => {
-      navigation.replace('DrawerDashboard');
+      navigation.replace('QRScreen');
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -58,6 +58,7 @@ export default function SplashScreen({navigation}) {
       const res = await getApiCall({
         url: `admin/get-app-color`,
       });
+      log('res company data', res);
 
       const d_token = await getApiCall({
         url: `admin/device-token?deviceId=${deviceToken}`,

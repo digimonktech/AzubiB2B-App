@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -112,7 +113,7 @@ const Register = ({ navigation }) => {
         setContentTxt(res.data.welcomeMessageForApp.text);
       }
     } catch (e) {
-      alert(e);
+      // alert(e);
     } finally {
       setLoading(false);
     }
@@ -279,7 +280,7 @@ const Register = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <ImageBackground source={Images.bgImage} style={styles.container}>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={styles.main}>
+           <View style={styles.main}> 
             <FormInput
               name="Name"
               control={control}
@@ -418,14 +419,14 @@ const Register = ({ navigation }) => {
             <View
               style={[
                 styles.buttonView,
-                { backgroundColor: isChecked ? reCol().color.BTNCOLOR : 'grey' },
+                { backgroundColor: isChecked ? reCol().color.BTNCOLOR ?  reCol().color.BTNCOLOR : '#F87B1B' : 'grey' },
               ]}>
               <Button
                 size={'lg'}
                 variant={'solid'}
                 disabled={isChecked ? false : true}
                 _text={styles.btnText}
-                colorScheme={isChecked ? reCol().color.BTNCOLOR : 'grey'}
+                colorScheme={isChecked ? reCol().color.BTNCOLOR ?  reCol().color.BTNCOLOR : '#F87B1B'  : 'grey'}
                 style={styles.buttonStyle}
                 onPress={() => {
                   handleSubmit(onSubmit)();
@@ -433,7 +434,7 @@ const Register = ({ navigation }) => {
                 {'Speichern'}
               </Button>
             </View>
-          </View>
+          </View> 
 
           <View style={styles.main1}>
             <RenderHTML style={styles.welText} source={{ html: contentHead }} />
@@ -461,6 +462,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginHorizontal: 20,
     paddingVertical: 15,
+    marginVertical: 10,
     backgroundColor: reCol().color.WHITE,
     borderRadius: 10,
   },
@@ -482,6 +484,7 @@ const styles = StyleSheet.create({
   },
   btnText: {
     fontFamily: fontFamily.poppinsBold,
+    backgroundColor: '#F87B1B',
   },
   welText: {
     color: '#4E4D4D',

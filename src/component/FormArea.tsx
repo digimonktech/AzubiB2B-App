@@ -1,7 +1,7 @@
 import { FormControl, Input, TextArea, WarningOutlineIcon } from 'native-base'
 import React from 'react'
 import { FieldValues, useController, UseControllerProps } from 'react-hook-form'
-import { ViewStyle } from 'react-native';
+import { TextInput, ViewStyle } from 'react-native';
 
 type Props<T extends FieldValues> = {
     children?: React.ReactNode,
@@ -23,19 +23,40 @@ function TextAreaInput<T extends FieldValues = any>(props: Props<T>) {
             {
                 props.children ?
                     props.children : (
-                        <TextArea
+                        // <TextArea
+                        //     placeholder={props.placeholder}
+                        //     onChangeText={field.onChange}
+                        //     value={field.value}
+                        //     returnKeyType='done'
+                        //     onBlur={field.onBlur}
+                        //     h={props.height}
+                        //     backgroundColor={props.backgroundColor ? props.backgroundColor : 'transparent'}
+                        //     borderRadius={10}
+                        //     borderColor={props.borderColor ? props.borderColor : 'black'}
+                        //     style={props.style}
+                        //     autoCompleteType={'off'}
+                        // />
+
+                        <TextInput 
                             placeholder={props.placeholder}
+                            onBlur={field.onBlur}
                             onChangeText={field.onChange}
                             value={field.value}
-                            returnKeyType='done'
-                            onBlur={field.onBlur}
-                            h={props.height}
-                            backgroundColor={props.backgroundColor ? props.backgroundColor : 'transparent'}
-                            borderRadius={10}
-                            borderColor={props.borderColor ? props.borderColor : 'black'}
-                            style={props.style}
-                            autoCompleteType={'off'}
+                            multiline={true}
+                            numberOfLines={4}
+                            style={{
+                                textAlignVertical: 'top',
+                                height: props.height ? props.height : 100,
+                                backgroundColor: props.backgroundColor ? props.backgroundColor : 'transparent',
+                                borderRadius: 10,
+                                borderColor: props.borderColor ? props.borderColor : 'black',
+                                borderWidth: 1,
+                                padding: 10,
+                                ...props.style
+                            }}
                         />
+                        
+
                     )
             }
 

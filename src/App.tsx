@@ -7,8 +7,8 @@ import { Provider } from 'react-redux';
 import { myStore } from './redux/store/myStore';
 import { CityProvider } from './Context/CityProvider';
 import { CityAlertsProvider } from './Context/CityProviderAlerts';
-import { LogBox, Alert, PermissionsAndroid, Platform } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { LogBox, Alert, PermissionsAndroid, Platform, StatusBar } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 // import messaging, {
 //   FirebaseMessagingTypes,
 // } from '@react-native-firebase/messaging';
@@ -164,17 +164,20 @@ const App: React.FC = () => {
 
   return (
     <SafeAreaProvider>
-      <Provider store={myStore}>
-        <CityProvider>
-          <CityAlertsProvider>
-            <NavigationContainer>
-              <ThemeProvider>
-                <ScreenProvider />
-              </ThemeProvider>
-            </NavigationContainer>
-          </CityAlertsProvider>
-        </CityProvider>
-      </Provider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar barStyle="dark-content" />
+        <Provider store={myStore}>
+          <CityProvider>
+            <CityAlertsProvider>
+              <NavigationContainer>
+                <ThemeProvider>
+                  <ScreenProvider />
+                </ThemeProvider>
+              </NavigationContainer>
+            </CityAlertsProvider>
+          </CityProvider>
+        </Provider>
+      </SafeAreaView>
     </SafeAreaProvider>
 
   );

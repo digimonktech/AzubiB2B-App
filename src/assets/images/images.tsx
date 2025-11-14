@@ -56,4 +56,5 @@ export const Images = {
     checkedIcon: require('./checkedIcon.png'),
     unCheckedIcon: require('./unCheckedIcon.png'),
     demoJobWall: require('./demoJobWall.png'),
+    orDvider: require('./Container.png')
 }
