@@ -1,9 +1,9 @@
-import React, {useEffect} from 'react';
-import {View, StyleSheet, ImageBackground, Image} from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, ImageBackground, Image, Linking } from 'react-native';
 import LottieView from 'lottie-react-native';
-import {getApiCall} from '@/utils/ApiHandler';
+import { getApiCall } from '@/utils/ApiHandler';
 import DeviceInfo from 'react-native-device-info';
-import {useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import messaging from '@react-native-firebase/messaging';
 
 const LoaderAnimation = require('../assets/images/animation_lmzwwr3b.json');
@@ -12,24 +12,183 @@ export let colorDynamic2 = '';
 export let manageEmail = '';
 export let manageSavedJob = '';
 
-export default function SplashScreen({navigation}) {
+export default function SplashScreen({ navigation }) {
   const dispatch = useDispatch();
 
+  // useEffect(() => {
+  //   const initializeApp = async () => {
+  //     try {
+  //       // 1️⃣ FCM Token fetch
+  //       await messaging().registerDeviceForRemoteMessages();
+  //       const token = await messaging().getToken();
+  //       console.log('----------Token-----------', token);
+
+  //       // 2️⃣ Company API call
+  //       await getCompany(token);
+
+  //       // 3️⃣ Deep link check
+  //       const url = await Linking.getInitialURL();
+  //       console.log('Deep link URL:', url);
+
+  //       if (url) {
+  //         // Example: http://azubib2b/aktuelle-jobs
+  //         if (url.includes('aktuelle-jobs')) {
+  //           // navigation.replace('Aktuelle Jobs'); // tera Jobs tab ka screen name
+  //         } else {
+  //           // navigation.replace('DrawerDashboard'); // fallback
+  //         }
+  //       } else {
+  //         // 4️⃣ Normal flow if no deep link
+  //         setTimeout(() => {
+  //           // navigation.replace('DrawerDashboard');
+  //         }, 2000);
+  //       }
+  //     } catch (error) {
+  //       console.error('Splash init error:', error);
+  //       // fallback navigation on error
+  //       navigation.replace('DrawerDashboard');
+  //     } finally {
+  //       // setLoading(false); // Loader hide
+  //     }
+  //   };
+
+  //   initializeApp();
+  // }, []);
+
+
+  // useEffect(() => {
+  //   const getToken = async () => {
+  //     await messaging().registerDeviceForRemoteMessages();
+  //     const token = await messaging().getToken();
+  //     console.log('----------Token-----------', token);
+  //     await getCompany(token);
+  //   };
+
+  //   getToken();
+  //   // const timer = setTimeout(() => {
+  //   //   navigation.replace('DrawerDashboard');
+  //   // }, 3000);
+
+  //   // return () => clearTimeout(timer);
+  // }, []);
+
+  // useEffect(() => {
+  //   const handleLink = async () => {
+  //     const url = await Linking.getInitialURL();
+  //     console.log('deep url ', url);
+
+  //     if (url.includes('aktuelle-jobs')) {
+  //       console.log('Navigating to Aktuelle Jobs via deep link', url.includes('aktuelle-jobs'));
+  //       navigation.replace('Aktuelle Jobs');
+  //     }
+  //     setTimeout(() => {
+  //       navigation.replace('DrawerDashboard');
+  //     }, 3000);
+  //   };
+
+  //   handleLink();
+  // }, []);
+
+
+  // useEffect(() => {
+  //   const handleLink = async () => {
+  //     const url = await Linking.getInitialURL();
+  //     console.log('deep url ', url);
+
+  //     if (url && url.includes('aktuelle-jobs')) {
+  //       console.log('Navigating to Aktuelle Jobs via deep link', url);
+  //       // navigation.replace('Aktuelle Jobs');
+
+  //       // Navigate to DrawerDashboard, then Tab -> "Aktuelle Jobs"
+  //       navigation.navigate('DrawerDashboard', {
+  //         screen: 'Tab', // the Tab navigator inside DrawerDashboard
+  //         params: {
+  //           screen: 'Aktuelle Jobs', // the Tab screen
+  //         },
+  //       });
+
+  //     } else {
+  //       // Only navigate to default screen if no deep link
+  //       setTimeout(() => {
+  //         navigation.replace('DrawerDashboard');
+  //       }, 3000);
+  //     }
+  //   };
+
+  //   handleLink();
+  // }, []);
+
+
   useEffect(() => {
-    const getToken = async () => {
-      await messaging().registerDeviceForRemoteMessages();
-      const token = await messaging().getToken();
-      console.log('----------Token-----------', token);
-      await getCompany(token);
+    const handleLink = async () => {
+      const url = await Linking.getInitialURL();
+      console.log('deep url', url);
+
+      if (!url) {
+        setTimeout(() => navigation.replace('DrawerDashboard'), 3000);
+        return;
+      }
+
+      const deepLinkMap = {
+        // Tab Screens inside DrawerDashboard → Tab
+        'aktuelle-jobs': { type: 'tab', drawer: 'DrawerDashboard', tab: 'Aktuelle Jobs' },
+        'meine-daten': { type: 'tab', drawer: 'DrawerDashboard', tab: 'Meine Daten' },
+        'unternehmen': { type: 'tab', drawer: 'DrawerDashboard', tab: 'Unternehmen' },
+        'jobwall': { type: 'tab', drawer: 'DrawerDashboard', tab: 'JobWall' },
+        'meine-jobs': { type: 'tab', drawer: 'DrawerDashboard', tab: 'Meine Jobs' },
+
+        // Drawer-level screens
+        'job-alerts': { type: 'drawer', screen: 'JobAlerts' },
+        'about-us': { type: 'drawer', screen: 'AboutUs' },
+        'privacy-policy': { type: 'drawer', screen: 'PrivacyPolicy' },
+        'application-tips': { type: 'drawer', screen: 'ApplicationTips' },
+        'contact': { type: 'drawer', screen: 'Contact' },
+
+        // Stack screens (outside Drawer)
+        'details-job': { type: 'stack', screen: 'DetailsJobs' },
+        'details-company': { type: 'stack', screen: 'DetailsCompany' },
+        'qr-screen': { type: 'stack', screen: 'QRScreen' },
+      };
+
+
+      let target = null;
+      for (const key in deepLinkMap) {
+        if (url.includes(key)) {
+          target = deepLinkMap[key];
+          break;
+        }
+      }
+
+      if (target) {
+        switch (target.type) {
+          case 'tab':
+            navigation.navigate(target.drawer, {
+              screen: 'Tab',
+              params: { screen: target.tab },
+            });
+            break;
+
+          case 'drawer':
+            navigation.navigate(target.screen);
+            break;
+
+          case 'stack':
+            navigation.navigate(target.screen);
+            break;
+
+          default:
+            setTimeout(() => navigation.replace('DrawerDashboard'), 3000);
+            break;
+        }
+      } else {
+        setTimeout(() => navigation.replace('DrawerDashboard'), 3000);
+      }
     };
 
-    getToken();
-    const timer = setTimeout(() => {
-      navigation.replace('QRScreen');
-    }, 3000);
-
-    return () => clearTimeout(timer);
+    handleLink();
   }, []);
+
+
 
   // React.useEffect(() => {
   //   const fetchDeviceId = async () => {
@@ -83,7 +242,7 @@ export default function SplashScreen({navigation}) {
       <Image
         source={require('../assets/images/azr-logo-1.png')}
         resizeMode="contain"
-        style={{height: '30%', width: '70%'}}
+        style={{ height: '30%', width: '70%' }}
       />
       <LottieView
         style={styles.animate}

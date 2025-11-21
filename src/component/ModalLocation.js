@@ -28,7 +28,7 @@ export const ModalLocation = ({ visibleLocation, setVisibleLocation, navigation 
                 setVisible(res?.data?.cities[0].companyId?.cityStatus);
             }
         } catch (e) {
-            alert(e);
+            // alert(e);
         } finally {
             setLoading(false);
         }

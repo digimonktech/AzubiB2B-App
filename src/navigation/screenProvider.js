@@ -56,17 +56,16 @@ const Tabs = () => {
         tabBarActiveTintColor: activeColor,
         tabBarInactiveTintColor: inactiveColor,
         tabBarStyle: {
-          height: Platform.OS === 'ios' ? 65 : 65,
+          height: Platform.OS === 'ios' ? 65 : 60,
           backgroundColor: tabBg,
           borderTopWidth: 0,
           paddingBottom: Platform.OS === 'ios' ? 20 : 2,
           paddingTop: 6,
-          // gap: 5,
           elevation: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 10,
-          // fontWeight: '600',
+          fontSize: 9,  
+          fontWeight: '600',
           fontFamily: fontFamily.poppinsMedium,
           flexWrap: 'nowrap',      // 🔥 FORCE SINGLE LINE
           // includeFontPadding: false,
@@ -81,7 +80,7 @@ const Tabs = () => {
           tabBarIcon: ({ color, size }) => (
             <Image
               source={Images.tabData}
-              style={{ tintColor: color, width: size, height: size, marginBottom: 8 }}
+              style={{ tintColor: color, width: size, height: size, marginBottom: 4 }}
               resizeMode="contain"
             />
           ),
@@ -97,7 +96,7 @@ const Tabs = () => {
           tabBarIcon: ({ color, size }) => (
             <Image
               source={Images.tabJob}
-              style={{ tintColor: color, width: size, height: size, marginBottom: 8 }}
+              style={{ tintColor: color, width: size, height: size, marginBottom: 4 }}
               resizeMode="contain"
             />
           ),
@@ -113,7 +112,7 @@ const Tabs = () => {
           tabBarIcon: ({ color, size }) => (
             <Image
               source={Images.tabCompanies}
-              style={{ tintColor: color, width: size, height: size, marginBottom: 8 }}
+              style={{ tintColor: color, width: size, height: size, marginBottom: 4 }}
               resizeMode="contain"
             />
           ),
@@ -129,7 +128,7 @@ const Tabs = () => {
           tabBarIcon: ({ color, size }) => (
             <Image
               source={Images.tabGallery}
-              style={{ tintColor: color, width: size, height: size, marginBottom: 8 }}
+              style={{ tintColor: color, width: size, height: size, marginBottom: 4 }}
               resizeMode="contain"
             />
           ),
@@ -145,7 +144,7 @@ const Tabs = () => {
           tabBarIcon: ({ color, size }) => (
             <Image
               source={Images.tabSaveJob}
-              style={{ tintColor: color, width: size, height: size, marginBottom: 8 }}
+              style={{ tintColor: color, width: size, height: size, marginBottom: 4 }}
               resizeMode="contain"
             />
           ),

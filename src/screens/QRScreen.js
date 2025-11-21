@@ -184,24 +184,24 @@ const styles = StyleSheet.create({
     },
 
     qrImage: {
-        marginTop: 40,
-        width: 200,
-        height: 200,
+        marginTop: 20,
+        width: 150,
+        height: 150,
     },
 
     scanWrapper: {
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 5,
     },
 
     scanBtn: {
         backgroundColor: '#0097A7',
-        width: 200,
-        height: 48,
+        width: 90,
+        height: 40,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 14,
-        marginBottom: 8,
+        borderRadius: 12,
+        marginBottom: 0,
     },
 
     downloadBtn: {
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
         height: 40,
         width: 280,
         alignSelf: 'center',
-        marginTop: 40,
+        marginTop: 10,
     },
 
     companyWrapper: {
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
 
     btnText: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '600',
         fontFamily: 'Poppins-Medium',
     },

@@ -29,7 +29,7 @@ export const ModalLocationAlert = ({ visibleLocation, setVisibleLocation }) => {
                 setContent(newData);
             }
         } catch (e) {
-            alert(e);
+            // alert(e);
         } finally {
             setLoading(false);
         }

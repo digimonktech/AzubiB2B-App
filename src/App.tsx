@@ -79,6 +79,41 @@ const requestUserPermission = async () => {
   }
 };
 
+// THIS: Deep Link Config
+// const linking = {
+//   prefixes: ['http://azubib2b', 'azubib2b://'],
+//   config: {
+//     screens: {
+//       Home: '', // Default screen when only domain is opened
+//       MeineDaten: "meine-daten",
+//       AktuelleJobs: 'aktuelle-jobs',
+//       JobDetail: 'job-detail/:id',
+//       CompanyProfile: 'company/:id',
+//     },
+//   },
+// };
+
+const linking = {
+  prefixes: ['http://azubib2b', 'azubib2b://'],
+  config: {
+    screens: {
+      DrawerDashboard: {
+        screens: {
+          Tab: {
+            screens: {
+              "Meine Daten": "meine-daten",
+              "Aktuelle Jobs": "jobs",
+              DetailsJobs: "job-detail/:id",
+              DetailsCompany: "company/:id",
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+
 const App: React.FC = () => {
   // Request user permission and initialize notification listener
   // useEffect(() => {
@@ -169,7 +204,8 @@ const App: React.FC = () => {
         <Provider store={myStore}>
           <CityProvider>
             <CityAlertsProvider>
-              <NavigationContainer>
+              {/* linking prop */}
+              <NavigationContainer linking={linking}>
                 <ThemeProvider>
                   <ScreenProvider />
                 </ThemeProvider>

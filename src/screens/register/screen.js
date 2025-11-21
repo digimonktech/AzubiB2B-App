@@ -1,5 +1,5 @@
 import {
-  Alert,
+  // Alert,
   Dimensions,
   FlatList,
   Image,

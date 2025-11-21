@@ -80,7 +80,9 @@ const Jobs = props => {
         }
       }
     } catch (e) {
-      alert(e);
+      // alert(e);
+      console.log('err ',e);
+      
     } finally {
       setLoading(false);
     }
@@ -166,7 +168,7 @@ const Jobs = props => {
       }
     } catch (e) {
       console.error('Error:', e);
-      alert(e);
+      // alert(e);
     } finally {
       setIsRefresh(false);
       getAllIndustry();
@@ -409,7 +411,9 @@ const Jobs = props => {
         setJobTypeData(newArr);
       }
     } catch (e) {
-      alert(e);
+      // alert(e);
+      console.log('e ',e);
+      
     } finally {
       setLoading(false);
     }
@@ -449,7 +453,9 @@ const Jobs = props => {
         setShowIndustry(res?.data?.industries[0].companyId?.industryStatus);
       }
     } catch (e) {
-      alert(e);
+      // alert(e);
+      console.log('e ', e);
+      
     } finally {
       getJobType();
     }
@@ -476,7 +482,9 @@ const Jobs = props => {
         setJobDetails(res.data);
       }
     } catch (e) {
-      alert(e);
+      // alert(e);
+      console.log('e ',e);
+      
     } finally {
       setLoader(false);
       setVisibleApply(true);

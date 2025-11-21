@@ -33,6 +33,18 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+
+        <!-- 🚀 Deep Link Support -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                
+                <!-- Your Deep Link Format -->
+                <data android:scheme="http"
+                      android:host="azubib2b" />
+            </intent-filter>
+            
       </activity>
     </application>
 </manifest>

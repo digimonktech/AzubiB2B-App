@@ -1,6 +1,6 @@
 import {
   ActivityIndicator,
-  Alert,
+  // Alert,
   Dimensions,
   FlatList,
   Image,
@@ -59,6 +59,8 @@ const Gallery = ({navigation}) => {
   const LoaderAnimation = require('../../assets/images/Animation - 1713529999054.json');
   const {height, width} = Dimensions.get('screen');
   const comId = useSelector(state => state.companyId?.companyId);
+  console.log('comId ', comId);
+  
   // const flatData = [
   //     {
   //         image: Images.demoJobWall, cityName: 'Bamberg', txt: [
@@ -125,8 +127,11 @@ const Gallery = ({navigation}) => {
       if (res.status == 200) {
         setJobTypeData(res?.data?.jobTypes);
       }
+      
     } catch (e) {
-      alert(e);
+      // alert(e);
+      console.log('e', e);
+      
     } finally {
       setLoading(false);
     }
@@ -200,8 +205,8 @@ const Gallery = ({navigation}) => {
         setFlatData(res.data);
       }
     } catch (e) {
-      console.error('Error:', e);
-      alert(e);
+      console.error('Error :', e);
+      // alert(e);
     } finally {
       setIsRefresh(false);
       getAllIndustry();
@@ -272,7 +277,9 @@ const Gallery = ({navigation}) => {
         setShowIndustry(res?.data?.industries[0].companyId?.industryStatus);
       }
     } catch (e) {
-      alert(e);
+      console.log('e alert ', e);
+      
+      // alert(e);
     } finally {
       setLoading(false);
     }
