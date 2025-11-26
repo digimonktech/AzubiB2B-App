@@ -125,7 +125,7 @@ export default function SplashScreen({ navigation }) {
       console.log('deep url', url);
 
       if (!url) {
-        setTimeout(() => navigation.replace('DrawerDashboard'), 3000);
+        setTimeout(() => navigation.replace('DrawerDashboard'), 2000);
         return;
       }
 
@@ -177,11 +177,11 @@ export default function SplashScreen({ navigation }) {
             break;
 
           default:
-            setTimeout(() => navigation.replace('DrawerDashboard'), 3000);
+            setTimeout(() => navigation.replace('DrawerDashboard'), 2000);
             break;
         }
       } else {
-        setTimeout(() => navigation.replace('DrawerDashboard'), 3000);
+        setTimeout(() => navigation.replace('DrawerDashboard'), 2000);
       }
     };
 

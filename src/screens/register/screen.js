@@ -1,4 +1,5 @@
 import {
+  Alert,
   // Alert,
   Dimensions,
   FlatList,
@@ -179,11 +180,14 @@ const Register = ({ navigation }) => {
       const response = await networkWithoutToken
         .createMobileOtp()
         .registerData(data);
-      //   console.log('RESP', response);
+        console.log('RESP', response);
       if (response.status === 200) {
         retrieveData();
       } else {
         console.log('Error');
+        Alert.alert(
+        response.data.message,
+      );
       }
     } catch (error) {
       alert(error);

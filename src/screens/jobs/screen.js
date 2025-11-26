@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -13,26 +13,29 @@ import {
   ActivityIndicator,
   RefreshControl,
   Dimensions,
+  TextInput,
 } from 'react-native';
-import {Images} from '@/assets/images/images';
-import {fontFamily, reCol} from '@/utils/configuration';
-import {Icon, Input} from 'native-base';
+import { Images } from '@/assets/images/images';
+import { fontFamily, reCol } from '@/utils/configuration';
+import { Icon, Input } from 'native-base';
 import Loader from '@/component/Loader';
 import MainHeader from '@/component/MainHeader';
-import {ModalApply} from '@/component/Modal';
+import { ModalApply } from '@/component/Modal';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {getApiCall} from '@/utils/ApiHandler';
+import { getApiCall } from '@/utils/ApiHandler';
 import Globals from '@/utils/Globals';
 import RBSheet from 'react-native-raw-bottom-sheet';
-import {Button} from 'native-base';
-import {ModalLocation} from '@/component/ModalLocation';
-import {useCity} from '@/Context/CityProvider';
+import { Button } from 'native-base';
+import { ModalLocation } from '@/component/ModalLocation';
+import { useCity } from '@/Context/CityProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useFocusEffect} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
-const {height, width} = Dimensions.get('screen');
+import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+const { height, width } = Dimensions.get('screen');
 const Jobs = props => {
-  const {navigation} = props;
+  const route = useRoute();
+  const { navigation } = props;
   const id = useSelector(state => state.deviceId?.deviceId);
   const comId = useSelector(state => state.companyId?.companyId);
   const scrollViewRef = useRef(null);
@@ -52,11 +55,24 @@ const Jobs = props => {
   const [industryData, setIndustryData] = useState([]);
   const [selectedIndustries, setSelectedIndustries] = useState([]);
   const [selectedIndustryName, setSelectedIndustryName] = useState([]);
-  const {selectedCityId, showCity} = useCity();
+  const { selectedCityId, showCity } = useCity();
   const [jobDetails, setJobDetails] = useState([]);
   const [showIndustry, setShowIndustry] = useState(false);
   const [loader, setLoader] = useState(false);
   const [savedJobs, setSavedJobs] = useState([]);
+  const [QRCode, setQRCode] = useState(null);
+  const [newComId, setNewComId] = useState();
+
+  // console.log('QRCode ', QRCode);
+
+  // console.log('job route ', route)
+  console.log('search value ', searchValue);
+  
+
+  // console.log('Company Id -> ', comId);
+  // console.log('flatData ', flatData);
+
+
   const onRefresh = () => {
     setIsRefresh(true);
   };
@@ -68,21 +84,45 @@ const Jobs = props => {
     getJobDetailsSearchApi();
   }, [searchValue]);
 
+  // const getQRCode = async () => {
+  //   try {
+  //     // const res = await getApiCall({
+  //     //   url: `https://azubi.api.digimonk.net/api/v1/company/id/'69203c9bd1fbb34dc2a5e825`
+  //     // })
+
+  //     const res = await axios.get('https://azubi.api.digimonk.net/api/v1/admin/company/id/69203c9bd1fbb34dc2a5e825')
+
+  //     // console.log('QR code res ', res.data.data?.qrCode);
+  //     setQRCode(res.data.data?.qrCode);
+
+  //   } catch (error) {
+  //     console.log('QR code error ', error);
+  //   }
+  // }
+
+  useEffect(() => {
+    // getQRCode();
+    setNewComId(route.params?.companyId);
+  })
+
   const getJobDetailsSearchApi = async () => {
     try {
       if (searchValue.length >= 3 || searchValue.length == 0) {
         setLoading(true);
         let res = await getApiCall({
-          url: `admin/jobs?companyId=${comId}` + '&searchValue=' + searchValue,
+          url: `admin/jobs?companyId=${newComId ? newComId : '69203c9bd1fbb34dc2a5e825'}` + '&searchValue=' + searchValue,
         });
+
+        console.log('flatData search res:', res);
+
         if (res.status == 200) {
           setFlatData(res.data);
         }
       }
     } catch (e) {
       // alert(e);
-      console.log('err ',e);
-      
+      console.log('err ', e);
+
     } finally {
       setLoading(false);
     }
@@ -138,8 +178,8 @@ const Jobs = props => {
       let selectedCityParams =
         selectedCityId && selectedCityId.length > 0
           ? `selectedCities=${encodeURIComponent(
-              JSON.stringify(selectedCityId),
-            )}`
+            JSON.stringify(selectedCityId),
+          )}`
           : '';
       let industryParams =
         selectedIndustries && selectedIndustries.length > 0
@@ -155,12 +195,15 @@ const Jobs = props => {
         .join('&');
 
       // Construct the full URL
-      const url = `admin/jobs?companyId=${comId}&${queryParams}`;
+      const url = `admin/jobs?companyId=${'69203c9bd1fbb34dc2a5e825'}&${queryParams}`;
 
       console.log('Final URL:', url);
 
       // Make the API call
-      let res = await getApiCall({url});
+      let res = await getApiCall({ url });
+
+      console.log('getAllJobs res ', res);
+
 
       if (res.status === 200) {
         // console.log('Response:', res.data);
@@ -175,7 +218,9 @@ const Jobs = props => {
     }
   };
 
-  const RenderImageComponent = ({item, navigation}) => {
+  const RenderImageComponent = ({ item, navigation }) => {
+    console.log('RenderImageComponent item:', item);
+
     const [showLoadImage, setShowLoadImage] = useState(true);
     const handleLoad = () => {
       setShowLoadImage(false);
@@ -186,11 +231,11 @@ const Jobs = props => {
       <TouchableHighlight underlayColor={'none'}>
         <View style={styles.renderMainView}>
           <TouchableOpacity
-            style={{width: '80%', paddingHorizontal: 10, paddingVertical: 10}}
+            style={{ width: '80%', paddingHorizontal: 10, paddingVertical: 10 }}
             activeOpacity={0.5}
-            onPress={() => navigation.navigate('DetailsJobs', {item: item})}>
+            onPress={() => navigation.navigate('DetailsJobs', { item: item })}>
             <Text
-              style={[styles.nameTxt, {color: reCol().color.BDRCLR}]}
+              style={[styles.nameTxt, { color: reCol().color.BDRCLR }]}
               numberOfLines={2}>
               {item?.jobTitle}
             </Text>
@@ -216,23 +261,23 @@ const Jobs = props => {
                   </View>
                 )}
                 <Image
-                  style={{height: '100%', width: '100%', borderRadius: 10}}
+                  style={{ height: '100%', width: '100%', borderRadius: 10 }}
                   resizeMode="cover"
-                  source={{uri: Globals.BASE_URL + item?.companyId.profileIcon}}
+                  source={{ uri: Globals.BASE_URL + item?.companyId.profileIcon }}
                   onLoad={handleLoad}
                 />
               </View>
               <Text
                 style={[
                   styles.nameTxt,
-                  {color: reCol().color.BTNCOLOR, left: 10},
+                  { color: reCol().color.BTNCOLOR, left: 10 },
                 ]}
                 numberOfLines={2}>
                 {item?.companyId.companyname}
               </Text>
             </View>
             {showCity && (
-              <View style={[styles.locView, {width: '85%'}]}>
+              <View style={[styles.locView, { width: '85%' }]}>
                 <Image
                   source={Images.location}
                   style={styles.locImage}
@@ -246,7 +291,8 @@ const Jobs = props => {
             <View style={styles.locView}>
               <View
                 style={{
-                  backgroundColor: reCol().color.EMLCLR,
+                  // backgroundColor: reCol().color.EMLCLR,
+                  backgroundColor: '#FFA500',
                   borderRadius: 2,
                   height: 20,
                   paddingHorizontal: 5,
@@ -299,7 +345,7 @@ const Jobs = props => {
             </View>
           </TouchableOpacity>
 
-          <View style={{width: '100%'}}>
+          <View style={{ width: '100%' }}>
             <TouchableOpacity
               style={{
                 height: '50%',
@@ -313,7 +359,7 @@ const Jobs = props => {
                 getJobsDetails(item._id);
               }}>
               <Image
-                style={{height: 20, width: 24}}
+                style={{ height: 20, width: 24 }}
                 resizeMode="contain"
                 source={require('../../assets/images/sms-tracking.png')}
               />
@@ -329,7 +375,7 @@ const Jobs = props => {
               }}
               onPress={() => saveJob(item)}>
               <Image
-                style={{height: 20, width: 24}}
+                style={{ height: 20, width: 24 }}
                 resizeMode="contain"
                 source={
                   isSaved
@@ -343,7 +389,7 @@ const Jobs = props => {
       </TouchableHighlight>
     );
   };
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     return <RenderImageComponent item={item} navigation={navigation} />;
   };
 
@@ -352,7 +398,7 @@ const Jobs = props => {
       <View style={styles.renderMainLoader}>
         <SkeletonPlaceholder style={styles.renderMainView}>
           <SkeletonPlaceholder
-            style={{width: '100%', paddingHorizontal: 10, paddingVertical: 10}}>
+            style={{ width: '100%', paddingHorizontal: 10, paddingVertical: 10 }}>
             <SkeletonPlaceholder>
               <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
                 <SkeletonPlaceholder.Item
@@ -392,7 +438,7 @@ const Jobs = props => {
   };
   useEffect(() => {
     if (scrollTop && scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({y: 0, animated: true});
+      scrollViewRef.current.scrollTo({ y: 0, animated: true });
       setScrollTop(false);
     }
   }, [scrollTop]);
@@ -401,19 +447,19 @@ const Jobs = props => {
     try {
       let res = await getApiCall({
         url: 'admin/job-types',
-        params: {companyId: comId},
+        params: { companyId: comId },
       });
       if (res.status == 200) {
         const newArr = [
-          {_id: '', jobTypeName: 'Alle anzeigen'},
+          { _id: '', jobTypeName: 'Alle anzeigen' },
           ...res?.data.jobTypes,
         ];
         setJobTypeData(newArr);
       }
     } catch (e) {
       // alert(e);
-      console.log('e ',e);
-      
+      console.log('e ', e);
+
     } finally {
       setLoading(false);
     }
@@ -442,11 +488,14 @@ const Jobs = props => {
     try {
       let res = await getApiCall({
         url: 'admin/industries',
-        params: {companyId: comId},
+        params: { companyId: comId },
       });
+
+      console.log('getAllIndustry res:', res);
+
       if (res.status == 200) {
         const newArr = [
-          {_id: '', industryName: 'Alle'},
+          { _id: '', industryName: 'Alle' },
           ...res?.data.industries,
         ];
         setIndustryData(newArr);
@@ -455,7 +504,7 @@ const Jobs = props => {
     } catch (e) {
       // alert(e);
       console.log('e ', e);
-      
+
     } finally {
       getJobType();
     }
@@ -477,14 +526,14 @@ const Jobs = props => {
   const getJobsDetails = async id => {
     try {
       setLoader(true);
-      let res = await getApiCall({url: 'admin/job/' + id});
+      let res = await getApiCall({ url: 'admin/job/' + id });
       if (res.status == 200) {
         setJobDetails(res.data);
       }
     } catch (e) {
       // alert(e);
-      console.log('e ',e);
-      
+      console.log('e ', e);
+
     } finally {
       setLoader(false);
       setVisibleApply(true);
@@ -534,7 +583,7 @@ const Jobs = props => {
           </Text>
           <Image
             source={isChecked ? Images.checkedIcon : Images.unCheckedIcon}
-            style={{height: 20, width: 20}}
+            style={{ height: 20, width: 20 }}
           />
         </View>
       </TouchableOpacity>
@@ -553,13 +602,28 @@ const Jobs = props => {
             <RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />
           }>
           <ImageBackground style={styles.container} source={Images.bgImage}>
-            <View style={[styles.whiteBox, {marginTop: 5}]}>
+            <View style={[styles.whiteBox, { marginTop: 5 }]}>
               <View style={styles.fieldView}>
-                <Input
+                {/* react native TextInput search  */}
+                <View style={styles.inputContainer}>
+                  <Icon
+                    ml="2"
+                    size="5"
+                    as={<Image source={Images.search} />}
+                  />
+                  <TextInput 
+                    placeholder='Berufsbezeichnung, Stichwörter oder Unternehmen'
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.nativeEvent.text)}
+                    style={{ flex: 1, fontSize: 13, paddingVertical: 5 }}
+                    returnKeyType="done"
+                  />
+                </View>
+                {/* <Input
                   placeholder={
                     'Berufsbezeichnung, Stichwörter oder Unternehmen'
                   }
-                  style={{fontSize: 13}}
+                  style={{ fontSize: 13 }}
                   variant={'unstyled'}
                   size={'md'}
                   value={searchValue}
@@ -586,12 +650,12 @@ const Jobs = props => {
                   }
                   bgColor={reCol().color.WHITE}
                   marginTop={5}
-                />
+                /> */}
               </View>
             </View>
             <View style={styles.infoMainView}>
               <Text
-                style={[styles.jobsNumberText, {color: reCol().color.BDRCLR}]}>
+                style={[styles.jobsNumberText, { color: reCol().color.BDRCLR }]}>
                 {flatData?.length} {'Jobs gefunden'}
               </Text>
               <View style={styles.touchView}>
@@ -608,12 +672,12 @@ const Jobs = props => {
                             ? selectedIndustryName[0] === 'Alle'
                               ? 'Alle ausgewählt'.slice(0, 8) + '...'
                               : selectedIndustryName[0].length > 12
-                              ? selectedIndustryName[0].slice(0, 5) + '...'
-                              : selectedIndustryName[0] +
+                                ? selectedIndustryName[0].slice(0, 5) + '...'
+                                : selectedIndustryName[0] +
                                 ` +${selectedIndustryName?.length - 1}`
                             : selectedIndustryName[0].length > 6
-                            ? selectedIndustryName[0].slice(0, 3) + '...'
-                            : selectedIndustryName[0]
+                              ? selectedIndustryName[0].slice(0, 3) + '...'
+                              : selectedIndustryName[0]
                           : 'Branche'}
                       </Text>
 
@@ -625,7 +689,7 @@ const Jobs = props => {
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
-                  style={[styles.sortTouch, {left: 5}]}
+                  style={[styles.sortTouch, { left: 5 }]}
                   onPress={() => {
                     OpenMenu();
                   }}>
@@ -643,6 +707,12 @@ const Jobs = props => {
                 </TouchableOpacity>
               </View>
             </View>
+
+            {/* <Image
+              source={{ uri: QRCode }}
+              style={{ width: 200, height: 200 }}
+              resizeMode="contain"
+            /> */}
 
             {loading ? (
               // Render skeleton loader when loading
@@ -699,7 +769,7 @@ const Jobs = props => {
             </View>
             <FlatList
               data={jobTypeData}
-              renderItem={({item}) => (
+              renderItem={({ item }) => (
                 <TouchableOpacity
                   style={{
                     height: 50,
@@ -782,7 +852,7 @@ const Jobs = props => {
                   }}
                   size={'lg'}
                   onPress={() => CloseIndustryMenu(selectedIndustries)}
-                  style={{marginTop: 15}}
+                  style={{ marginTop: 15 }}
                   borderRadius={10}>
                   {'Auswahl speichern'}
                 </Button>
@@ -795,7 +865,7 @@ const Jobs = props => {
           onPress={() => setScrollTop(true)}>
           <Image
             source={require('../../assets/images/upArrow.png')}
-            style={{height: '50%', width: '50%'}}
+            style={{ height: '50%', width: '50%' }}
           />
         </TouchableOpacity>
       </SafeAreaView>
@@ -807,6 +877,12 @@ const Jobs = props => {
 export default Jobs;
 
 const styles = StyleSheet.create({
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 15,
+    justifyContent: 'space-between',
+  },
   container: {
     flex: 1,
   },
@@ -858,7 +934,7 @@ const styles = StyleSheet.create({
     elevation: 10,
     width: '48%',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
   },
@@ -875,7 +951,7 @@ const styles = StyleSheet.create({
     // marginHorizontal: 10,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
     elevation: 5,
@@ -920,7 +996,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
     backgroundColor: reCol().color.WHITE,

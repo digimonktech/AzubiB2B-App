@@ -9,10 +9,10 @@ import { CityProvider } from './Context/CityProvider';
 import { CityAlertsProvider } from './Context/CityProviderAlerts';
 import { LogBox, Alert, PermissionsAndroid, Platform, StatusBar } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-// import messaging, {
-//   FirebaseMessagingTypes,
-// } from '@react-native-firebase/messaging';
-// import notifee, {AndroidImportance} from '@notifee/react-native';
+import messaging, {
+  FirebaseMessagingTypes,
+} from '@react-native-firebase/messaging';
+import notifee, { AndroidImportance } from '@notifee/react-native';
 import { AppRegistry } from 'react-native';
 import {
   NotificationListner,
@@ -20,19 +20,19 @@ import {
 } from './utils/CommonUtill';
 
 // Suppress all log warnings
-// LogBox.ignoreAllLogs(true);
+LogBox.ignoreAllLogs(true);
 
 // // Define headless task for background messages
-// const YourHeadlessTask = async (
-//   remoteMessage: FirebaseMessagingTypes.RemoteMessage,
-// ) => {
-//   console.log('Background Message:', remoteMessage);
-// };
+const YourHeadlessTask = async (
+  remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+) => {
+  console.log('Background Message:', remoteMessage);
+};
 
-// AppRegistry.registerHeadlessTask(
-//   'ReactNativeFirebaseMessagingHeadlessTask',
-//   () => YourHeadlessTask,
-// );
+AppRegistry.registerHeadlessTask(
+  'ReactNativeFirebaseMessagingHeadlessTask',
+  () => YourHeadlessTask,
+);
 
 const requestUserPermission = async () => {
   try {
@@ -79,22 +79,36 @@ const requestUserPermission = async () => {
   }
 };
 
-// THIS: Deep Link Config
+;
+
 // const linking = {
-//   prefixes: ['http://azubib2b', 'azubib2b://'],
+//   prefixes: ['https://azubib2b.com', 'azubib2b://'],
 //   config: {
 //     screens: {
-//       Home: '', // Default screen when only domain is opened
-//       MeineDaten: "meine-daten",
-//       AktuelleJobs: 'aktuelle-jobs',
-//       JobDetail: 'job-detail/:id',
-//       CompanyProfile: 'company/:id',
+//       DrawerDashboard: {
+//         screens: {
+//           Tab: {
+//             screens: {
+//               "Meine Daten": "meine-daten",
+//               "Aktuelle Jobs": {
+//                 path: "aktuelle-jobs",
+//                 parse: {
+//                   companyId: (id: any) => `${id}`,
+//                 },
+//               },
+//               DetailsJobs: "job-detail/:id",
+//               DetailsCompany: "company/:id",
+//             },
+//           },
+//         },
+//       },
 //     },
 //   },
 // };
 
+
 const linking = {
-  prefixes: ['http://azubib2b', 'azubib2b://'],
+  prefixes: ['jobb2b://jobs/', 'jobb2b://'],
   config: {
     screens: {
       DrawerDashboard: {
@@ -102,9 +116,24 @@ const linking = {
           Tab: {
             screens: {
               "Meine Daten": "meine-daten",
-              "Aktuelle Jobs": "jobs",
-              DetailsJobs: "job-detail/:id",
-              DetailsCompany: "company/:id",
+              "Aktuelle Jobs": {
+                path: "aktuelle-jobs",
+                parse: {
+                  companyId: (companyId: string) => `${companyId}`,
+                },
+              },
+              DetailsJobs: {
+                path: "job-detail/:id",
+                parse: {
+                  id: (id: string) => `${id}`,
+                },
+              },
+              DetailsCompany: {
+                path: "company/:id",
+                parse: {
+                  id: (id: string) => `${id}`,
+                },
+              },
             },
           },
         },
@@ -116,27 +145,27 @@ const linking = {
 
 const App: React.FC = () => {
   // Request user permission and initialize notification listener
-  // useEffect(() => {
-  //   requestUserPermission();
-  //   requestNotificationPermission();
-  //   NotificationListner();
-  // }, []);
+  useEffect(() => {
+    requestUserPermission();
+    requestNotificationPermission();
+    NotificationListner();
+  }, []);
 
   // Display local notification using Notifee
-  // const displayNotification = async (
-  //   remoteMessage: FirebaseMessagingTypes.RemoteMessage,
-  // ) => {
-  //   if (remoteMessage.notification) {
-  //     await notifee.displayNotification({
-  //       title: remoteMessage.notification.title,
-  //       body: remoteMessage.notification.body,
-  //       android: {
-  //         channelId: 'default',
-  //         importance: AndroidImportance.HIGH,
-  //       },
-  //     });
-  //   }
-  // };
+  const displayNotification = async (
+    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+  ) => {
+    if (remoteMessage.notification) {
+      await notifee.displayNotification({
+        title: remoteMessage.notification.title,
+        body: remoteMessage.notification.body,
+        android: {
+          channelId: 'default',
+          importance: AndroidImportance.HIGH,
+        },
+      });
+    }
+  };
 
   // // Handle FCM messages for both foreground and background states
   // useEffect(() => {
@@ -165,19 +194,19 @@ const App: React.FC = () => {
   // }, []);
 
   // // Get and log the device FCM token
-  // useEffect(() => {
-  //   const getToken = async () => {
-  //     try {
-  //       await messaging().registerDeviceForRemoteMessages();
-  //       const token = await messaging().getToken();
-  //       console.log('Device FCM Token:', token);
-  //     } catch (error) {
-  //       console.error('Error fetching FCM token:', error);
-  //     }
-  //   };
+  useEffect(() => {
+    const getToken = async () => {
+      try {
+        await messaging().registerDeviceForRemoteMessages();
+        const token = await messaging().getToken();
+        console.log('Device FCM Token:', token);
+      } catch (error) {
+        console.error('Error fetching FCM token:', error);
+      }
+    };
 
-  //   getToken();
-  // }, []);
+    getToken();
+  }, []);
 
   // // Create a notification channel for Android
   // useEffect(() => {

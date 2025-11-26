@@ -1,4 +1,4 @@
-import { Alert, Dimensions, FlatList, Image, ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Dimensions, FlatList, Image, ImageBackground, Keyboard, KeyboardAvoidingView, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import MainHeader from '@/component/MainHeader';
 import { Images } from '@/assets/images/images';
@@ -261,17 +261,18 @@ const JobAlerts = ({ navigation }) => {
                             {/* <Text style={styles.headingText1}>Lass dich uber passende neue Jobs direkt informieren!</Text> */}
                             <RenderHTML
                                 contentWidth={width}
-                                baseStyle={{ marginTop: -15 }}
+                                baseStyle={{ marginTop: -8 }}
                                 source={source}
                                 tagsStyles={tagStyle}
                             />
                             {/* <Text style={styles.subHeadingText}>Wir empfehlen dir diesen Job Alert</Text> */}
                             <RenderHTML
                                 contentWidth={width}
-                                baseStyle={{ marginTop: -30 }}
+                                baseStyle={{ marginTop: -10 }}
                                 source={source1}
                                 tagsStyles={tagStyle1}
                             />
+                            {/* region wahlen */}
                             <TouchableOpacity style={{ marginTop: 0, width: '100%' }} onPress={() => setVisibleLocation(true)}>
                                 <View style={{ height: 60, backgroundColor: reCol().color.WHITE, borderRadius: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -290,6 +291,7 @@ const JobAlerts = ({ navigation }) => {
                                     <Image source={Images.forwardArrow} style={{ height: 15, width: 15, marginRight: 15 }} />
                                 </View>
                             </TouchableOpacity>
+                            {/* branche */}
                             <TouchableOpacity style={{ marginTop: 15, width: '100%' }} onPress={() => { OpenIndustryMenu() }}>
                                 <View style={{
                                     height: 60,
@@ -315,7 +317,25 @@ const JobAlerts = ({ navigation }) => {
                             </TouchableOpacity>
                             <KeyboardAvoidingView style={{ width: '95%', height: isKeyboardVisible ? '85%' : '15%' }} behavior='padding'>
                                 <View style={{ width: '95%' }}>
-                                    <Input
+                                    {/* react native InputText */}
+                                    <TextInput
+                                        placeholder={'Geben Sie Ihre E-Mail-Adresse ein'}
+                                        value={email}
+                                        onChangeText={setEmail}
+                                        style={{
+                                            height: 45,
+                                            borderColor: reCol().color.BDRCLR,
+                                            borderWidth: 1,
+                                            borderRadius: 10,
+                                            paddingHorizontal: 15,
+                                            fontSize: 16,
+                                            marginTop: 20,
+                                            backgroundColor: reCol().color.WHITE
+                                        }}
+                                        keyboardType='email-address'
+                                        returnKeyType='done'
+                                    />
+                                    {/* <Input
                                         returnKeyType='done'
                                         size={'xl'}
                                         marginTop={2}
@@ -324,7 +344,7 @@ const JobAlerts = ({ navigation }) => {
                                         placeholder={'Geben Sie Ihre E-Mail-Adresse ein'}
                                         borderColor={reCol().color.BDRCLR}
                                         onChangeText={setEmail}
-                                    />
+                                    /> */}
                                 </View>
                             </KeyboardAvoidingView>
                             <View style={{ justifyContent: 'flex-end', width: '100%', flex: 1, paddingBottom: 10 }}>
