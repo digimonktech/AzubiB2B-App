@@ -50,7 +50,7 @@ const Tabs = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Meine Daten"
+      initialRouteName="Unternehmen"
       screenOptions={{
         headerShown: true,
         tabBarActiveTintColor: activeColor,
@@ -64,7 +64,7 @@ const Tabs = () => {
           elevation: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 9,  
+          fontSize: 9,
           fontWeight: '600',
           fontFamily: fontFamily.poppinsMedium,
           flexWrap: 'nowrap',      // 🔥 FORCE SINGLE LINE
@@ -72,6 +72,24 @@ const Tabs = () => {
         },
       }}
     >
+
+      {/* --- Unternehmen  start --- */}
+      <Tab.Screen
+        name="Unternehmen"
+        component={Companies}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Image
+              source={Images.tabCompanies}
+              style={{ tintColor: color, width: size, height: size, marginBottom: 4 }}
+              resizeMode="contain"
+            />
+          ),
+          tabBarLabel: "Start",
+        }}
+      />
+
+
       {/* --- Meine Daten --- */}
       <Tab.Screen
         name="Meine Daten"
@@ -88,7 +106,7 @@ const Tabs = () => {
         }}
       />
 
-      {/* --- Aktuelle Jobs --- */}
+      {/* --- Aktuelle Jobs jobs --- */}
       <Tab.Screen
         name="Aktuelle Jobs"
         component={Jobs}
@@ -100,27 +118,12 @@ const Tabs = () => {
               resizeMode="contain"
             />
           ),
-          tabBarLabel: "Aktuelle Jobs",
+          tabBarLabel: "Jobs",
         }}
       />
 
-      {/* --- Unternehmen --- */}
-      <Tab.Screen
-        name="Unternehmen"
-        component={Companies}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <Image
-              source={Images.tabCompanies}
-              style={{ tintColor: color, width: size, height: size, marginBottom: 4 }}
-              resizeMode="contain"
-            />
-          ),
-          tabBarLabel: "Unternehmen",
-        }}
-      />
 
-      {/* --- JobWall --- */}
+      {/* --- JobWall news --- */}
       <Tab.Screen
         name="JobWall"
         component={Gallery}
@@ -132,11 +135,11 @@ const Tabs = () => {
               resizeMode="contain"
             />
           ),
-          tabBarLabel: "JobWall",
+          tabBarLabel: "News",
         }}
       />
 
-      {/* --- Meine Jobs --- */}
+      {/* --- Meine Jobs kontakt --- */}
       <Tab.Screen
         name="Meine Jobs"
         component={SaveJobs}
@@ -148,7 +151,7 @@ const Tabs = () => {
               resizeMode="contain"
             />
           ),
-          tabBarLabel: "Meine Jobs",
+          tabBarLabel: "Kontakt",
         }}
       />
     </Tab.Navigator>

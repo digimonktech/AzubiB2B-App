@@ -30,8 +30,14 @@ import { ModalLocation } from '@/component/ModalLocation';
 import { useCity } from '@/Context/CityProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
+import { useCompany } from '@/Context/CompanyId';
+import { addJobsFromCompany, removeJob } from '@/redux/reducers/companiesJobList';
+import { addCompany } from '@/redux/reducers/companiesList';
+import { set } from 'react-hook-form';
+
+
 const { height, width } = Dimensions.get('screen');
 const Jobs = props => {
   const route = useRoute();
@@ -62,15 +68,21 @@ const Jobs = props => {
   const [savedJobs, setSavedJobs] = useState([]);
   const [QRCode, setQRCode] = useState(null);
   const [newComId, setNewComId] = useState();
+  const [filteredJobs, setFilteredJobs] = useState([]);
+  const { updateCompanyId } = useCompany();
+  const dispatch = useDispatch()
 
-  // console.log('QRCode ', QRCode);
+  const jobList = useSelector(state => state.companiesJobList.list);
 
-  // console.log('job route ', route)
-  console.log('search value ', searchValue);
-  
 
-  // console.log('Company Id -> ', comId);
-  // console.log('flatData ', flatData);
+  console.log('filteredJobs ', filteredJobs);
+
+
+
+  useEffect(() => {
+    setFilteredJobs(jobList)
+  }, [jobList])
+
 
 
   const onRefresh = () => {
@@ -83,6 +95,35 @@ const Jobs = props => {
   useEffect(() => {
     getJobDetailsSearchApi();
   }, [searchValue]);
+
+  const onClearSearch = () => {
+    setSearchValue('');
+    setFilteredJobs(jobList)
+  };
+
+  const filterJobList = (word) => {
+    if (!word?.trim()) {
+      setFilteredJobs(jobList)
+      // return []; // return empty list if no search text
+    }
+
+    const lower = word.toLowerCase();
+
+    const filteredList = jobList.filter((job) =>
+      job?.jobTitle?.toLowerCase().includes(lower)
+    );
+
+    setFilteredJobs(filteredList)
+
+    // console.log('filteredList:', filteredList);
+    // return filteredList;
+  };
+
+
+
+  useEffect(() => {
+    filterJobList(searchValue)
+  }, [searchValue])
 
   // const getQRCode = async () => {
   //   try {
@@ -101,22 +142,29 @@ const Jobs = props => {
   // }
 
   useEffect(() => {
-    // getQRCode();
-    setNewComId(route.params?.companyId);
-  })
+    if (route?.params?.companyId) {
+      updateCompanyId(route.params.companyId);
+    }
+  }, [route]);
 
   const getJobDetailsSearchApi = async () => {
     try {
       if (searchValue.length >= 3 || searchValue.length == 0) {
         setLoading(true);
         let res = await getApiCall({
-          url: `admin/jobs?companyId=${newComId ? newComId : '69203c9bd1fbb34dc2a5e825'}` + '&searchValue=' + searchValue,
+          url: `admin/jobs?companyId=${route?.params?.companyId}` + '&searchValue=' + searchValue,
         });
+
+        // let res = await getApiCall({
+        //   url: `admin/jobs?companyId=${newComId || '692c5420c0e8b3044c256b1f'}&searchValue=${searchValue}`,
+        // });
+
 
         console.log('flatData search res:', res);
 
         if (res.status == 200) {
           setFlatData(res.data);
+          dispatch(addJobsFromCompany(res.data))
         }
       }
     } catch (e) {
@@ -125,8 +173,47 @@ const Jobs = props => {
 
     } finally {
       setLoading(false);
+      // setFlatData([])
     }
   };
+
+  const getCompany = async () => {
+    // let repeatIndustryParams
+    // let repeatCityParams
+    // if (selectedCityId && selectedCityId.length > 0) {
+    //     repeatCityParams = selectedCityId.map(cityId => `slectedCity=${cityId}`).join('&');
+    // }
+    // if (selectedIndustries && selectedIndustries.length > 0) {
+    //     repeatIndustryParams = selectedIndustries.map(industryId => `isFillter=${industryId}`).join('&');
+    // }
+    try {
+      setLoading(true);
+      // let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
+      let res = await getApiCall({ url: `admin/company/id/${route?.params?.companyId}` });
+      // console.log('getComapay res ', res);
+
+      if (res.status == 200) {
+        // console.log('ResponseCompany', res.data)
+        // setFlatData([res.data]);
+        dispatch(addCompany([res.data]))
+
+      }
+    } catch (e) {
+      // alert(e);
+      console.log('Get company Error ', e);
+
+    } finally {
+      // setIsRefresh(false);
+      setLoading(false);
+      // getAllIndustry();
+    }
+  };
+
+
+  useEffect(() => {
+    getCompany();
+  }, [])
+
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
@@ -197,17 +284,17 @@ const Jobs = props => {
       // Construct the full URL
       const url = `admin/jobs?companyId=${'69203c9bd1fbb34dc2a5e825'}&${queryParams}`;
 
-      console.log('Final URL:', url);
+      // console.log('Final URL:', url);
 
       // Make the API call
       let res = await getApiCall({ url });
 
-      console.log('getAllJobs res ', res);
+      // console.log('getAllJobs res ', res);
 
 
       if (res.status === 200) {
         // console.log('Response:', res.data);
-        setFlatData(res.data);
+        // setFlatData(res.data);
       }
     } catch (e) {
       console.error('Error:', e);
@@ -218,8 +305,14 @@ const Jobs = props => {
     }
   };
 
+  const removeJobfromList = (item) => {
+    console.log('removejob ', item);
+    dispatch(removeJob(item._id))
+
+  }
+
   const RenderImageComponent = ({ item, navigation }) => {
-    console.log('RenderImageComponent item:', item);
+    // console.log('RenderImageComponent item:', item);
 
     const [showLoadImage, setShowLoadImage] = useState(true);
     const handleLoad = () => {
@@ -255,11 +348,11 @@ const Jobs = props => {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                {showLoadImage && (
+                {/* {showLoadImage && (
                   <View style={styles.indicatorView}>
                     <ActivityIndicator size="small" color="gray" />
                   </View>
-                )}
+                )} */}
                 <Image
                   style={{ height: '100%', width: '100%', borderRadius: 10 }}
                   resizeMode="cover"
@@ -284,7 +377,7 @@ const Jobs = props => {
                   resizeMode="contain"
                 />
                 <Text style={styles.locTxt}>
-                  {item.city.map(city => city.name).join(', ')}
+                  {item.city.map(city => city.name).join(', ')} / {item?.address}
                 </Text>
               </View>
             )}
@@ -308,47 +401,46 @@ const Jobs = props => {
                   {item?.jobType?.jobTypeName}
                 </Text>
               </View>
-              {showIndustry && (
-                <View
-                  style={{
-                    backgroundColor: reCol().color.HRTCLR,
-                    borderRadius: 2,
-                    height: 20,
-                    width: '25%',
-                    paddingHorizontal: 5,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    left: 5,
-                  }}>
-                  {item?.industryName.industryName.length > 9 ? (
-                    <Text
-                      style={{
-                        color: '#fff',
-                        fontSize: 11,
-                        fontFamily: fontFamily.poppinsRegular,
-                      }}>
-                      {item?.industryName.industryName.slice(0, 9) + '...'}
-                    </Text>
-                  ) : (
-                    <Text
-                      style={{
-                        color: '#fff',
-                        fontSize: 11,
-                        fontFamily: fontFamily.poppinsRegular,
-                      }}>
-                      {item?.industryName.industryName}
-                    </Text>
-                  )}
-                </View>
-              )}
-              <Text style={styles.mwdTxt}>(m/w/d)</Text>
+              <View
+                style={{
+                  backgroundColor: '#4479ecff',
+                  borderRadius: 2,
+                  height: 20,
+                  width: '25%',
+                  paddingHorizontal: 5,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  left: 5,
+                }}>
+                {item?.industryName.industryName.length > 9 ? (
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontSize: 11,
+                      fontFamily: fontFamily.poppinsRegular,
+                    }}>
+                    {item?.industryName.industryName.slice(0, 9) + '...'}
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      color: '#fff',
+                      fontSize: 11,
+                      fontFamily: fontFamily.poppinsRegular,
+                    }}>
+                    {item?.industryName.industryName}
+                  </Text>
+                )}
+              </View>
+
             </View>
           </TouchableOpacity>
 
           <View style={{ width: '100%' }}>
+            {/* msg */}
             <TouchableOpacity
               style={{
-                height: '50%',
+                height: '30%',
                 width: '20%',
                 backgroundColor: reCol().color.EMLCLR,
                 borderTopRightRadius: 10,
@@ -364,9 +456,10 @@ const Jobs = props => {
                 source={require('../../assets/images/sms-tracking.png')}
               />
             </TouchableOpacity>
+            {/* like */}
             <TouchableOpacity
               style={{
-                height: '50%',
+                height: '30%',
                 width: '20%',
                 backgroundColor: reCol().color.HRTCLR,
                 borderBottomRightRadius: 10,
@@ -382,6 +475,23 @@ const Jobs = props => {
                     ? require('../../assets/images/heartFill.png')
                     : require('../../assets/images/heartEmpty.png')
                 }
+              />
+            </TouchableOpacity>
+            {/* delete */}
+            <TouchableOpacity
+              style={{
+                height: '30%',
+                width: '20%',
+                backgroundColor: reCol().color.HRTCLR,
+                borderBottomRightRadius: 10,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              onPress={() => removeJobfromList(item)}>
+              <Image
+                style={{ height: 35, width: 26 }}
+                resizeMode="contain"
+                source={require('../../assets/images/deleteAccount.png')}
               />
             </TouchableOpacity>
           </View>
@@ -527,12 +637,14 @@ const Jobs = props => {
     try {
       setLoader(true);
       let res = await getApiCall({ url: 'admin/job/' + id });
+      // console.log('message details res' , res);
+
       if (res.status == 200) {
         setJobDetails(res.data);
       }
     } catch (e) {
       // alert(e);
-      console.log('e ', e);
+      console.log('message deteail by id ', e);
 
     } finally {
       setLoader(false);
@@ -590,6 +702,9 @@ const Jobs = props => {
     );
   };
 
+
+
+
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
@@ -602,61 +717,53 @@ const Jobs = props => {
             <RefreshControl refreshing={isRefresh} onRefresh={onRefresh} />
           }>
           <ImageBackground style={styles.container} source={Images.bgImage}>
-            <View style={[styles.whiteBox, { marginTop: 5 }]}>
+
+            {/* search */}
+            <View style={[styles.whiteBox, { marginTop: 15 }]}>
               <View style={styles.fieldView}>
-                {/* react native TextInput search  */}
-                <View style={styles.inputContainer}>
-                  <Icon
-                    ml="2"
-                    size="5"
-                    as={<Image source={Images.search} />}
+
+                {/* Search Container */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingHorizontal: 4,
+                    paddingVertical: 5,
+                    backgroundColor: '#FFFFFF',
+                  }}
+                >
+                  <Image
+                    source={Images.search}
+                    style={{ width: 20, height: 20, tintColor: '#8E8E8E', marginRight: 5 }}
+                    resizeMode="contain"
                   />
-                  <TextInput 
-                    placeholder='Berufsbezeichnung, Stichwörter oder Unternehmen'
+
+                  <TextInput
+                    placeholder="Berufsbezeichnung, Stichwörter oder Unternehmen"
                     value={searchValue}
-                    onChange={(e) => setSearchValue(e.nativeEvent.text)}
-                    style={{ flex: 1, fontSize: 13, paddingVertical: 5 }}
-                    returnKeyType="done"
+                    onChangeText={setSearchValue}
+                    style={{ flex: 1, fontSize: 12, color: '#333', paddingVertical: 0 }}
+                    placeholderTextColor="#9E9E9E"
                   />
-                </View>
-                {/* <Input
-                  placeholder={
-                    'Berufsbezeichnung, Stichwörter oder Unternehmen'
-                  }
-                  style={{ fontSize: 13 }}
-                  variant={'unstyled'}
-                  size={'md'}
-                  value={searchValue}
-                  returnKeyType="done"
-                  onChangeText={txt => setSearchValue(txt)}
-                  InputLeftElement={
-                    <Icon
-                      ml="2"
-                      size="5"
-                      as={<Image source={Images.search} />}
+
+                  <TouchableOpacity style={{ paddingVertical: 4, paddingHorizontal: 8 }} onPress={onClearSearch}>
+                    <Image
+                      source={Images.modalClose}
+                      style={{ width: 20, height: 20, tintColor: '#8E8E8E', marginRight: 5 }}
+                      resizeMode="contain"
                     />
-                  }
-                  InputRightElement={
-                    searchValue ? (
-                      <TouchableOpacity onPress={() => setSearchValue('')}>
-                        <Icon
-                          ml="2"
-                          size="5"
-                          marginRight={2}
-                          as={<Image source={Images.modalClose} />}
-                        />
-                      </TouchableOpacity>
-                    ) : null
-                  }
-                  bgColor={reCol().color.WHITE}
-                  marginTop={5}
-                /> */}
+                  </TouchableOpacity>
+                </View>
+
+
               </View>
             </View>
+
+            {/* drop-down */}
             <View style={styles.infoMainView}>
               <Text
                 style={[styles.jobsNumberText, { color: reCol().color.BDRCLR }]}>
-                {flatData?.length} {'Jobs gefunden'}
+                {jobList?.length} {'Jobs gefunden'}
               </Text>
               <View style={styles.touchView}>
                 {showIndustry && (
@@ -708,12 +815,6 @@ const Jobs = props => {
               </View>
             </View>
 
-            {/* <Image
-              source={{ uri: QRCode }}
-              style={{ width: 200, height: 200 }}
-              resizeMode="contain"
-            /> */}
-
             {loading ? (
               // Render skeleton loader when loading
               <FlatList
@@ -724,9 +825,17 @@ const Jobs = props => {
             ) : (
               // Render actual data when not loading
               <FlatList
-                data={flatData}
+                data={filteredJobs}
                 renderItem={renderItem}
+                ListEmptyComponent={<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: 500 }} >
+                  <Text style={{
+                    fontSize: 18,
+                    color: '#1f1b1bff',
+                    fontWeight: 'bold',
+                  }}>No Jobs found</Text>
+                </View>}
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 800 }}
               />
             )}
           </ImageBackground>
@@ -885,6 +994,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    height: height,
   },
   whiteBox: {
     paddingHorizontal: 5,
@@ -894,7 +1004,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   fieldView: {
-    marginTop: -20,
+    // marginTop: 10,
   },
   sortDownImage: {
     marginLeft: 5,

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, ImageBackground, SafeAreaView, StyleSheet, FlatList, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl, Platform, Dimensions } from 'react-native';
+import { View, Text, Image, ImageBackground, SafeAreaView, StyleSheet, FlatList, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl, Platform, Dimensions, TextInput } from 'react-native';
 import { Images } from '@/assets/images/images';
 import { fontFamily, reCol } from '@/utils/configuration';
-import { Icon, Input } from 'native-base';
+import { Icon, Input, useNativeBase } from 'native-base';
 import Loader from '@/component/Loader';
 import MainHeader from '@/component/MainHeader';
 import { ModalAppointment } from '@/component/Modal';
@@ -14,11 +14,18 @@ import { Button } from "native-base";
 import RenderHtml from 'react-native-render-html';
 import { ModalLocation } from '@/component/ModalLocation';
 import { useCity } from '@/Context/CityProvider';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useCompany } from '@/Context/CompanyId';
+import { removeJobsByCompanyId } from '@/redux/reducers/companiesJobList';
+import { removeCompany } from '@/redux/reducers/companiesList';
+import { set } from 'react-hook-form';
+import { useNavigation } from '@react-navigation/native';
+
+const { height: Screen_Height } = Dimensions.get('window')
+
+const { height, width } = Dimensions.get('screen');
 
 const Companies = (props) => {
-    const { height, width } = Dimensions.get('screen');
-    const { navigation } = props;
     const [loading, setLoading] = useState(false);
     const [flatData, setFlatData] = useState([]);
     const [selectedIndustryName, setSelectedIndustryName] = useState([]);
@@ -35,48 +42,90 @@ const Companies = (props) => {
     const [isRefresh, setIsRefresh] = useState(false);
     const [visibleAppointments, setVisibleAppointments] = useState(false);
     const scrollViewRef = useRef(null);
+    const [filterCompaniesList, setFilterCompaniesList] = useState([])
+
+    const { companyId } = useCompany();
+
+
+
+    const companyList = useSelector(state => state.companiesList.list);
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
+
+    console.log('redux companyList ', companyList);
+
+
+    useEffect(() => {
+        setFilterCompaniesList(companyList)
+    }, [companyList])
+
+    // console.log('useContext companyId ', companyId);
+
+    console.log(
+        'searchValue',
+        searchValue?.trim().toLowerCase()
+    );
+
+
+
+
+
+
+    const onClearSearch = () => {
+        setSearchValue('');
+
+    };
+
+
+    const filterCompanies = (val) => {
+        const input = val?.trim()?.toLowerCase();
+
+        if (!input) {
+            setFilterCompaniesList(companyList); // search empty → full list
+            return;
+        }
+
+        const filtered = companyList.filter((item) => {
+            const name = item?.companyname?.trim()?.toLowerCase();
+            return name === input; // EXACT MATCH ONLY
+        });
+
+        setFilterCompaniesList(filtered);
+    };
+
+
+
+
+
+
+
+
+    useEffect(() => {
+        filterCompanies(searchValue);
+    }, [searchValue]);
+
+
+
+
+
     const onRefresh = () => {
         setIsRefresh(true);
     };
     const comId = useSelector(
         (state) => state.companyId?.companyId
     );
+
+
+
     useEffect(() => {
         if (scrollTop && scrollViewRef.current) {
             scrollViewRef.current.scrollTo({ y: 0, animated: true });
             setScrollTop(false); // Reset the scrollTop state
         }
     }, [scrollTop]);
-    // useEffect(() => {
-    //     getAllCompanies();
-    // }, [!searchValue, IndustryType, selectedCityId, isRefresh]);
     useEffect(() => {
         getAllCompanies();
     }, []);
-
-    // useEffect(() => {
-    //     getCompanySearchApi();
-    // }, [searchValue]);
-
-
-    // const getCompanySearchApi = async () => {
-    //     let repeatIndustryParams
-    //     let repeatCityParams
-
-    //     try {
-    //         if (searchValue.length >= 3 || searchValue.length == 0) {
-    //             setLoading(true);
-    //             let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
-    //             if (res.status == 200) {
-    //                 setFlatData(res.data);
-    //             }
-    //         }
-    //     } catch (e) {
-    //         alert(e);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
 
 
@@ -92,13 +141,17 @@ const Companies = (props) => {
         try {
             setLoading(true);
             // let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
-            let res = await getApiCall({ url: `admin/company/${comId}` });
+            let res = await getApiCall({ url: `admin/company/id/${companyId}` });
+            // console.log('untern getAllComapay ', res);
+
             if (res.status == 200) {
-                console.log('ResponseCompany', res.data)
+                // console.log('ResponseCompany', res.data)
                 setFlatData([res.data]);
             }
         } catch (e) {
-            alert(e);
+            // alert(e);
+            console.log('Get ALl Companies Error ', e);
+
         } finally {
             // setIsRefresh(false);
             setLoading(false);
@@ -106,7 +159,20 @@ const Companies = (props) => {
         }
     };
 
+    const removeComapnyfromList = (item) => {
+        console.log('removeComapnyfromList item ', item);
+        dispatch(removeCompany(item._id))
+
+        // remove all jobs related company
+        dispatch(removeJobsByCompanyId(item._id))
+
+    }
+
     const RenderImageComponent = ({ item }) => {
+        // console.log('RenderImageComponent item ', item);
+
+
+
         const { companyname, industryName, profileIcon } = item;
         const truncateHtml = (htmlString, maxLength) => {
             // Convert HTML string to plain text
@@ -123,20 +189,22 @@ const Companies = (props) => {
             <View>
                 <View style={styles.renderMainView}>
                     <View style={{ backgroundColor: '#fff', borderRadius: 10, height: 50, width: 50, alignItems: 'center', justifyContent: 'center', margin: 5 }}>
-                        {showLoadImage && (
+                        {/* {showLoadImage && (
                             <View style={styles.indicatorView}>
                                 <ActivityIndicator size="small" color="gray" />
                             </View>
-                        )}
-                        <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={{ uri: Globals.BASE_URL + profileIcon }} onLoad={handleLoad} />
+                        )} */}
+                        <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={profileIcon === '' ? require('../../assets/images/gallery.png') : { uri: Globals.BASE_URL + profileIcon }} />
                     </View>
-                    <TouchableOpacity style={{ width: '60%', paddingHorizontal: 10, paddingVertical: 10 }} onPress={() => navigation.navigate('DetailsCompany', { item: item })}>
+                    <TouchableOpacity onPress={() => navigation.navigate('DetailsCompany', { item: item })} style={{ width: '60%', paddingHorizontal: 10, paddingVertical: 10 }} >
+
+                        {/* onPress={() => navigation.navigate('DetailsCompany', { item: item })} */}
                         <Text style={[styles.nameTxt, { color: reCol().color.BDRCLR }]} numberOfLines={2}>{companyname}</Text>
-                        <Text style={[styles.nameTxt, { color: '#646464', fontFamily: fontFamily.poppinsRegular, marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>{industryName.industryName}</Text>
-                        <View style={[styles.locView, { marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>
+                        {/* <Text style={[styles.nameTxt, { color: '#646464', fontFamily: fontFamily.poppinsRegular, marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>{industryName?.industryName}</Text> */}
+                        {/* <View style={[styles.locView, { marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>
                             <Image source={Images.location} style={styles.locImage} resizeMode='contain' />
-                            <Text style={styles.locTxt}>{item?.city.name}</Text>
-                        </View>
+                            <Text style={styles.locTxt}>{item?.city?.name}</Text>
+                        </View> */}
                         {/* <View style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}>
                             <RenderHtml
                                 style={[styles.nameTxt, { color: '#646464', fontFamily: fontFamily.poppinsRegular }]}
@@ -145,11 +213,19 @@ const Companies = (props) => {
                         </View> */}
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={{ height: '100%', width: '20%', borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }}>
-                        {/* <Image style={{ height: 24, width: 24 }} resizeMode='contain' source={require('../../assets/images/sms-tracking.png')} />
-                        <Text style={{ color: '#646464', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{'E-Mail'}</Text> */}
-                    </TouchableOpacity>
+                    <View style={{ width: '100%' }} >
+                        <TouchableOpacity style={{ height: '50%', width: '30%', borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center', }}>
+                            <Image style={{ height: 24, width: 24 }} resizeMode='contain' source={require('../../assets/images/sms-tracking.png')} />
+                            {/* <Text style={{ color: '#646464', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{'E-Mail'}</Text> */}
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{ height: '50%', width: '30%', borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center', }} onPress={() => removeComapnyfromList(item)}>
+                            <Image style={{ height: 20, width: 20 }} resizeMode='contain' source={require('../../assets/images/deleteAccount.png')} />
+                            {/* <Text style={{ color: '#646464', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{'E-Mail'}</Text> */}
+                        </TouchableOpacity>
+                    </View>
+
                 </View>
+
             </View>
         );
     };
@@ -299,12 +375,50 @@ const Companies = (props) => {
                     refreshing={isRefresh}
                     onRefresh={onRefresh}
                 />}
-                scrollsToTop={scrollTop}>
+                scrollsToTop={scrollTop}
+            >
 
                 <ImageBackground style={styles.container} source={Images.bgImage}>
-                    {/* <View style={[styles.whiteBox, { marginTop: 5 }]}>
+                    <View style={[styles.whiteBox, { marginTop: 15 }]}>
                         <View style={styles.fieldView}>
-                            <Input
+
+                            {/* Search Container */}
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    paddingHorizontal: 4,
+                                    paddingVertical: 5,
+                                    backgroundColor: '#FFFFFF',
+                                }}
+                            >
+                                <Image
+                                    source={Images.search}
+                                    style={{ width: 20, height: 20, tintColor: '#8E8E8E', marginRight: 5 }}
+                                    resizeMode="contain"
+                                />
+
+                                <TextInput
+                                    placeholder="Berufsbezeichnung, Stichwörter oder Unternehmen"
+                                    value={searchValue}
+                                    onChangeText={setSearchValue}
+                                    style={{ flex: 1, fontSize: 12, color: '#333', paddingVertical: 0 }}
+                                    placeholderTextColor="#9E9E9E"
+                                />
+
+                                <TouchableOpacity style={{ paddingVertical: 4, paddingHorizontal: 8 }} onPress={onClearSearch}>
+                                    <Image
+                                        source={Images.modalClose}
+                                        style={{ width: 20, height: 20, tintColor: '#8E8E8E', marginRight: 5 }}
+                                        resizeMode="contain"
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+
+
+
+                            {/* <Input
                                 placeholder={'Berufsbezeichnung, Stichwörter oder Unternehmen'}
                                 style={{ fontSize: 13 }}
                                 variant={'unstyled'}
@@ -322,12 +436,14 @@ const Companies = (props) => {
                                         <TouchableOpacity onPress={() => setSearchValue('')}>
                                             <Icon ml="2" size="5" marginRight={2}
                                                 as={<Image source={Images.modalClose} />}
-                                            /></TouchableOpacity> : null} />
+                                            /></TouchableOpacity> : null} /> */}
                         </View>
-                    </View> */}
-                    {/* <View style={styles.infoMainView}>
-                        <Text style={styles.jobsNumberText}>{flatData?.length} {'Unternehmen gefunden'}</Text>
-                        <TouchableOpacity style={[styles.sortTouch,
+                    </View>
+                    <View style={styles.infoMainView}>
+                        <Text style={styles.jobsNumberText}>{filterCompaniesList?.length} {'Unternehmen gefunden'}</Text>
+
+                        {/* city drop down */}
+                        {/* <TouchableOpacity style={[styles.sortTouch,
                         { width: '32%' }]}
                             underlayColor={'#fff'} activeOpacity={0.5}
                             onPress={() => { OpenIndustryMenu() }}>
@@ -349,8 +465,8 @@ const Companies = (props) => {
 
                                 <Image source={Images.downArrow} style={styles.sortDownImage} />
                             </View>
-                        </TouchableOpacity>
-                    </View> */}
+                        </TouchableOpacity> */}
+                    </View>
                     {loading ?
                         <FlatList
                             data={[1, 1, 1]}
@@ -359,9 +475,16 @@ const Companies = (props) => {
                         />
                         :
                         <FlatList
-                            data={flatData}
+                            data={filterCompaniesList}
                             renderItem={renderItem}
                             showsVerticalScrollIndicator={false}
+                            ListEmptyComponent={<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',  height: 500 }} >
+                                <Text style={{
+                                    fontSize: 18,
+                                    color: '#1f1b1bff',
+                                    fontWeight: 'bold',
+                                }}>No Unternehmen found</Text>
+                            </View>}
                         />
                     }
                 </ImageBackground>
@@ -464,6 +587,7 @@ export default Companies;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        height: Screen_Height,
     },
     whiteBox: {
         paddingHorizontal: 5,
@@ -473,7 +597,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     fieldView: {
-        marginTop: -20
+        // marginTop: -20
     },
     dropdown: {
         paddingHorizontal: 10,

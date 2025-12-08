@@ -38,7 +38,7 @@ const SaveJobs = ({navigation}) => {
               styles.touchStyle,
               {
                 backgroundColor:
-                  selected === 0 ? reCol().color.EMLCLR : 'white',
+                 'lightblue',
               },
             ]}>
             <Text

@@ -101,7 +101,9 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
   applyData,
   deviceId,
 }) => {
-  console.log('ApplySaveData', applyData);
+  console.log('model open ');
+  
+  console.log('ApplySaveData mk', applyData);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<any>([]);
   const [selectedImage, setSelectedImage] = useState<any>([]);
@@ -192,6 +194,8 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
       'Deine Bewerbung wurde erfolgreich versendet.',
     );
   };
+
+  
   const onSubmit: any = async (values: IApply) => {
     setLoading(true);
     applyApi(values);

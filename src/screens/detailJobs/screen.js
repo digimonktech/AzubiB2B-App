@@ -683,7 +683,7 @@ const DetailsJobs = ({navigation, route}) => {
               <Image source={Images.callingIcn} style={styles.locImage} />
               <TouchableOpacity>
                 <Text style={styles.locTxt}>
-                  {item?.companyId?.phoneNumber}
+                  {item?.phoneNumber}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -988,7 +988,7 @@ const DetailsJobs = ({navigation, route}) => {
             <Divider
               orientation="vertical"
               alignSelf={'center'}
-              marginLeft={'25%'}
+              marginLeft={'10%'}
             />
             <Text
               style={[
@@ -1186,7 +1186,8 @@ const DetailsJobs = ({navigation, route}) => {
                   <View style={styles.locView}>
                     <View
                       style={{
-                        backgroundColor: reCol().color.EMLCLR,
+                        backgroundColor:  '#4bad0aff',
+                        // reCol().color.EMLCLR
                         borderRadius: 2,
                         height: 20,
                         paddingHorizontal: 5,
@@ -1204,7 +1205,8 @@ const DetailsJobs = ({navigation, route}) => {
                     </View>
                     <View
                       style={{
-                        backgroundColor: reCol().color.HRTCLR,
+                        backgroundColor: '#1991edff',
+                        // reCol().color.HRTCLR
                         borderRadius: 2,
                         height: 20,
                         width: '25%',
@@ -1236,7 +1238,7 @@ const DetailsJobs = ({navigation, route}) => {
                         </Text>
                       )}
                     </View>
-                    <Text style={styles.mwdTxt}>(m/w/d)</Text>
+                    {/* <Text style={styles.mwdTxt}>(m/w/d)</Text> */}
                   </View>
                 </View>
                 <View style={{width: '100%'}}>

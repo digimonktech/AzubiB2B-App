@@ -4,7 +4,10 @@ import ScreenProvider from './navigation/screenProvider';
 import ThemeProvider from './themeProvider';
 import SplashScreen from 'react-native-splash-screen';
 import { Provider } from 'react-redux';
-import { myStore } from './redux/store/myStore';
+// import { myStore } from './redux/store/myStore';
+import { store, persistor } from './redux/store/myStore';
+import { PersistGate } from "redux-persist/integration/react";
+
 import { CityProvider } from './Context/CityProvider';
 import { CityAlertsProvider } from './Context/CityProviderAlerts';
 import { LogBox, Alert, PermissionsAndroid, Platform, StatusBar } from 'react-native';
@@ -18,6 +21,7 @@ import {
   NotificationListner,
   requestNotificationPermission,
 } from './utils/CommonUtill';
+import { CompanyProvider } from './Context/CompanyId';
 
 // Suppress all log warnings
 LogBox.ignoreAllLogs(true);
@@ -226,26 +230,52 @@ const App: React.FC = () => {
     SplashScreen.hide();
   }, []);
 
+
+
+
+
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar barStyle="dark-content" />
-        <Provider store={myStore}>
-          <CityProvider>
-            <CityAlertsProvider>
-              {/* linking prop */}
-              <NavigationContainer linking={linking}>
-                <ThemeProvider>
-                  <ScreenProvider />
-                </ThemeProvider>
-              </NavigationContainer>
-            </CityAlertsProvider>
-          </CityProvider>
-        </Provider>
+        <StatusBar barStyle="light-content" />
+
+        {/* GLOBAL CONTEXT SHOULD WRAP NAVIGATION */}
+        <CompanyProvider>
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+              <CityProvider>
+                <CityAlertsProvider>
+                  <NavigationContainer linking={linking}>
+                    <ThemeProvider>
+                      <ScreenProvider />
+                    </ThemeProvider>
+                  </NavigationContainer>
+                </CityAlertsProvider>
+              </CityProvider>
+            </PersistGate>
+          </Provider>
+        </CompanyProvider>
+
       </SafeAreaView>
     </SafeAreaProvider>
-
   );
+
+
+
 };
 
 export default App;
+
+
+{/* <Provider store={myStore}>
+            <CityProvider>
+              <CityAlertsProvider>
+                <NavigationContainer linking={linking}>
+                  <ThemeProvider>
+                    <ScreenProvider />
+                  </ThemeProvider>
+                </NavigationContainer>
+              </CityAlertsProvider>
+            </CityProvider>
+          </Provider> */}

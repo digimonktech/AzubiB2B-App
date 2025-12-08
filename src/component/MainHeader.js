@@ -68,7 +68,10 @@ export default function MainHeader({title, press}) {
             {title}
           </Text>
         </SafeAreaView>
-        {showCity && (
+
+
+        {/* region wahlen */}
+        {/* {showCity && (
           <TouchableOpacity
             style={[
               styles.rightComponent,
@@ -105,7 +108,9 @@ export default function MainHeader({title, press}) {
               source={require('../assets/images/downArrow.png')}
             />
           </TouchableOpacity>
-        )}
+        )} */}
+
+        
         {selectedCity.length > 0 && (
           <TouchableOpacity
             style={{top: Platform.OS === 'ios' ? '6%' : 0}}

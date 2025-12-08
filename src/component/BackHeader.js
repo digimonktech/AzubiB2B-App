@@ -68,7 +68,10 @@ export default function BackHeader({ title, press }) {
                         }}>{title}</Text>}
 
                 </SafeAreaView>
-                <TouchableOpacity style={[styles.rightComponent, { width: '35%' }]} activeOpacity={0.5} onPress={press}>
+
+
+                {/* Region wählen */}
+                {/* <TouchableOpacity style={[styles.rightComponent, { width: '35%' }]} activeOpacity={0.5} onPress={press}>
                     <Image style={{ height: 20, width: 20 }} source={require('../assets/images/location.png')} />
                     <Text style={{
                         color: reCol().color.BDRCLR,
@@ -86,7 +89,9 @@ export default function BackHeader({ title, press }) {
                         }</Text>
                     <Image style={{ height: 20, width: 20, marginLeft: 0 }} source={require('../assets/images/downArrow.png')} />
 
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+
+                
                 <SafeAreaView>
                     <TouchableOpacity activeOpacity={0.5}
                         style={{ height: 35, justifyContent: 'center' }}
