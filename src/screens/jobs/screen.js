@@ -75,7 +75,10 @@ const Jobs = props => {
   const jobList = useSelector(state => state.companiesJobList.list);
 
 
-  console.log('filteredJobs ', filteredJobs);
+  // console.log('filteredJobs ', filteredJobs);
+
+  console.log('Company ID => ', route.params?.companyId);
+
 
 
 
@@ -94,7 +97,7 @@ const Jobs = props => {
 
   useEffect(() => {
     getJobDetailsSearchApi();
-  }, [searchValue]);
+  }, [searchValue, route.params?.companyId]);
 
   const onClearSearch = () => {
     setSearchValue('');
@@ -212,7 +215,7 @@ const Jobs = props => {
 
   useEffect(() => {
     getCompany();
-  }, [])
+  }, [route.params?.companyId])
 
   useFocusEffect(
     useCallback(() => {
@@ -477,6 +480,7 @@ const Jobs = props => {
                 }
               />
             </TouchableOpacity>
+            
             {/* delete */}
             <TouchableOpacity
               style={{

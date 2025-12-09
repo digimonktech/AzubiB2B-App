@@ -76,7 +76,7 @@ const DetailsCompany = ({ navigation, route }) => {
       let res = await getApiCall({
         url: `admin/jobs?companyId=${item?._id}`,
       });
-      console.log('Company Jobs res ', res);
+      // console.log('Company Jobs res ', res);
 
       if (res.status === 200) {
         setCompanyJobList(res.data)
@@ -342,6 +342,9 @@ const DetailsCompany = ({ navigation, route }) => {
   };
 
   const renderImages = ({ item }) => {
+    // console.log('renderImages ', item);
+    const imageUrl = Globals.BASE_URL + item?.file
+    console.log('imageUrl ', imageUrl);
     return (
       <TouchableOpacity
         style={[styles.locView, { marginTop: 10, marginRight: 10 }]}
@@ -349,7 +352,7 @@ const DetailsCompany = ({ navigation, route }) => {
           setDetailImage(item), setVisibleImage(true);
         }}>
         <Image
-          source={{ uri: Globals.BASE_URL + item }}
+          source={{ uri: Globals.BASE_URL + item.file }}
           style={styles.camPic}
           resizeMode="contain"
         />
@@ -638,6 +641,7 @@ const DetailsCompany = ({ navigation, route }) => {
 
         <FlatList
           data={item?.companyImages}
+          // companyImages
           renderItem={renderImages}
           keyExtractor={index => index.toString()}
           numColumns={2}
@@ -733,6 +737,9 @@ const DetailsCompany = ({ navigation, route }) => {
       setVisibleApply(true);
     }
   };
+
+  const companyProfileUrl = Globals.BASE_URL + item.profileIcon
+  console.log('companyProfile ', item);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -846,6 +853,8 @@ const DetailsCompany = ({ navigation, route }) => {
             />
           )}
 
+
+          {/* jobs */}
           <View style={{ height: 200, }}>
 
             <Text style={[styles.titleText, { marginHorizontal: 15 }]}>
@@ -857,28 +866,12 @@ const DetailsCompany = ({ navigation, route }) => {
               renderItem={renderJobCard}
               horizontal
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{paddingHorizontal: 15 }}
+              contentContainerStyle={{ paddingHorizontal: 15 }}
             />
 
           </View>
 
         </ScrollView>
-
-
-
-        {/* Jobs */}
-        {/* <Text style={[styles.titleText, { marginHorizontal: 15 }]}>
-        Jobs {companyJobList.length}
-      </Text> */}
-
-        {/* <FlatList
-        data={companyJobList || []}
-        renderItem={renderJobCard}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ padding: 10 }}
-      /> */}
-
       </ImageBackground>
 
       {/* Modals */}

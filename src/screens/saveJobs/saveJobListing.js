@@ -9,15 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
-import {Images} from '@/assets/images/images';
-import {fontFamily, reCol} from '@/utils/configuration';
-import {getApiCall} from '@/utils/ApiHandler';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Images } from '@/assets/images/images';
+import { fontFamily, reCol } from '@/utils/configuration';
+import { getApiCall } from '@/utils/ApiHandler';
 import Globals from '@/utils/Globals';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import {ModalApply, ModalSaveApply} from '@/component/Modal';
-import {useSelector} from 'react-redux';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { ModalApply, ModalSaveApply } from '@/component/Modal';
+import { useSelector } from 'react-redux';
 
 const SaveJobListing = () => {
   const [flatData, setFlatData] = useState([]);
@@ -87,7 +87,7 @@ const SaveJobListing = () => {
   const getJobsDetails = async id => {
     try {
       setLoader(true);
-      let res = await getApiCall({url: 'admin/job/' + id});
+      let res = await getApiCall({ url: 'admin/job/' + id });
       if (res.status == 200) {
         setJobDetails(res.data);
       }
@@ -98,22 +98,26 @@ const SaveJobListing = () => {
       setVisibleApply(true);
     }
   };
-  const renderItem = ({item}) => {
-    const {jobTitle, city, startDate, companyLogo} = item;
+  const renderItem = ({ item }) => {
+    const { jobTitle, city, startDate, companyLogo } = item;
     const isSaved = savedJobs.includes(item._id);
     // console.log('item', item);
     return (
       <TouchableHighlight underlayColor={'none'}>
         <View style={styles.renderMainView}>
           <TouchableOpacity
-            style={{width: '83%', paddingHorizontal: 10, paddingVertical: 10}}
+            style={{ width: '83%', paddingHorizontal: 10, paddingVertical: 10 }}
             activeOpacity={0.5}
-            onPress={() => navigation.navigate('DetailsJobs', {item: item})}>
+            onPress={() => navigation.navigate('DetailsJobs', { item: item })}>
+
+            {/* Job Title */}
             <Text
-              style={[styles.nameTxt, {color: reCol().color.BDRCLR}]}
+              style={[styles.nameTxt, { color: reCol().color.BDRCLR }]}
               numberOfLines={2}>
-              {item?.jobTitle}
+              {item?.jobTitle || 'N/A'}
             </Text>
+
+            {/* Company */}
             <View
               style={{
                 flexDirection: 'row',
@@ -131,20 +135,29 @@ const SaveJobListing = () => {
                   justifyContent: 'center',
                 }}>
                 <Image
-                  style={{height: '100%', width: '100%', borderRadius: 10}}
+                  style={{ height: '100%', width: '100%', borderRadius: 10 }}
                   resizeMode="cover"
-                  source={{uri: Globals.BASE_URL + item?.companyId.profileIcon}}
+                  source={{
+                    uri:
+                      item?.companyId?.profileIcon
+                        ? Globals.BASE_URL + item.companyId.profileIcon
+                        : undefined,
+                  }}
+                  defaultSource={Images.fallbackLogo}
                 />
               </View>
+
               <Text
                 style={[
                   styles.nameTxt,
-                  {color: reCol().color.BTNCOLOR, left: 10},
+                  { color: reCol().color.BTNCOLOR, left: 10 },
                 ]}
                 numberOfLines={2}>
-                {item?.companyId.companyname}
+                {item?.companyId?.companyname || 'Unknown Company'}
               </Text>
             </View>
+
+            {/* location  */}
             <View style={styles.locView}>
               <Image
                 source={Images.location}
@@ -152,13 +165,20 @@ const SaveJobListing = () => {
                 resizeMode="contain"
               />
               <Text style={styles.locTxt}>
-                {item.city.map(city => city.name).join(', ')}
+                {item?.city?.length > 0
+                  ? item.city
+                    .map(c => c?.name)
+                    .filter(Boolean)
+                    .join(', ')
+                  : 'No City'}
               </Text>
             </View>
+
+            {/* job type */}
             <View style={styles.locView}>
               <View
                 style={{
-                  backgroundColor: reCol().color.EMLCLR,
+                  backgroundColor: '#f3c12dff',
                   borderRadius: 2,
                   height: 20,
                   paddingHorizontal: 5,
@@ -171,12 +191,13 @@ const SaveJobListing = () => {
                     fontSize: 11,
                     fontFamily: fontFamily.poppinsRegular,
                   }}>
-                  {item?.jobType?.jobTypeName}
+                  {item?.jobType?.jobTypeName || 'N/A'}
                 </Text>
               </View>
+
               <View
                 style={{
-                  backgroundColor: reCol().color.HRTCLR,
+                  backgroundColor: '#1373d9ff',
                   borderRadius: 2,
                   height: 20,
                   width: '25%',
@@ -185,63 +206,59 @@ const SaveJobListing = () => {
                   justifyContent: 'center',
                   left: 5,
                 }}>
-                {item?.industryName.industryName.length > 9 ? (
-                  <Text
-                    style={{
-                      color: '#fff',
-                      fontSize: 11,
-                      fontFamily: fontFamily.poppinsRegular,
-                    }}>
-                    {item?.industryName.industryName.slice(0, 9) + '...'}
-                  </Text>
-                ) : (
-                  <Text
-                    style={{
-                      color: '#fff',
-                      fontSize: 11,
-                      fontFamily: fontFamily.poppinsRegular,
-                    }}>
-                    {item?.industryName.industryName}
-                  </Text>
-                )}
+                <Text
+                  style={{
+                    color: '#fff',
+                    fontSize: 11,
+                    fontFamily: fontFamily.poppinsRegular,
+                  }}>
+                  {item?.industryName?.industryName
+                    ? item.industryName.industryName.length > 9
+                      ? item.industryName.industryName.slice(0, 9) + '...'
+                      : item.industryName.industryName
+                    : 'N/A'}
+                </Text>
               </View>
-              <Text style={styles.mwdTxt}>(m/w/d)</Text>
+
+              <Text style={styles.mwdTxt}></Text>
             </View>
           </TouchableOpacity>
 
-          <View style={{width: '100%'}}>
+          {/* right side buttons */}
+          <View style={{ width: '100%' }}>
             <TouchableOpacity
               style={{
                 height: '50%',
                 width: '17%',
-                backgroundColor: reCol().color.EMLCLR,
+                backgroundColor: '#9deefeff',
                 borderTopRightRadius: 10,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
               onPress={() => {
-                getJobsDetails(item._id);
+                if (item?._id) getJobsDetails(item._id);
               }}>
               <Image
-                style={{height: 20, width: 24}}
+                style={{ height: 20, width: 24 }}
                 resizeMode="contain"
                 source={require('../../assets/images/sms-tracking.png')}
               />
             </TouchableOpacity>
+
             <TouchableOpacity
               style={{
                 height: '50%',
                 width: '17%',
-                backgroundColor: reCol().color.HRTCLR,
+                backgroundColor: '#16b5caff',
                 borderBottomRightRadius: 10,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
               onPress={() => {
-                removeAlert(item);
+                if (item) removeAlert(item);
               }}>
               <Image
-                style={{height: 20, width: 24}}
+                style={{ height: 20, width: 24 }}
                 resizeMode="contain"
                 source={require('../../assets/images/heartFill.png')}
               />
@@ -249,6 +266,7 @@ const SaveJobListing = () => {
           </View>
         </View>
       </TouchableHighlight>
+
     );
   };
   return (
@@ -317,7 +335,7 @@ const styles = StyleSheet.create({
     // marginHorizontal: 10,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
     elevation: 5,

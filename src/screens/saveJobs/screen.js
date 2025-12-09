@@ -36,10 +36,7 @@ const SaveJobs = ({navigation}) => {
             onPress={() => setSelected(0)}
             style={[
               styles.touchStyle,
-              {
-                backgroundColor:
-                 'lightblue',
-              },
+              {backgroundColor: selected === 0 ? '#0b7693ff' : 'white'},
             ]}>
             <Text
               style={[
@@ -53,10 +50,13 @@ const SaveJobs = ({navigation}) => {
             onPress={() => setSelected(1)}
             style={[
               styles.touchStyle,
+              // {
+              //   backgroundColor:
+              //     selected === 1 ? reCol().color.EMLCLR : 'white',
+              // },
               {
-                backgroundColor:
-                  selected === 1 ? reCol().color.EMLCLR : 'white',
-              },
+                backgroundColor: selected === 1 ? '#0b7693ff' : 'white'
+              }
             ]}>
             <Text
               style={[

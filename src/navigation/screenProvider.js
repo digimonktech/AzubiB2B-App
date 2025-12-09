@@ -24,6 +24,9 @@ import Gallery from '@/screens/Gallery/screen';
 import GalleryDetails from '@/screens/GalleryDetail/screen';
 import { DrawerContent } from './DrawerContent';
 import QRScreen from '@/screens/QRScreen';
+import CompanyGallery from '@/screens/Company/CompanyGallery';
+import CompanyTrems from '@/screens/Company/CompanyTrems';
+import CompanyPrivacy from '@/screens/Company/CompanyPrivacy';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -174,6 +177,9 @@ const ScreenProvider = () => (
     <Stack.Screen name="ApplicationTips" component={ApplicationTips} options={{ headerShown: true, animation: 'fade' }} />
     <Stack.Screen name="Contact" component={Contact} options={{ headerShown: true, animation: 'fade' }} />
     <Stack.Screen name="GalleryDetail" component={GalleryDetails} options={{ headerShown: true, animation: 'fade' }} />
+    <Stack.Screen name="CompanyGallery" component={CompanyGallery} options={{ headerShown: true, animation: 'fade' }} />
+    <Stack.Screen name="CompanyTrems" component={CompanyTrems} options={{ headerShown: true, animation: 'fade' }} />
+    <Stack.Screen name="CompanyPrivacy" component={CompanyPrivacy} options={{ headerShown: true, animation: 'fade' }} />
   </Stack.Navigator>
 );
 

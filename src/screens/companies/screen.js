@@ -168,67 +168,169 @@ const Companies = (props) => {
 
     }
 
-    const RenderImageComponent = ({ item }) => {
-        // console.log('RenderImageComponent item ', item);
+    const RenderImageComponent = ({ item, navigation }) => {
+        console.log('companyItem ', item);
 
-
-
-        const { companyname, industryName, profileIcon } = item;
-        const truncateHtml = (htmlString, maxLength) => {
-            // Convert HTML string to plain text
-            const plainText = htmlString.replace(/<[^>]*>?/gm, '');
-
-            // Return the first 'maxLength' characters of the plain text
-            return plainText.length > maxLength ? `${plainText.substring(0, maxLength)}...` : plainText;
-        };
+        const { companyname, profileIcon } = item;
         const [showLoadImage, setShowLoadImage] = useState(true);
-        const handleLoad = () => {
-            setShowLoadImage(false);
+        const [showMenu, setShowMenu] = useState(false);
+
+        const toggleMenu = () => setShowMenu(!showMenu);
+
+        const handleMenuSelect = (type) => {
+            setShowMenu(false);
+            if (type === "gallery") {
+                navigation.navigate('CompanyGallery', { item });
+            } else if (type === "terms") {
+                navigation.navigate('CompanyTrems');
+            } else if (type === "privacy") {
+                navigation.navigate('CompanyPrivacy');
+            }
         };
+
         return (
-            <View>
-                <View style={styles.renderMainView}>
-                    <View style={{ backgroundColor: '#fff', borderRadius: 10, height: 50, width: 50, alignItems: 'center', justifyContent: 'center', margin: 5 }}>
-                        {/* {showLoadImage && (
-                            <View style={styles.indicatorView}>
-                                <ActivityIndicator size="small" color="gray" />
-                            </View>
-                        )} */}
-                        <Image style={{ height: '100%', width: '100%', borderRadius: 10 }} resizeMode='cover' source={profileIcon === '' ? require('../../assets/images/gallery.png') : { uri: Globals.BASE_URL + profileIcon }} />
-                    </View>
-                    <TouchableOpacity onPress={() => navigation.navigate('DetailsCompany', { item: item })} style={{ width: '60%', paddingHorizontal: 10, paddingVertical: 10 }} >
-
-                        {/* onPress={() => navigation.navigate('DetailsCompany', { item: item })} */}
-                        <Text style={[styles.nameTxt, { color: reCol().color.BDRCLR }]} numberOfLines={2}>{companyname}</Text>
-                        {/* <Text style={[styles.nameTxt, { color: '#646464', fontFamily: fontFamily.poppinsRegular, marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>{industryName?.industryName}</Text> */}
-                        {/* <View style={[styles.locView, { marginTop: Platform.OS === 'ios' ? 5 : 0 }]}>
-                            <Image source={Images.location} style={styles.locImage} resizeMode='contain' />
-                            <Text style={styles.locTxt}>{item?.city?.name}</Text>
-                        </View> */}
-                        {/* <View style={{ marginTop: Platform.OS === 'ios' ? 10 : 0 }}>
-                            <RenderHtml
-                                style={[styles.nameTxt, { color: '#646464', fontFamily: fontFamily.poppinsRegular }]}
-                                source={{ html: truncateHtml(item?.description, 26) }}
-                            />
-                        </View> */}
-                    </TouchableOpacity>
-
-                    <View style={{ width: '100%' }} >
-                        <TouchableOpacity style={{ height: '50%', width: '30%', borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center', }}>
-                            <Image style={{ height: 24, width: 24 }} resizeMode='contain' source={require('../../assets/images/sms-tracking.png')} />
-                            {/* <Text style={{ color: '#646464', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{'E-Mail'}</Text> */}
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ height: '50%', width: '30%', borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center', }} onPress={() => removeComapnyfromList(item)}>
-                            <Image style={{ height: 20, width: 20 }} resizeMode='contain' source={require('../../assets/images/deleteAccount.png')} />
-                            {/* <Text style={{ color: '#646464', fontSize: 10, fontFamily: fontFamily.poppinsRegular }}>{'E-Mail'}</Text> */}
-                        </TouchableOpacity>
-                    </View>
-
+            <View
+                style={{
+                    height: 150,
+                    width: '90%',
+                    alignSelf: 'center',
+                    backgroundColor: '#fff',
+                    borderRadius: 10,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginVertical: 12,
+                    padding: 8,
+                    elevation: 3,
+                    position: 'relative', // 🆕 required for zIndex children
+                    zIndex: 1, // 🆕 lift above below cards
+                }}
+            >
+                {/* Company Image */}
+                <View
+                    style={{
+                        backgroundColor: '#fff',
+                        borderRadius: 10,
+                        height: 130,
+                        width: 100,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Image
+                        style={{ height: '100%', width: '100%', borderRadius: 10 }}
+                        resizeMode="cover"
+                        onLoadEnd={() => setShowLoadImage(false)}
+                        source={
+                            profileIcon === ''
+                                ? require('../../assets/images/gallery.png')
+                                : { uri: Globals.BASE_URL + profileIcon }
+                        }
+                    />
                 </View>
 
+                {/* Company Info */}
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => navigation.navigate('DetailsCompany', { item })}
+                    style={{ flex: 1, paddingHorizontal: 10 }}
+                >
+                    <Text
+                        style={{
+                            color: reCol().color.BDRCLR,
+                            fontFamily: fontFamily.poppinsSemiBold,
+                            fontSize: 16,
+                            fontWeight: 'bold',
+                        }}
+                        numberOfLines={2}
+                    >
+                        {item?.companyname ?? '--'}
+                    </Text>
+                </TouchableOpacity>
+
+                {/* Action Buttons */}
+                <View
+                    style={{
+                        height: '100%',
+                        justifyContent: 'space-between',
+                        paddingVertical: 10,
+                        alignItems: 'center',
+                    }}
+                >
+
+                    {/* Email */}
+                    <TouchableOpacity activeOpacity={0.7} style={{ alignItems: 'center' }}>
+                        <Image
+                            style={{ height: 22, width: 22 }}
+                            resizeMode="contain"
+                            source={require('../../assets/images/sms-tracking.png')}
+                        />
+                        <Text style={{ fontSize: 10, color: '#646464' }}>E-Mail</Text>
+                    </TouchableOpacity>
+
+                    {/* More Button */}
+                    <View style={{ alignItems: 'center' }}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={toggleMenu}>
+                            <Image
+                                style={{ height: 22, width: 22 }}
+                                resizeMode="contain"
+                                source={require('../../assets/images/mk.png')}
+                            />
+                            <Text style={{ fontSize: 10, color: '#646464' }}>More</Text>
+                        </TouchableOpacity>
+
+                        {/* Dropdown menu */}
+                        {showMenu && (
+                            <View
+                                style={{
+                                    position: 'absolute',
+                                    right: 35,
+                                    top: 0,
+                                    backgroundColor: '#fff',
+                                    elevation: 5,
+                                    borderRadius: 6,
+                                    padding: 6,
+                                    width: 100,
+                                    zIndex: 10,
+                                    zIndex: 999, // 🆕 ensure dropdown stays on top
+                                }}
+                            >
+                                {[
+                                    { label: 'Gallery', key: 'gallery' },
+                                    { label: 'Terms', key: 'terms' },
+                                    { label: 'Privacy', key: 'privacy' },
+                                ].map((m, i) => (
+                                    <TouchableOpacity
+                                        key={i}
+                                        onPress={() => handleMenuSelect(m.key)}
+                                        style={{
+                                            paddingVertical: 6,
+                                        }}
+                                    >
+                                        <Text style={{ fontSize: 14, color: '#222', fontWeight: '600' }}>{m.label}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
+                        )}
+                    </View>
+
+                    {/* Delete */}
+                    <TouchableOpacity activeOpacity={0.7} style={{ alignItems: 'center' }}>
+                        <Image
+                            style={{ height: 22, width: 22 }}
+                            resizeMode="contain"
+                            source={require('../../assets/images/deleteAccount.png')}
+                        />
+                        <Text style={{ fontSize: 10, color: '#646464' }}>Delete</Text>
+                    </TouchableOpacity>
+
+                </View>
             </View>
         );
     };
+
+
+
+
     const renderItem = ({ item }) => {
         return <RenderImageComponent item={item} navigation={navigation} />;
     };
@@ -478,7 +580,7 @@ const Companies = (props) => {
                             data={filterCompaniesList}
                             renderItem={renderItem}
                             showsVerticalScrollIndicator={false}
-                            ListEmptyComponent={<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',  height: 500 }} >
+                            ListEmptyComponent={<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: 500 }} >
                                 <Text style={{
                                     fontSize: 18,
                                     color: '#1f1b1bff',
