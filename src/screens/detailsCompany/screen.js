@@ -37,6 +37,7 @@ import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 
 
+const COMPANY_DESCRIPTION = 'company is a leading logistics and supply chain management organization dedicated to delivering safe, reliable, and cost-efficient cargo solutions. With years of industry experience, we specialize in transporting goods across multiple sectors including manufacturing, retail, construction, and consumer services. Our mission is to build strong connections between businesses and their customers by ensuring timely movement of goods with complete transparency.'
 
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window')
@@ -625,27 +626,49 @@ const DetailsCompany = ({ navigation, route }) => {
         </TouchableOpacity>
         <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>{'Webseite'}</Text>
         <TouchableOpacity onPress={() => Linking.openURL(item?.websiteLink)}>
-          <Text style={[styles.aboutComText, { color: '#222' }]}>{item?.websiteLink ?? '--'}</Text>
+          {/* <Text style={[styles.aboutComText, { color: '#222' }]}>{item?.websiteLink ?? '--'}</Text> */}
+          <Text style={[styles.aboutComText, { color: '#222' }]}>{'https://www.britannica.com/topic/German-language'}</Text>
+
         </TouchableOpacity>
         <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
           {'Telefonnummer'}
         </Text>
         <TouchableOpacity>
-          <Text style={styles.aboutComText}>{item?.phoneNumber ?? '--'}</Text>
+          {/* <Text style={styles.aboutComText}>{item?.phoneNumber ?? '--'}</Text> */}
+          <Text style={styles.aboutComText}>6232762406</Text>
         </TouchableOpacity>
-        <RenderHTML
+        {/* <RenderHTML
           style={styles.aboutComText}
           enableExperimentalMarginCollapsing={true}
           source={{ html: cleanedData }}
-        />
+        /> */}
 
-        <FlatList
+
+        <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
+          {'Discription'}
+        </Text>
+
+        <Text style={styles.aboutComText}>
+          {item?.companyname ?? 'some'} {COMPANY_DESCRIPTION}
+        </Text>
+
+
+        {/* social links */}
+        <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
+          {'Social links'}
+        </Text>
+
+        <View>
+          
+        </View>
+
+        {/* <FlatList
           data={item?.companyImages}
           // companyImages
           renderItem={renderImages}
           keyExtractor={index => index.toString()}
           numColumns={2}
-        />
+        /> */}
 
         {item?.videoLink != '' && (
           <YoutubePlayer

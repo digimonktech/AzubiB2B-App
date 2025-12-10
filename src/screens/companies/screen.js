@@ -185,6 +185,10 @@ const Companies = (props) => {
                 navigation.navigate('CompanyTrems');
             } else if (type === "privacy") {
                 navigation.navigate('CompanyPrivacy');
+            } else if (type === "JobWall") {
+                navigation.navigate('CompanyJobWall')
+            } else if (type === 'kontakt') {
+                navigation.navigate('CompanyKontakt')
             }
         };
 
@@ -284,7 +288,7 @@ const Companies = (props) => {
                                 style={{
                                     position: 'absolute',
                                     right: 35,
-                                    top: 0,
+                                    top: -25,
                                     backgroundColor: '#fff',
                                     elevation: 5,
                                     borderRadius: 6,
@@ -296,8 +300,9 @@ const Companies = (props) => {
                             >
                                 {[
                                     { label: 'Gallery', key: 'gallery' },
-                                    { label: 'Terms', key: 'terms' },
-                                    { label: 'Privacy', key: 'privacy' },
+                                    { label: 'JobWall', key: 'JobWall' },
+                                    { label: 'Privacy Policy', key: 'privacy' },
+                                    { label: 'Kontakt', key: 'kontakt' },
                                 ].map((m, i) => (
                                     <TouchableOpacity
                                         key={i}
@@ -306,7 +311,7 @@ const Companies = (props) => {
                                             paddingVertical: 6,
                                         }}
                                     >
-                                        <Text style={{ fontSize: 14, color: '#222', fontWeight: '600' }}>{m.label}</Text>
+                                        <Text style={{ fontSize: 12, color: '#222', fontWeight: '400' }} numberOfLines={1}>{m.label}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>

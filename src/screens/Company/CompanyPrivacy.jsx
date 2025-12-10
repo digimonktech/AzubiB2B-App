@@ -15,7 +15,7 @@ const CompanyPrivacy = () => {
     
       React.useLayoutEffect(() => {
         navigation.setOptions({
-          header: () => <MainHeader title={'Privacy'} press={() => { setVisibleLocation(true) }} />,
+          header: () => <MainHeader title={'Privacy Policy'} press={() => { setVisibleLocation(true) }} />,
         });
       }, [navigation]);
     return (

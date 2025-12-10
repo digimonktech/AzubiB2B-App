@@ -27,6 +27,8 @@ import QRScreen from '@/screens/QRScreen';
 import CompanyGallery from '@/screens/Company/CompanyGallery';
 import CompanyTrems from '@/screens/Company/CompanyTrems';
 import CompanyPrivacy from '@/screens/Company/CompanyPrivacy';
+import CompanyJobWall from '@/screens/Company/CompanyJobWall';
+import CompanyKontakt from '@/screens/Company/CompanyKontakt';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -154,7 +156,7 @@ const Tabs = () => {
               resizeMode="contain"
             />
           ),
-          tabBarLabel: "Kontakt",
+          tabBarLabel: "Meine Jobs",
         }}
       />
     </Tab.Navigator>
@@ -180,6 +182,9 @@ const ScreenProvider = () => (
     <Stack.Screen name="CompanyGallery" component={CompanyGallery} options={{ headerShown: true, animation: 'fade' }} />
     <Stack.Screen name="CompanyTrems" component={CompanyTrems} options={{ headerShown: true, animation: 'fade' }} />
     <Stack.Screen name="CompanyPrivacy" component={CompanyPrivacy} options={{ headerShown: true, animation: 'fade' }} />
+    <Stack.Screen name="CompanyJobWall" component={CompanyJobWall} options={{ headerShown: true, animation: 'fade' }} />
+    <Stack.Screen name="CompanyKontakt" component={CompanyKontakt} options={{ headerShown: true, animation: 'fade' }} />
+
   </Stack.Navigator>
 );
 
