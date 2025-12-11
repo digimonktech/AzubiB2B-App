@@ -20,6 +20,7 @@ import { removeJobsByCompanyId } from '@/redux/reducers/companiesJobList';
 import { removeCompany } from '@/redux/reducers/companiesList';
 import { set } from 'react-hook-form';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const { height: Screen_Height } = Dimensions.get('window')
 
@@ -43,8 +44,54 @@ const Companies = (props) => {
     const [visibleAppointments, setVisibleAppointments] = useState(false);
     const scrollViewRef = useRef(null);
     const [filterCompaniesList, setFilterCompaniesList] = useState([])
+    const [allCompanies, setAllCompanies] = useState([])
+
+    // console.log('allCompanies =>', allCompanies);
+
+    const findComapnyInAllCompanies = (val) => {
+        console.log('Call All Companies filter => ', val);
+        
+        const input = val?.trim()?.toLowerCase();
+
+        // if (!input) {
+        //     setFilterCompaniesList(allCompanies); // search empty → full list
+        //     return;
+        // }
+
+        const filtered = allCompanies.filter((item) => {
+            const name = item?.companyname?.trim()?.toLowerCase();
+            return name === input; // EXACT MATCH ONLY
+        });
+
+        console.log('findout company => ', filtered);
+
+
+        // setFilterCompaniesList(filtered);
+    }
+
 
     const { companyId } = useCompany();
+
+    const fetchAllCompanies = async () => {
+        try {
+            const response = await axios.get(
+                'https://azubi.api.digimonk.net/api/v1/admin/companies'
+            );
+
+            const data = response?.data?.data?.companies
+
+            setAllCompanies(data?.companies)
+
+            // console.log('All Companies  => ', data);
+
+        } catch (error) {
+            console.log('Error fetch all companies => ', error.message);
+        }
+    };
+
+    useEffect(() => {
+        fetchAllCompanies();
+    }, []);
 
 
 
@@ -52,7 +99,7 @@ const Companies = (props) => {
     const dispatch = useDispatch();
     const navigation = useNavigation();
 
-    console.log('redux companyList ', companyList);
+    // console.log('redux companyList ', companyList);
 
 
     useEffect(() => {
@@ -101,6 +148,7 @@ const Companies = (props) => {
 
 
     useEffect(() => {
+        findComapnyInAllCompanies(searchValue)
         filterCompanies(searchValue);
     }, [searchValue]);
 
@@ -169,7 +217,7 @@ const Companies = (props) => {
     }
 
     const RenderImageComponent = ({ item, navigation }) => {
-        console.log('companyItem ', item);
+        // console.log('companyItem ', item);
 
         const { companyname, profileIcon } = item;
         const [showLoadImage, setShowLoadImage] = useState(true);
@@ -188,7 +236,7 @@ const Companies = (props) => {
             } else if (type === "JobWall") {
                 navigation.navigate('CompanyJobWall')
             } else if (type === 'kontakt') {
-                navigation.navigate('CompanyKontakt')
+                navigation.navigate('CompanyKontakt', { item })
             }
         };
 
@@ -299,7 +347,6 @@ const Companies = (props) => {
                                 }}
                             >
                                 {[
-                                    { label: 'Gallery', key: 'gallery' },
                                     { label: 'JobWall', key: 'JobWall' },
                                     { label: 'Privacy Policy', key: 'privacy' },
                                     { label: 'Kontakt', key: 'kontakt' },
@@ -319,7 +366,7 @@ const Companies = (props) => {
                     </View>
 
                     {/* Delete */}
-                    <TouchableOpacity activeOpacity={0.7} style={{ alignItems: 'center' }}>
+                    <TouchableOpacity activeOpacity={0.7} style={{ alignItems: 'center' }} onPress={() => removeComapnyfromList(item)}>
                         <Image
                             style={{ height: 22, width: 22 }}
                             resizeMode="contain"
@@ -376,7 +423,7 @@ const Companies = (props) => {
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
-            header: () => <MainHeader title={'Unternehmen'} press={() => { setVisibleLocation(true) }} />,
+            header: () => <MainHeader title={'Start'} press={() => { setVisibleLocation(true) }} />,
         });
     }, [navigation]);
 
@@ -478,10 +525,10 @@ const Companies = (props) => {
                 ref={scrollViewRef}
                 style={styles.container}
                 showsVerticalScrollIndicator={false}
-                refreshControl={<RefreshControl
-                    refreshing={isRefresh}
-                    onRefresh={onRefresh}
-                />}
+                // refreshControl={<RefreshControl
+                //     refreshing={isRefresh}
+                //     onRefresh={onRefresh}
+                // />}
                 scrollsToTop={scrollTop}
             >
 

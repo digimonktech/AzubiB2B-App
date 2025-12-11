@@ -52,13 +52,13 @@ export default function BackHeader({ title, press }) {
                     }}>
                         <MaterialIcons name='chevron-left' size={20} color={reCol().color.BDRCLR} underlayColor={'#FFFFFF'} />
                     </TouchableOpacity>
-                    {title.length > 12 ? <Text style={{
+                    {title.length > 22 ? <Text style={{
                         left: 20,
                         color: reCol().color.BDRCLR,
                         fontFamily: fontFamily.poppinsSeBold,
                         fontSize: 14,
                         width: selectedCity.length > 0 ? width / 2.5 : width / 2.4
-                    }}>{title.slice(0, 12) + '...'}</Text> :
+                    }}>{title.slice(0, 22) + '...'}</Text> :
                         <Text style={{
                             left: 20,
                             color: reCol().color.BDRCLR,
@@ -91,7 +91,7 @@ export default function BackHeader({ title, press }) {
 
                 </TouchableOpacity> */}
 
-                
+
                 <SafeAreaView>
                     <TouchableOpacity activeOpacity={0.5}
                         style={{ height: 35, justifyContent: 'center' }}

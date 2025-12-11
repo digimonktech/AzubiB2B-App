@@ -29,6 +29,9 @@ import CompanyTrems from '@/screens/Company/CompanyTrems';
 import CompanyPrivacy from '@/screens/Company/CompanyPrivacy';
 import CompanyJobWall from '@/screens/Company/CompanyJobWall';
 import CompanyKontakt from '@/screens/Company/CompanyKontakt';
+import News from '@/screens/News/News';
+import NewsDetails from '@/screens/News/NewsDetails';
+import CompanyNews from '@/screens/News/CompanyNews';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -131,7 +134,7 @@ const Tabs = () => {
       {/* --- JobWall news --- */}
       <Tab.Screen
         name="JobWall"
-        component={Gallery}
+        component={News}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Image
@@ -184,6 +187,9 @@ const ScreenProvider = () => (
     <Stack.Screen name="CompanyPrivacy" component={CompanyPrivacy} options={{ headerShown: true, animation: 'fade' }} />
     <Stack.Screen name="CompanyJobWall" component={CompanyJobWall} options={{ headerShown: true, animation: 'fade' }} />
     <Stack.Screen name="CompanyKontakt" component={CompanyKontakt} options={{ headerShown: true, animation: 'fade' }} />
+    <Stack.Screen name="NewsDetails" component={NewsDetails} options={{ headerShown: true, animation: 'fade' }} />
+    <Stack.Screen name="CompanyNews" component={CompanyNews} options={{ headerShown: true, animation: 'fade' }} />
+
 
   </Stack.Navigator>
 );

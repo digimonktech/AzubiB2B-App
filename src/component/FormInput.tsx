@@ -1,4 +1,4 @@
-import { FormControl, Input, WarningOutlineIcon } from 'native-base'
+import { FormControl, WarningOutlineIcon } from 'native-base'
 import React from 'react'
 import { FieldValues, useController, UseControllerProps } from 'react-hook-form'
 import { TextStyle, ViewStyle, KeyboardTypeOptions, TextInput } from 'react-native';

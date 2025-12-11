@@ -42,6 +42,23 @@ const COMPANY_DESCRIPTION = 'company is a leading logistics and supply chain man
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window')
 
+const SOCIAL_ICONS = [
+  {
+    icon: require('../../assets/images/instagram.png'),
+    label: 'Instagram'
+  },
+
+  {
+    icon: require('../../assets/images/faceBook.png'),
+    label: 'FaceBook'
+  },
+
+  {
+    icon: require('../../assets/images/X.png'),
+    label: 'X'
+  }
+]
+
 const DetailsCompany = ({ navigation, route }) => {
   const [visibleAppointments, setVisibleAppointments] = useState(false);
   const [visibleApply, setVisibleApply] = useState(false);
@@ -653,14 +670,8 @@ const DetailsCompany = ({ navigation, route }) => {
         </Text>
 
 
-        {/* social links */}
-        <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
-          {'Social links'}
-        </Text>
 
-        <View>
-          
-        </View>
+
 
         {/* <FlatList
           data={item?.companyImages}
@@ -685,6 +696,90 @@ const DetailsCompany = ({ navigation, route }) => {
             }}
           />
         )}
+
+        {/* social links */}
+        <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
+          {'Social links'}
+        </Text>
+
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginTop: 15,
+            paddingHorizontal: 10,
+          }}
+        >
+          {SOCIAL_ICONS.map((social) => (
+            <TouchableOpacity
+              key={social.label}
+              activeOpacity={0.7}
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingVertical: 10,
+                borderRadius: 10,
+              }}
+            >
+              <Image
+                source={social.icon}
+                style={{
+                  width: 45,
+                  height: 45,
+                  marginBottom: 6,
+                  resizeMode: 'contain',
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '600',
+                  color: '#000',
+                  textAlign: 'center',
+                }}
+              >
+                {social.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+
+        {/* gallery */}
+        <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
+          {'Gallery'}
+        </Text>
+
+        <FlatList
+          data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+          keyExtractor={(item) => item.toString()}
+          numColumns={3}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                flex: 1,
+                alignItems: 'center',
+                marginVertical: 8,
+              }}
+            >
+              <Image
+                source={require('../../assets/images/gallery.png')}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 10,
+                  resizeMode: 'cover',
+                }}
+              />
+            </View>
+          )}
+          contentContainerStyle={{
+            paddingVertical: 10,
+            gap: 8,
+          }}
+        />
+
 
         <TouchableOpacity
           style={{

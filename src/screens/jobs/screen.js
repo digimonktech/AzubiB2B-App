@@ -628,7 +628,7 @@ const Jobs = props => {
     navigation.setOptions({
       header: () => (
         <MainHeader
-          title={'Aktuelle Jobs'}
+          title={'Jobs'}
           press={() => {
             setVisibleLocation(true);
           }}

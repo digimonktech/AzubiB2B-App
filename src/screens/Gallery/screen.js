@@ -411,7 +411,7 @@ const Gallery = ({navigation}) => {
     navigation.setOptions({
       header: () => (
         <MainHeader
-          title={'JobWall'}
+          title={'News'}
           press={() => {
             setVisibleLocation(true);
           }}
