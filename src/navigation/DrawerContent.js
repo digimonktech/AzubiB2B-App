@@ -105,7 +105,7 @@ schau dir die AzubiRegional APP an: hier findest du regionale TOP-Unternehmen mi
             })
           }>
           <Image
-            source={require('../assets/images/azr-logo.png')}
+            source={require('../assets/images/JobLogo.jpeg')}
             // source={{ uri: Globals.BASE_URL + dynamicLogo }}
             style={styles.logo}
             resizeMode="contain"
@@ -286,7 +286,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: '100%',
-    height: 50,
+    height: 100,
+    marginLeft: 15,
   },
 
   /** CONTENT */

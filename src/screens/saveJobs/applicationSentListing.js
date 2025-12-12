@@ -28,11 +28,11 @@ const ApplicationSentListing = () => {
   const getAllJobs = async () => {
     try {
       let res = await getApiCall({
-        url: 'admin/applications?pageNo=1&recordPerPage=10&companyId=' + comId,
+        url: 'admin/applications',
       });
 
       if (res.status == 200) {
-        // console.log('ResponseDataofapplylistings', res.data);
+        console.log('ResponseDataofapplylistings', res.data);
         setFlatData(res.data);
       }
     } catch (e) {
@@ -95,11 +95,14 @@ const ApplicationSentListing = () => {
     ]);
   };
   const renderItem = ({item}) => {
+    // console.log('Item ', item);
+    
     // console.log('...ITEM...', item, '...ITEM...');
     // const isSaved = savedJobs.includes(item._id);
     return (
       <TouchableHighlight underlayColor={'none'}>
         <View style={styles.renderMainView}>
+          {/* job title */}
           <TouchableOpacity
             style={{
               width: '82%',
@@ -151,18 +154,21 @@ const ApplicationSentListing = () => {
                 {item?.companyId?.companyname}
               </Text>
             </View>
+
+            {/* location */}
             <View style={styles.locView}>
               <Image
                 source={Images.location}
                 style={styles.locImage}
                 resizeMode="contain"
               />
-              <Text style={styles.locTxt}>{item?.jobId.city[0]?.name}</Text>
+              <Text style={styles.locTxt}>{item?.jobId.city[0]?.name ?? 'No City'}</Text>
             </View>
             <View style={styles.locView}>
               <View
                 style={{
-                  backgroundColor: reCol().color.EMLCLR,
+                  // backgroundColor: reCol().color.EMLCLR,
+                  backgroundColor: '#efcb2aff',
                   borderRadius: 2,
                   height: 20,
                   paddingHorizontal: 5,
@@ -180,7 +186,8 @@ const ApplicationSentListing = () => {
               </View>
               <View
                 style={{
-                  backgroundColor: reCol().color.HRTCLR,
+                  // backgroundColor: reCol().color.HRTCLR,
+                  backgroundColor: '#1587d3ff',
                   borderRadius: 2,
                   height: 20,
                   width: '25%',
@@ -211,14 +218,17 @@ const ApplicationSentListing = () => {
             </View>
           </TouchableOpacity>
 
+
+          {/* actions */}
           <View style={{width: '100%'}}>
             <TouchableOpacity
               style={{
                 height: '50%',
                 width: '18.2%',
-                backgroundColor: reCol().color.EMLCLR,
+                // backgroundColor: reCol().color.EMLCLR,
+                backgroundColor: '#5ee7fcff',
                 borderTopRightRadius: 10,
-                borderBottomRightRadius: 10,
+                // borderBottomRightRadius: 10,
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
@@ -231,11 +241,14 @@ const ApplicationSentListing = () => {
                 source={require('../../assets/images/sms-tracking.png')}
               />
             </TouchableOpacity>
+
+            {/* X */}
             <TouchableOpacity
               style={{
                 height: '50%',
                 width: '18.2%',
-                backgroundColor: reCol().color.HRTCLR,
+                // backgroundColor: reCol().color.HRTCLR,
+                backgroundColor: '#0ba1c6ff',
                 borderBottomRightRadius: 10,
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -316,7 +329,8 @@ const styles = StyleSheet.create({
   },
   locTxt: {
     left: 5,
-    color: reCol().color.BLACK,
+    // color: reCol().color.BLACK,
+    color: '#222',
     fontFamily: fontFamily.poppinsLight,
     fontSize: 10,
     top: 3,

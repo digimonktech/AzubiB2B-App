@@ -641,7 +641,7 @@ const Jobs = props => {
     try {
       setLoader(true);
       let res = await getApiCall({ url: 'admin/job/' + id });
-      // console.log('message details res' , res);
+      console.log('message details res' , res);
 
       if (res.status == 200) {
         setJobDetails(res.data);

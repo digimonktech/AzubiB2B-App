@@ -240,7 +240,7 @@ export default function SplashScreen({ navigation }) {
       resizeMode="cover"
       source={require('../assets/images/Onboarding.png')}>
       <Image
-        source={require('../assets/images/azr-logo-1.png')}
+        source={require('../assets/images/NewSplashLogo.png')}
         resizeMode="contain"
         style={{ height: '30%', width: '70%' }}
       />

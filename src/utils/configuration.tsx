@@ -32,7 +32,8 @@ export const screenName = {
   DETAILSCOMPANY: 'DetailsCompany',
 };
 export const urlApi = {
-  DEVELOPMENT: 'http://digimonk.net:2751/api/v1/',
+  // DEVELOPMENT: 'http://digimonk.net:2751/api/v1/',
+  DEVELOPMENT: 'https://azubi.api.digimonk.net/api/v1/',
   DEVELOPMENTIMAGE: 'https://api.azubiregional.de/',
 };
 export const endPoint = {

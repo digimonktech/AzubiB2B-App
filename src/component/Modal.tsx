@@ -564,7 +564,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
   applyData,
   deviceId,
 }) => {
-  // console.log('applyJobDataModal', applyData);
+  console.log('applyJobDataModal', applyData);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<any>([]);
   const [coverLabel, setCoverLabel] = useState<any>([]);
@@ -659,14 +659,14 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
     setValue('Cover', content);
   }, [flag, isfocused]);
   const applyApi = async (values: IApply) => {
-    // console.log('Called')
+    console.log('Called applyApi ')
     const body: any = new FormData();
     body.append('jobId', applyData._id);
     body.append('name', values.Name);
     body.append('email', values.Email);
     body.append('phone', values.Mobile || '');
     body.append('aboutMe', values.About || '');
-    body.append('companyId', comId);
+    body.append('companyId', applyData.companyId._id);
     body.append('coverLetter', 'Content job details');
     // body.append('coverLetter', content);
     // { selectedImage ? body.append('attachment', selectedImage) : null }
@@ -675,7 +675,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
         body.append('attachement', image);
       });
     }
-    // console.log('PayLoad', body);
+    console.log('PayLoad', body);
     const response = await networkWithoutToken.createMobileOtp().applyJob(body);
     console.log('ResponseOfApplyApi', response?.data);
     setLoading(false);
@@ -987,7 +987,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
                     justifyContent: 'center',
                     height: 50,
                     backgroundColor: isChecked
-                      ? reCol().color.BTNCOLOR
+                      ? '#f39632ff'
                       : 'gray',
                     borderRadius: 10,
                     top: 15,
