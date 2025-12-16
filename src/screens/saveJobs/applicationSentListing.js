@@ -9,15 +9,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {Images} from '@/assets/images/images';
-import {fontFamily, reCol} from '@/utils/configuration';
+import React, { useEffect, useState } from 'react';
+import { Images } from '@/assets/images/images';
+import { fontFamily, reCol } from '@/utils/configuration';
 import Globals from '@/utils/Globals';
-import {useSelector} from 'react-redux';
-import {delApiCall, getApiCall, postApiCall} from '@/utils/ApiHandler';
+import { useSelector } from 'react-redux';
+import { delApiCall, getApiCall, postApiCall } from '@/utils/ApiHandler';
 import Loader from '@/component/Loader';
-import {ModalSaveApply} from '@/component/Modal';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import { ModalSaveApply } from '@/component/Modal';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
 const ApplicationSentListing = () => {
   const navigation = useNavigation();
@@ -71,7 +71,7 @@ const ApplicationSentListing = () => {
   const getJobsDetails = async id => {
     try {
       setLoader(true);
-      let res = await getApiCall({url: 'admin/job/' + id});
+      let res = await getApiCall({ url: 'admin/job/' + id });
       if (res.status == 200) {
         setJobDetails(res.data);
       }
@@ -94,9 +94,9 @@ const ApplicationSentListing = () => {
       },
     ]);
   };
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     // console.log('Item ', item);
-    
+
     // console.log('...ITEM...', item, '...ITEM...');
     // const isSaved = savedJobs.includes(item._id);
     return (
@@ -117,7 +117,7 @@ const ApplicationSentListing = () => {
               })
             }>
             <Text
-              style={[styles.nameTxt, {color: reCol().color.BDRCLR}]}
+              style={[styles.nameTxt, { color: reCol().color.BDRCLR }]}
               numberOfLines={2}>
               {item?.jobId.jobTitle}
             </Text>
@@ -138,7 +138,7 @@ const ApplicationSentListing = () => {
                   justifyContent: 'center',
                 }}>
                 <Image
-                  style={{height: '100%', width: '100%', borderRadius: 10}}
+                  style={{ height: '100%', width: '100%', borderRadius: 10 }}
                   resizeMode="cover"
                   source={{
                     uri: Globals.BASE_URL + item?.companyId?.profileIcon,
@@ -148,7 +148,7 @@ const ApplicationSentListing = () => {
               <Text
                 style={[
                   styles.nameTxt,
-                  {color: reCol().color.BTNCOLOR, left: 10},
+                  { color: reCol().color.BTNCOLOR, left: 10 },
                 ]}
                 numberOfLines={2}>
                 {item?.companyId?.companyname}
@@ -220,7 +220,7 @@ const ApplicationSentListing = () => {
 
 
           {/* actions */}
-          <View style={{width: '100%'}}>
+          <View style={{ width: '100%' }}>
             <TouchableOpacity
               style={{
                 height: '50%',
@@ -236,7 +236,7 @@ const ApplicationSentListing = () => {
                 getJobsDetails(item?.jobId?._id);
               }}>
               <Image
-                style={{height: 20, width: 24}}
+                style={{ height: 20, width: 24 }}
                 resizeMode="contain"
                 source={require('../../assets/images/sms-tracking.png')}
               />
@@ -255,7 +255,7 @@ const ApplicationSentListing = () => {
               }}
               onPress={() => removeAlert(item._id)}>
               <Image
-                style={{height: 30, width: 30}}
+                style={{ height: 30, width: 30 }}
                 resizeMode="contain"
                 source={require('../../assets/images/close.png')}
               />
@@ -273,6 +273,20 @@ const ApplicationSentListing = () => {
             data={flatData}
             renderItem={renderItem}
             showsVerticalScrollIndicator={false}
+            ListEmptyComponent={<View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 500,
+              }}
+            >
+              <Text style={{
+                color: '#222',
+                fontWeight: '500',
+                fontSize: 16
+              }} >No Bewerbungen</Text>
+            </View>}
           />
         </View>
       </ImageBackground>
@@ -309,7 +323,7 @@ const styles = StyleSheet.create({
     // marginHorizontal: 10,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
     elevation: 5,

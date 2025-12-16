@@ -7384,13 +7384,18 @@ react-native-swiper-flatlist@^3.2.3:
   resolved "https://registry.yarnpkg.com/react-native-swiper-flatlist/-/react-native-swiper-flatlist-3.2.5.tgz#d69030e2986b8a322ff274ad2896ca809c1ebe0e"
   integrity sha512-pP6Yioo//PgxBf1Ac/utPaAMaCTXF0QW/Q55hQofGtE7B5/hL0nb9u4cXEdgGJslx0oBCkir4AJAbbD5FpWnaA==
 
-react-native-vector-icons@^10.0.3:
+react-native-vector-icons@^10.3.0:
   version "10.3.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-10.3.0.tgz#de440f2627a2ed1079ce3b99d5b9d4f86894df28"
   integrity sha512-IFQ0RE57819hOUdFvgK4FowM5aMXg7C7XKsuGLevqXkkIJatc3QopN0wYrb2IrzUgmdpfP+QVIbI3S6h7M0btw==
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-vision-camera@^4.7.3:
+  version "4.7.3"
+  resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-4.7.3.tgz#ed03cedabcaec54774f5aa40e69afa30069924d4"
+  integrity sha512-g1/neOyjSqn1kaAa2FxI/qp5KzNvPcF0bnQw6NntfbxH6tm0+8WFZszlgb5OV+iYlB6lFUztCbDtyz5IpL47OA==
 
 react-native-webview@^13.14.1:
   version "13.16.0"
