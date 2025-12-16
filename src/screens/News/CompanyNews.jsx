@@ -26,7 +26,7 @@ const CompanyNews = () => {
 
     const [news, setNews] = useState([]);
 
-    // console.log('CompanyNews => ', news);
+    console.log('CompanyNews => ', news);
 
 
     const fetchCompanyAllNews = async () => {

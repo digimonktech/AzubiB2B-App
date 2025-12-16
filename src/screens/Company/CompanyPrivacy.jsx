@@ -9,15 +9,16 @@ import React from 'react';
 import { fontFamily, reCol } from '@/utils/configuration'; // if exists
 import { useNavigation } from '@react-navigation/native';
 import MainHeader from '@/component/MainHeader';
+import BackHeader from '@/component/BackHeader';
 
 const CompanyPrivacy = () => {
     const navigation = useNavigation();
-    
-      React.useLayoutEffect(() => {
+
+    React.useLayoutEffect(() => {
         navigation.setOptions({
-          header: () => <MainHeader title={'Privacy Policy'} press={() => { setVisibleLocation(true) }} />,
+            header: () => <BackHeader title={'Privacy Policy'} press={() => setVisibleLocation(true)} />,
         });
-      }, [navigation]);
+    }, [navigation]);
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView

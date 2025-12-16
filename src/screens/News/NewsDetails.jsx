@@ -23,6 +23,9 @@ const NewsDetails = () => {
   const route = useRoute();
   const navigation = useNavigation();
 
+  // console.log('NewsDetails route => ', route.params);
+  
+
   const [newsDetails, setNewsDetails] = useState(null);
 
   const fetchNewsDetails = async () => {
@@ -30,6 +33,9 @@ const NewsDetails = () => {
       const response = await axios.get(
         `${BASE_URL}/admin/get-news/${route.params?.item?._id}`
       );
+
+      console.log('res ', response);
+      
       if (response.status === 200) {
         setNewsDetails(response?.data?.data || {});
       }

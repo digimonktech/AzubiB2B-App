@@ -6,12 +6,13 @@ import deviceIdSlice from "../reducers/deviceIdSlice";
 import companyIdSlice from "../reducers/companyIdSlice";
 import companiesJobListSlice from "../reducers/companiesJobList";
 import companiesListSlice from "../reducers/companiesList";
+import showcompaniesListSlice from "../reducers/ShowCompaniesList";
 
 
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
-    whitelist: ['companiesJobList', 'companiesList'],
+    whitelist: ['companiesJobList', 'companiesList', 'showcompaniesList'],
 };
 
 const rootReducer = combineReducers({
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     companyId: companyIdSlice,
     companiesJobList: companiesJobListSlice,
     companiesList: companiesListSlice,  // ✅ corrected
+    showcompaniesList: showcompaniesListSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

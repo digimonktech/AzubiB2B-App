@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, ImageBackground, SafeAreaView, StyleSheet, FlatList, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl, Platform, Dimensions, TextInput } from 'react-native';
+import { View, Text, Image, ImageBackground, SafeAreaView, StyleSheet, FlatList, TouchableOpacity, ScrollView, Dimensions, TextInput } from 'react-native';
 import { Images } from '@/assets/images/images';
 import { fontFamily, reCol } from '@/utils/configuration';
-import { Icon, Input, useNativeBase } from 'native-base';
 import Loader from '@/component/Loader';
 import MainHeader from '@/component/MainHeader';
 import { ModalAppointment } from '@/component/Modal';
@@ -11,16 +10,14 @@ import { getApiCall } from '@/utils/ApiHandler';
 import Globals from '@/utils/Globals';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import { Button } from "native-base";
-import RenderHtml from 'react-native-render-html';
 import { ModalLocation } from '@/component/ModalLocation';
 import { useCity } from '@/Context/CityProvider';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCompany } from '@/Context/CompanyId';
-import { removeJobsByCompanyId } from '@/redux/reducers/companiesJobList';
-import { removeCompany } from '@/redux/reducers/companiesList';
-import { set } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
+import { addJobsFromCompany, removeJobsByCompanyId } from '@/redux/reducers/companiesJobList';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
+import { addCompany, clearCompanyList, removeCompany } from '@/redux/reducers/ShowCompaniesList';
 
 const { height: Screen_Height } = Dimensions.get('window')
 
@@ -28,50 +25,43 @@ const { height, width } = Dimensions.get('screen');
 
 const Companies = (props) => {
     const [loading, setLoading] = useState(false);
-    const [flatData, setFlatData] = useState([]);
-    const [selectedIndustryName, setSelectedIndustryName] = useState([]);
     const [visibleLocation, setVisibleLocation] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [scrollTop, setScrollTop] = useState(false);
     const refIndustrySheet = React.useRef();
-    const [IndustryType, setIndustryType] = useState([]);
     const [industryData, setIndustryData] = useState([]);
     const [selectedIndustries, setSelectedIndustries] = useState([]);
     const [loader, setLoader] = useState(false);
     const [companyJobs, setCompanyJobs] = useState([]);
-    const { selectedCityId } = useCity();
     const [isRefresh, setIsRefresh] = useState(false);
     const [visibleAppointments, setVisibleAppointments] = useState(false);
     const scrollViewRef = useRef(null);
-    const [filterCompaniesList, setFilterCompaniesList] = useState([])
     const [allCompanies, setAllCompanies] = useState([])
 
-    // console.log('allCompanies =>', allCompanies);
-
-    const findComapnyInAllCompanies = (val) => {
-        console.log('Call All Companies filter => ', val);
-        
-        const input = val?.trim()?.toLowerCase();
-
-        // if (!input) {
-        //     setFilterCompaniesList(allCompanies); // search empty → full list
-        //     return;
-        // }
-
-        const filtered = allCompanies.filter((item) => {
-            const name = item?.companyname?.trim()?.toLowerCase();
-            return name === input; // EXACT MATCH ONLY
-        });
-
-        console.log('findout company => ', filtered);
 
 
-        // setFilterCompaniesList(filtered);
-    }
 
 
-    const { companyId } = useCompany();
 
+    // const companyList = useSelector(state => state.companiesList.list);
+    const showCompaniesList = useSelector(state => state.showcompaniesList.list)
+    const CompaniesJobs = useSelector(state => state.companiesJobList.list)
+    const dispatch = useDispatch();
+    const navigation = useNavigation();
+    const route = useRoute();
+
+    // console.log('Start Screen Route => ', route.params);
+
+
+    // console.log('redux showCompaniesList ', showCompaniesList);
+    console.log('redux CompaniesJobs ', CompaniesJobs);
+
+
+
+
+    //  ------ all func for all companies ------
+
+    // 1 fetch all companies
     const fetchAllCompanies = async () => {
         try {
             const response = await axios.get(
@@ -88,80 +78,121 @@ const Companies = (props) => {
             console.log('Error fetch all companies => ', error.message);
         }
     };
-
     useEffect(() => {
         fetchAllCompanies();
     }, []);
 
 
+    // 2 filter companies by search
+    const findComapnyInAllCompanies = (val) => {
+        const input = val?.trim()?.toLowerCase();
 
-    const companyList = useSelector(state => state.companiesList.list);
-    const dispatch = useDispatch();
-    const navigation = useNavigation();
+        if (!input) return; // 🛑 IMPORTANT
 
-    // console.log('redux companyList ', companyList);
+        const filtered = allCompanies.filter(item =>
+            item?.companyname?.trim()?.toLowerCase() === input
+        );
 
-
+        if (filtered.length > 0) {
+            dispatch(addCompany(filtered));
+        }
+    };
     useEffect(() => {
-        setFilterCompaniesList(companyList)
-    }, [companyList])
-
-    // console.log('useContext companyId ', companyId);
-
-    console.log(
-        'searchValue',
-        searchValue?.trim().toLowerCase()
-    );
+        if (!searchValue) return;
+        findComapnyInAllCompanies(searchValue);
+    }, [searchValue]);
 
 
 
+    // 3 filter companies by route companyId
+    const findComapnyByCompanyID = (id) => {
+        console.log('Call find company by companyId => ', id);
+        console.log('allCompanies => ', allCompanies);
 
+
+        const filtered = allCompanies.filter((com) => com._id === id)
+        console.log('filtred company by comapnyId => ', filtered);
+
+        dispatch(addCompany(filtered))
+
+
+    }
+    useEffect(() => {
+        if (route.params?.companyId && allCompanies.length > 0) {
+            findComapnyByCompanyID(route.params.companyId);
+            return; // 🛑 STOP search logic
+        }
+    }, [route.params?.companyId, allCompanies]);
+
+
+
+    // all func for companies jobs
+
+    // 1 get companies jobs by route -> params -> companyId
+    const getCompaniesJobByComapnyId = async () => {
+        if (!route?.params?.companyId) return;
+
+        try {
+            let res = await getApiCall({
+                url: `admin/jobs?companyId=${route.params.companyId}`,
+            });
+
+            console.log('✅ Companies job by route:', res.data);
+
+            if (res.status === 200) {
+                dispatch(addJobsFromCompany(res.data))
+            }
+
+        } catch (e) {
+            console.log('❌ Get company jobs Error ', e);
+        }
+    };
+    useEffect(() => {
+        getCompaniesJobByComapnyId();
+    }, [route.params?.companyId,])
+
+
+    // 2 get companies jobs by search 
+    const getCompaniesJobBySearch = async (val) => {
+        const input = val?.trim()?.toLowerCase();
+
+        if (!input) return;
+        if (allCompanies.length === 0) return;
+
+        const filtered = allCompanies.filter(item =>
+            item?.companyname?.trim()?.toLowerCase() === input
+        );
+
+        if (filtered.length === 0) {
+            console.log('No company found for:', input);
+            return;
+        }
+
+        const companyId = filtered[0]._id;
+
+        try {
+            let res = await getApiCall({
+                url: `admin/jobs?companyId=${companyId}`,
+            });
+
+            if (res.status === 200) {
+                dispatch(addJobsFromCompany(res.data))
+            }
+
+            // console.log('✅ Companies Jobs API Response:', res);
+        } catch (e) {
+            console.log('❌ Get company jobs Error ', e);
+        }
+    };
+    useEffect(() => {
+        getCompaniesJobBySearch(searchValue);
+    }, [searchValue])
 
 
     const onClearSearch = () => {
         setSearchValue('');
 
     };
-
-
-    const filterCompanies = (val) => {
-        const input = val?.trim()?.toLowerCase();
-
-        if (!input) {
-            setFilterCompaniesList(companyList); // search empty → full list
-            return;
-        }
-
-        const filtered = companyList.filter((item) => {
-            const name = item?.companyname?.trim()?.toLowerCase();
-            return name === input; // EXACT MATCH ONLY
-        });
-
-        setFilterCompaniesList(filtered);
-    };
-
-
-
-
-
-
-
-
-    useEffect(() => {
-        findComapnyInAllCompanies(searchValue)
-        filterCompanies(searchValue);
-    }, [searchValue]);
-
-
-
-
-
-    const onRefresh = () => {
-        setIsRefresh(true);
-    };
-    const comId = useSelector(
-        (state) => state.companyId?.companyId
-    );
 
 
 
@@ -171,44 +202,42 @@ const Companies = (props) => {
             setScrollTop(false); // Reset the scrollTop state
         }
     }, [scrollTop]);
-    useEffect(() => {
-        getAllCompanies();
-    }, []);
 
 
 
-    const getAllCompanies = async () => {
-        // let repeatIndustryParams
-        // let repeatCityParams
-        // if (selectedCityId && selectedCityId.length > 0) {
-        //     repeatCityParams = selectedCityId.map(cityId => `slectedCity=${cityId}`).join('&');
-        // }
-        // if (selectedIndustries && selectedIndustries.length > 0) {
-        //     repeatIndustryParams = selectedIndustries.map(industryId => `isFillter=${industryId}`).join('&');
-        // }
-        try {
-            setLoading(true);
-            // let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
-            let res = await getApiCall({ url: `admin/company/id/${companyId}` });
-            // console.log('untern getAllComapay ', res);
 
-            if (res.status == 200) {
-                // console.log('ResponseCompany', res.data)
-                setFlatData([res.data]);
-            }
-        } catch (e) {
-            // alert(e);
-            console.log('Get ALl Companies Error ', e);
+    // const getAllCompanies = async () => {
+    //     // let repeatIndustryParams
+    //     // let repeatCityParams
+    //     // if (selectedCityId && selectedCityId.length > 0) {
+    //     //     repeatCityParams = selectedCityId.map(cityId => `slectedCity=${cityId}`).join('&');
+    //     // }
+    //     // if (selectedIndustries && selectedIndustries.length > 0) {
+    //     //     repeatIndustryParams = selectedIndustries.map(industryId => `isFillter=${industryId}`).join('&');
+    //     // }
+    //     try {
+    //         setLoading(true);
+    //         // let res = await getApiCall({ url: 'employer/get-all-emp-frontend?' + repeatIndustryParams + '&searchValue=' + searchValue + '&' + repeatCityParams });
+    //         let res = await getApiCall({ url: `admin/company/id/${companyId}` });
+    //         // console.log('untern getAllComapay ', res);
 
-        } finally {
-            // setIsRefresh(false);
-            setLoading(false);
-            // getAllIndustry();
-        }
-    };
+    //         if (res.status == 200) {
+    //             // console.log('ResponseCompany', res.data)
+    //             setFlatData([res.data]);
+    //         }
+    //     } catch (e) {
+    //         // alert(e);
+    //         console.log('Get ALl Companies Error ', e);
+
+    //     } finally {
+    //         // setIsRefresh(false);
+    //         setLoading(false);
+    //         // getAllIndustry();
+    //     }
+    // };
 
     const removeComapnyfromList = (item) => {
-        console.log('removeComapnyfromList item ', item);
+        console.log('removeComapnyfromList item ', item._id);
         dispatch(removeCompany(item._id))
 
         // remove all jobs related company
@@ -517,6 +546,16 @@ const Companies = (props) => {
             </TouchableOpacity>
         )
     }
+
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setLoading(false)
+        }, 1500)
+
+        return () => clearTimeout(timer)
+    }, [])
+
     return (
         <SafeAreaView style={styles.container}>
 
@@ -525,13 +564,8 @@ const Companies = (props) => {
                 ref={scrollViewRef}
                 style={styles.container}
                 showsVerticalScrollIndicator={false}
-                // refreshControl={<RefreshControl
-                //     refreshing={isRefresh}
-                //     onRefresh={onRefresh}
-                // />}
                 scrollsToTop={scrollTop}
             >
-
                 <ImageBackground style={styles.container} source={Images.bgImage}>
                     <View style={[styles.whiteBox, { marginTop: 15 }]}>
                         <View style={styles.fieldView}>
@@ -572,54 +606,11 @@ const Companies = (props) => {
 
 
 
-                            {/* <Input
-                                placeholder={'Berufsbezeichnung, Stichwörter oder Unternehmen'}
-                                style={{ fontSize: 13 }}
-                                variant={'unstyled'}
-                                size={'md'}
-                                value={searchValue}
-                                onChangeText={(txt) => setSearchValue(txt)}
-                                returnKeyType='done'
-                                InputLeftElement={<Icon
-                                    ml="2"
-                                    size="5"
-                                    as={<Image source={Images.search} />}
-                                />} bgColor={reCol().color.WHITE} marginTop={5}
-                                InputRightElement={
-                                    searchValue ?
-                                        <TouchableOpacity onPress={() => setSearchValue('')}>
-                                            <Icon ml="2" size="5" marginRight={2}
-                                                as={<Image source={Images.modalClose} />}
-                                            /></TouchableOpacity> : null} /> */}
                         </View>
                     </View>
+
                     <View style={styles.infoMainView}>
-                        <Text style={styles.jobsNumberText}>{filterCompaniesList?.length} {'Unternehmen gefunden'}</Text>
-
-                        {/* city drop down */}
-                        {/* <TouchableOpacity style={[styles.sortTouch,
-                        { width: '32%' }]}
-                            underlayColor={'#fff'} activeOpacity={0.5}
-                            onPress={() => { OpenIndustryMenu() }}>
-                            <View style={[styles.sortView]}>
-                                <Text style={[styles.sortText, {}]}>
-                                    {selectedIndustryName?.length > 0
-                                        ? selectedIndustryName?.length > 1
-                                            ? selectedIndustryName[0] === 'Alle'
-                                                ? 'Alle ausgewählt'.slice(0, 8) + '...'
-                                                : selectedIndustryName[0].length > 12
-                                                    ? selectedIndustryName[0].slice(0, 10) + '...' + ` +${selectedIndustryName?.length - 1}`
-                                                    : selectedIndustryName[0] + ` +${selectedIndustryName?.length - 1}`
-                                            : selectedIndustryName[0].length > 12
-                                                ? selectedIndustryName[0].slice(0, 10) + '...'
-                                                : selectedIndustryName[0]
-                                        : 'Branche'}
-                                </Text>
-
-
-                                <Image source={Images.downArrow} style={styles.sortDownImage} />
-                            </View>
-                        </TouchableOpacity> */}
+                        <Text style={styles.jobsNumberText}>{showCompaniesList?.length} {'Unternehmen gefunden'}</Text>
                     </View>
                     {loading ?
                         <FlatList
@@ -629,7 +620,7 @@ const Companies = (props) => {
                         />
                         :
                         <FlatList
-                            data={filterCompaniesList}
+                            data={showCompaniesList}
                             renderItem={renderItem}
                             showsVerticalScrollIndicator={false}
                             ListEmptyComponent={<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: 500 }} >

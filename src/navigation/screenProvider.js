@@ -58,7 +58,7 @@ const Tabs = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="Unternehmen"
+      initialRouteName="Aktuelle Jobs"
       screenOptions={{
         headerShown: true,
         tabBarActiveTintColor: activeColor,
@@ -82,8 +82,9 @@ const Tabs = () => {
     >
 
       {/* --- Unternehmen  start --- */}
+      {/* rename Unternehmen -> Aktuelle Jobs for deep link  */}
       <Tab.Screen
-        name="Unternehmen"
+        name="Aktuelle Jobs"
         component={Companies}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -115,8 +116,9 @@ const Tabs = () => {
       />
 
       {/* --- Aktuelle Jobs jobs --- */}
+      {/* rename Aktuelle Jobs -> Unternehmen for deep link  */}
       <Tab.Screen
-        name="Aktuelle Jobs"
+        name="Unternehmen"
         component={Jobs}
         options={{
           tabBarIcon: ({ color, size }) => (

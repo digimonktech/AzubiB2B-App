@@ -10,14 +10,12 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
-  ActivityIndicator,
   RefreshControl,
   Dimensions,
   TextInput,
 } from 'react-native';
 import { Images } from '@/assets/images/images';
 import { fontFamily, reCol } from '@/utils/configuration';
-import { Icon, Input } from 'native-base';
 import Loader from '@/component/Loader';
 import MainHeader from '@/component/MainHeader';
 import { ModalApply } from '@/component/Modal';
@@ -31,14 +29,14 @@ import { useCity } from '@/Context/CityProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
 import { useCompany } from '@/Context/CompanyId';
 import { addJobsFromCompany, removeJob } from '@/redux/reducers/companiesJobList';
 import { addCompany } from '@/redux/reducers/companiesList';
-import { set } from 'react-hook-form';
 
 
 const { height, width } = Dimensions.get('screen');
+
+
 const Jobs = props => {
   const route = useRoute();
   const { navigation } = props;
@@ -311,6 +309,8 @@ const Jobs = props => {
   const removeJobfromList = (item) => {
     console.log('removejob ', item);
     dispatch(removeJob(item._id))
+
+    
 
   }
 
