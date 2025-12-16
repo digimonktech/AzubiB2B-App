@@ -1,0 +1,61 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Century Gothic.ttf",
+      "sha1": "a2f9ca2ae529a6cc03cad88fefb0a0e45b7046f4"
+    },
+    {
+      "path": "src/assets/fonts/CenturyGothic.ttf",
+      "sha1": "8f77dcba946e3703813eee2e91d74b5ee3807b23"
+    },
+    {
+      "path": "src/assets/fonts/GOTHIC.TTF",
+      "sha1": "035669a8e8a5b486c3300eb9ea7a6672bb7ac331"
+    },
+    {
+      "path": "src/assets/fonts/GOTHICB.TTF",
+      "sha1": "194388a12999c4d643ab58aeabec0a49535ebeeb"
+    },
+    {
+      "path": "src/assets/fonts/GOTHICB0.TTF",
+      "sha1": "ed33e1307a491d78eadea9f5c62e021b94f339d1"
+    },
+    {
+      "path": "src/assets/fonts/GOTHICBI.TTF",
+      "sha1": "adc9a3f93910429353322cb9cf2ca8762a5b5563"
+    },
+    {
+      "path": "src/assets/fonts/GOTHICI.TTF",
+      "sha1": "967d66fc97165155fc763a043e9c8cae6edc6d75"
+    },
+    {
+      "path": "src/assets/fonts/Nunito-Bold.ttf",
+      "sha1": "d8091536d0fab37a3239067f708a0221070835da"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Bold.ttf",
+      "sha1": "875cf0cecd647bcf22e79d633d868c1b1ec98dfa"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Light.ttf",
+      "sha1": "e247a92158e112f8bf7b638c8d95381d66b00dbb"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Medium.ttf",
+      "sha1": "283f21b44efbdbf276ba802be2d949a36bbc4233"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Regular.ttf",
+      "sha1": "fdd3002e7d814ee47c1c1b8487c72c6bbb3a2d00"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-SemiBold.ttf",
+      "sha1": "8a4ace9392d06bcb7f8ea2f5169b07e4c383a90d"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Thin.ttf",
+      "sha1": "09ba4dcd5509c8085bf88c665dcc51cbdfced27b"
+    }
+  ]
+}
