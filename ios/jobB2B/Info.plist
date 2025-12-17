@@ -26,13 +26,40 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<false/>
+	<key>NSAllowsArbitraryLoads</key>
+<true/>
+<key>NSExceptionDomains</key>
+  <key>localhost</key>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+<string>Azubi B2B Requires storage permission</string>
+
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Azubi B2B Requires storage permission</string>
+
+<key>LSApplicationQueriesSchemes</key>
+<array>
+  <string>whatsapp</string>
+  <string>mailto</string>
+  <string>instagram</string>
+  <string>instagram-stories</string>
+  <string>fb</string>
+  <string>facebook-stories</string>
+</array>
+
+<key>UIFileSharingEnabled</key>
+<true/>
+<key>LSSupportsOpeningDocumentsInPlace</key>
+<true/>
+
+
+
+
 	<key>UIAppFonts</key>
 	<array>
 		<string>Century Gothic.ttf</string>
@@ -78,5 +105,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<key>CFBundleURLTypes</key>
+<array>
+  <dict>
+    <key>CFBundleURLName</key>
+    <string>jobb2b</string>
+    <key>CFBundleURLSchemes</key>
+    <array>
+      <string>jobb2b</string>
+    </array>
+  </dict>
+</array>
 </dict>
 </plist>
