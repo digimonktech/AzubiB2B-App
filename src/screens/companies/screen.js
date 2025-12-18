@@ -50,11 +50,16 @@ const Companies = (props) => {
     const navigation = useNavigation();
     const route = useRoute();
 
+    useEffect(() => {
+        console.log('fromRQ => ', route.params);
+
+    }, [route.params?.fromOR])
+
     // console.log('Start Screen Route => ', route.params);
 
 
     // console.log('redux showCompaniesList ', showCompaniesList);
-    console.log('redux CompaniesJobs ', CompaniesJobs);
+    // console.log('redux CompaniesJobs ', CompaniesJobs);
 
 
 
@@ -72,7 +77,7 @@ const Companies = (props) => {
 
             setAllCompanies(data?.companies)
 
-            // console.log('All Companies  => ', data);
+            console.log('All Companies  => ', data);
 
         } catch (error) {
             console.log('Error fetch all companies => ', error.message);
@@ -123,6 +128,26 @@ const Companies = (props) => {
             return; // 🛑 STOP search logic
         }
     }, [route.params?.companyId, allCompanies]);
+
+    // 4 filter companies by route companyId
+    const findComapnyByFromQR = (id) => {
+        console.log('Call find company by fromQR => ', id);
+        // console.log('allCompanies => ', allCompanies);
+
+
+        const filtered = allCompanies.filter((com) => com._id === id)
+        console.log('filtred company by comapnyId => ', filtered);
+
+        dispatch(addCompany(filtered))
+
+
+    }
+    useEffect(() => {
+        if (route.params?.fromQR && allCompanies.length > 0) {
+            findComapnyByFromQR(route.params.companyId);
+            return; // 🛑 STOP search logic
+        }
+    }, [route.params?.fromQR, allCompanies]);
 
 
 

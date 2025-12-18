@@ -14,13 +14,34 @@ export default function QRScanner() {
             if (scannedRef.current) return;
 
             const value = codes[0]?.value;
-            if (value) {
+            console.log('scan value:', value);
+
+            if (!value) return;
+
+            // Extract companyId manually (RN-safe)
+            const match = value.match(/companyId=([^&]+)/);
+
+            if (match && match[1]) {
                 scannedRef.current = true;
-                console.log('SCANNED:', value);
-                navigation.goBack();
+
+                const companyId = match[1];
+
+                navigation.navigate('Tabs', {
+                    screen: 'Aktuelle Jobs',
+                    params: {
+                        companyId,
+                        fromQR: true,
+                    },
+                });
+
+
+            } else {
+                console.log('companyId not found in QR');
             }
         },
     });
+
+
 
     useEffect(() => {
         Camera.requestCameraPermission();
