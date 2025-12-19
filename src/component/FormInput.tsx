@@ -47,6 +47,7 @@ function FormInput<T extends FieldValues = any>(props: Props<T>) {
                         // />
                         <TextInput
                             placeholder={props.placeholder}
+                            placeholderTextColor={'#222'}
                             onBlur={field.onBlur}
                             onChangeText={field.onChange}
                             value={field.value}

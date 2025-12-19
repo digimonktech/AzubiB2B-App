@@ -286,6 +286,20 @@ const SaveJobListing = () => {
             data={flatData}
             renderItem={renderItem}
             showsVerticalScrollIndicator={false}
+            ListEmptyComponent={<View 
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 500,
+              }}
+            >
+              <Text style={{
+                color: '#222',
+                fontWeight: '500',
+                fontSize: 16
+              }} >No Gespeichert</Text>
+            </View>}
           />
         </View>
       </ImageBackground>

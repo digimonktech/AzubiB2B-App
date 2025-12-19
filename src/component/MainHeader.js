@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {
   Image,
   ImageBackground,
@@ -10,20 +10,21 @@ import {
   SafeAreaView,
   Dimensions,
 } from 'react-native';
-import {Images} from '@/assets/images/images';
-import {Header as HeaderElement} from 'react-native-elements';
-import {fontFamily, reCol, screenName} from '@/utils/configuration';
+import { Images } from '@/assets/images/images';
+import { Header as HeaderElement } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/AntDesign';
+import { fontFamily, reCol, screenName } from '@/utils/configuration';
 import MaterialIcons from 'react-native-vector-icons/Ionicons';
-import {useNavigation, useTheme} from '@react-navigation/native';
+import { useNavigation, useTheme } from '@react-navigation/native';
 import Globals from '@/utils/Globals';
-import {useCity} from '@/Context/CityProvider';
-import {ModalLocation} from './ModalLocation';
+import { useCity } from '@/Context/CityProvider';
+import { ModalLocation } from './ModalLocation';
 
-export default function MainHeader({title, press}) {
-  const {colors, dark} = useTheme();
+export default function MainHeader({ title, press }) {
+  const { colors, dark } = useTheme();
   const navigation = useNavigation();
-  const {width} = Dimensions.get('screen');
-  const {selectedCity, setCity, showCity} = useCity();
+  const { width } = Dimensions.get('screen');
+  const { selectedCity, setCity, showCity } = useCity();
   // Function to reset selected locations
   const resetLocation = () => {
     setCity([], []); // Reset city in context
@@ -33,7 +34,7 @@ export default function MainHeader({title, press}) {
     <View
       style={[
         styles.mainView,
-        {backgroundColor: dark ? 'white' : colors.background},
+        { backgroundColor: dark ? 'white' : colors.background },
       ]}>
       <ImageBackground style={styles.mainViews}>
         <SafeAreaView
@@ -110,25 +111,67 @@ export default function MainHeader({title, press}) {
           </TouchableOpacity>
         )} */}
 
-        
+
         {selectedCity.length > 0 && (
           <TouchableOpacity
-            style={{top: Platform.OS === 'ios' ? '6%' : 0}}
+            style={{ top: Platform.OS === 'ios' ? '6%' : 0 }}
             onPress={() => resetLocation()}>
-            <Image source={Images.modalClose} style={{height: 25, width: 25}} />
+            <Image source={Images.modalClose} style={{ height: 25, width: 25 }} />
           </TouchableOpacity>
         )}
-        <SafeAreaView>
+
+        {/* action's icons */}
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            width: 80,
+          }}
+        >
+          {/* scaner */}
+          <TouchableOpacity
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 8,
+            }}
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate('QRScreen')}
+          >
+            <MaterialIcons
+              name="scan"
+              size={20}
+              color={reCol().color.BDRCLR}
+              underlayColor={'#FFFFFF'}
+            />
+            <Text
+              style={{
+                color: '#222',
+                fontSize: 8,
+                width: 40,
+                textAlign: 'center',
+                marginRight: 0
+              }}
+              numberOfLines={2}
+            >SCAN QR CODE</Text>
+
+          </TouchableOpacity>
+
+
+          {/* job alaram */}
+
           <TouchableOpacity
             activeOpacity={0.5}
-            style={{height: 35, justifyContent: 'center'}}
+            style={{ height: 35, justifyContent: 'center' }}
             onPress={() => navigation.navigate('JobAlerts')}>
             <Image
               source={Images.tabJobAlert}
-              style={{height: 25, width: 25}}
+              style={{ height: 25, width: 25 }}
             />
           </TouchableOpacity>
-        </SafeAreaView>
+        </View>
+
       </ImageBackground>
       <Image source={Images.dividerLine} style={styles.lineDivider} />
       {/* {ModalLocation({ visibleLocation, setVisibleLocation })} */}
@@ -165,7 +208,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     elevation: 20,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
     alignItems: 'center',
@@ -211,7 +254,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 20,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
     alignItems: 'center',

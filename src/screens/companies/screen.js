@@ -50,11 +50,16 @@ const Companies = (props) => {
     const navigation = useNavigation();
     const route = useRoute();
 
+    useEffect(() => {
+        console.log('fromRQ => ', route.params);
+
+    }, [route.params?.fromOR])
+
     // console.log('Start Screen Route => ', route.params);
 
 
     // console.log('redux showCompaniesList ', showCompaniesList);
-    console.log('redux CompaniesJobs ', CompaniesJobs);
+    // console.log('redux CompaniesJobs ', CompaniesJobs);
 
 
 
@@ -72,7 +77,7 @@ const Companies = (props) => {
 
             setAllCompanies(data?.companies)
 
-            // console.log('All Companies  => ', data);
+            console.log('All Companies  => ', data);
 
         } catch (error) {
             console.log('Error fetch all companies => ', error.message);
@@ -123,6 +128,26 @@ const Companies = (props) => {
             return; // 🛑 STOP search logic
         }
     }, [route.params?.companyId, allCompanies]);
+
+    // 4 filter companies by route companyId
+    const findComapnyByFromQR = (id) => {
+        console.log('Call find company by fromQR => ', id);
+        // console.log('allCompanies => ', allCompanies);
+
+
+        const filtered = allCompanies.filter((com) => com._id === id)
+        console.log('filtred company by comapnyId => ', filtered);
+
+        dispatch(addCompany(filtered))
+
+
+    }
+    useEffect(() => {
+        if (route.params?.fromQR && allCompanies.length > 0) {
+            findComapnyByFromQR(route.params.companyId);
+            return; // 🛑 STOP search logic
+        }
+    }, [route.params?.fromQR, allCompanies]);
 
 
 
@@ -261,9 +286,9 @@ const Companies = (props) => {
             } else if (type === "terms") {
                 navigation.navigate('CompanyTrems');
             } else if (type === "privacy") {
-                navigation.navigate('CompanyPrivacy');
+                navigation.navigate('CompanyPrivacy', {item});
             } else if (type === "JobWall") {
-                navigation.navigate('CompanyJobWall')
+                navigation.navigate('CompanyJobWall', { item });
             } else if (type === 'kontakt') {
                 navigation.navigate('CompanyKontakt', { item })
             }
@@ -339,7 +364,11 @@ const Companies = (props) => {
                 >
 
                     {/* Email */}
-                    <TouchableOpacity activeOpacity={0.7} style={{ alignItems: 'center' }}>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{ alignItems: 'center' }}
+                        onPress={() => getCompaniesDetails(item._id)}
+                    >
                         <Image
                             style={{ height: 22, width: 22 }}
                             resizeMode="contain"
@@ -488,13 +517,19 @@ const Companies = (props) => {
     const getCompaniesDetails = async (id) => {
         try {
             setLoader(true);
-            let res = await getApiCall({ url: 'employer/company-detail/' + id });
+            // let res = await getApiCall({ url: 'employer/company-detail/' + id });
+            let res = await getApiCall({ url: `admin/company/id/${id}` });
+
+            console.log('getCompaniesDetails res => ', res);
+
             if (res.status == 200) {
                 setCompanyJobs(res.data);
 
             }
         } catch (e) {
-            alert(e);
+            // alert(e);
+            console.log('getCompaniesDetails Error => ', e);
+
         } finally {
             setLoader(false)
             setVisibleAppointments(true)

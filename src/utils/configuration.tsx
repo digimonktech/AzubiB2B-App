@@ -40,7 +40,7 @@ export const endPoint = {
   job: 'job',
   company: 'employer/get-all-emp-frontend',
   applyJob: 'admin/application',
-  appointment: 'employer/add-appoinment',
+  appointment: '/admin/appointment-form',
   register: 'admin/register-form',
 };
 export const reCol = () => {
