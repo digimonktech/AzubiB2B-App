@@ -126,11 +126,16 @@ export default function MainHeader({ title, press }) {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            width: 60,
+            width: 80,
           }}
         >
           {/* scaner */}
           <TouchableOpacity
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginRight: 8,
+            }}
             activeOpacity={0.7}
             onPress={() => navigation.navigate('QRScreen')}
           >
@@ -140,6 +145,16 @@ export default function MainHeader({ title, press }) {
               color={reCol().color.BDRCLR}
               underlayColor={'#FFFFFF'}
             />
+            <Text
+              style={{
+                color: '#222',
+                fontSize: 8,
+                width: 40,
+                textAlign: 'center',
+                marginRight: 0
+              }}
+              numberOfLines={2}
+            >SCAN QR CODE</Text>
 
           </TouchableOpacity>
 

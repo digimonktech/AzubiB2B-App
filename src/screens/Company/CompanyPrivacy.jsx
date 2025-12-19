@@ -1,91 +1,121 @@
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
     StyleSheet,
     Text,
     View,
     ScrollView,
-    SafeAreaView,
+    ActivityIndicator,
 } from 'react-native';
-import React from 'react';
-import { fontFamily, reCol } from '@/utils/configuration'; // if exists
-import { useNavigation } from '@react-navigation/native';
-import MainHeader from '@/component/MainHeader';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import axios from 'axios';
+
 import BackHeader from '@/component/BackHeader';
+import { fontFamily, reCol } from '@/utils/configuration';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CompanyPrivacy = () => {
     const navigation = useNavigation();
+    const route = useRoute();
 
-    React.useLayoutEffect(() => {
+    const [privacyPolicy, setPrivacyPolicy] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    /* ---------------- Header ---------------- */
+    useLayoutEffect(() => {
         navigation.setOptions({
-            header: () => <BackHeader title={'Privacy Policy'} press={() => setVisibleLocation(true)} />,
+            header: () => <BackHeader title="Privacy Policy" />,
         });
     }, [navigation]);
+
+    /* ---------------- API ---------------- */
+    useEffect(() => {
+        if (!route.params?.item?._id) {
+            setLoading(false);
+            return;
+        }
+
+        const fetchPrivacyPolicy = async () => {
+            try {
+                const response = await axios.get(
+                    `https://azubi.api.digimonk.net/api/v1/admin/privacy-policy/${route.params.item._id}`,
+                );
+
+                setPrivacyPolicy(response.data?.data || null);
+            } catch (error) {
+                console.log(
+                    'Privacy policy error => ',
+                    error?.response?.data || error.message,
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPrivacyPolicy();
+    }, [route.params?.item?._id]);
+
+    /* ---------------- Render ---------------- */
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.contentContainer}
-            >
-                <Text style={styles.heading}>Privacy Policy</Text>
+            {loading ? (
+                <View style={styles.loaderView}>
+                    <ActivityIndicator size="large" color={reCol().color.BDRCLR} />
+                </View>
+            ) : (
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={styles.contentContainer}
+                >
+                    <View style={styles.card}>
+                        <Text style={styles.titleText}>Privacy Policy</Text>
 
-                <Text style={styles.text}>
-                    This is a sample privacy policy page for companies.
-                    Here you will provide details about how the user data is
-                    collected, used, and protected by your organization.
-                </Text>
+                        <View style={styles.divider} />
 
-                <Text style={styles.subHeading}>Data Collection</Text>
-                <Text style={styles.text}>
-                    We collect basic personal information necessary to provide
-                    our services in the best way possible.
-                </Text>
-
-                <Text style={styles.subHeading}>User Rights</Text>
-                <Text style={styles.text}>
-                    Users can request access or deletion of their stored data
-                    anytime via support.
-                </Text>
-
-                <Text style={styles.subHeading}>Contact Information</Text>
-                <Text style={styles.text}>
-                    If you have any questions regarding this policy, feel free to reach out to us.
-                </Text>
-
-                <View style={{ height: 30 }} />
-            </ScrollView>
+                        <Text style={styles.bodyText}>
+                            {privacyPolicy?.description || 'No privacy policy available.'}
+                        </Text>
+                    </View>
+                </ScrollView>
+            )}
         </SafeAreaView>
     );
 };
 
 export default CompanyPrivacy;
 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: reCol().color.WHITE,
+    },
+    loaderView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     contentContainer: {
-        paddingHorizontal: 20,
-        paddingVertical: 20,
+        padding: 16,
     },
-    heading: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#000',
-        marginBottom: 10,
-        // fontFamily: fontFamily.poppinsBold, // if exists
+    card: {
+        padding: 16,
     },
-    subHeading: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#000',
-        marginTop: 18,
-        marginBottom: 6,
-        // fontFamily: fontFamily.poppinsSemiBold,
+    titleText: {
+        fontSize: 18,
+        fontFamily: fontFamily.poppinsBold,
+        // color: reCol().color.BLACK,
+        color: '#222',
     },
-    text: {
+    divider: {
+        height: 1,
+        backgroundColor: '#E0E0E0',
+        marginVertical: 12,
+    },
+    bodyText: {
         fontSize: 14,
-        color: '#555',
         lineHeight: 22,
-        // fontFamily: fontFamily.poppinsRegular,
+        fontFamily: fontFamily.poppinsRegular,
+        color: '#444',
     },
 });
+

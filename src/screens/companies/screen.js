@@ -286,9 +286,9 @@ const Companies = (props) => {
             } else if (type === "terms") {
                 navigation.navigate('CompanyTrems');
             } else if (type === "privacy") {
-                navigation.navigate('CompanyPrivacy');
+                navigation.navigate('CompanyPrivacy', {item});
             } else if (type === "JobWall") {
-                navigation.navigate('CompanyJobWall')
+                navigation.navigate('CompanyJobWall', { item });
             } else if (type === 'kontakt') {
                 navigation.navigate('CompanyKontakt', { item })
             }
@@ -364,7 +364,11 @@ const Companies = (props) => {
                 >
 
                     {/* Email */}
-                    <TouchableOpacity activeOpacity={0.7} style={{ alignItems: 'center' }}>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{ alignItems: 'center' }}
+                        onPress={() => getCompaniesDetails(item._id)}
+                    >
                         <Image
                             style={{ height: 22, width: 22 }}
                             resizeMode="contain"
@@ -513,13 +517,19 @@ const Companies = (props) => {
     const getCompaniesDetails = async (id) => {
         try {
             setLoader(true);
-            let res = await getApiCall({ url: 'employer/company-detail/' + id });
+            // let res = await getApiCall({ url: 'employer/company-detail/' + id });
+            let res = await getApiCall({ url: `admin/company/id/${id}` });
+
+            console.log('getCompaniesDetails res => ', res);
+
             if (res.status == 200) {
                 setCompanyJobs(res.data);
 
             }
         } catch (e) {
-            alert(e);
+            // alert(e);
+            console.log('getCompaniesDetails Error => ', e);
+
         } finally {
             setLoader(false)
             setVisibleAppointments(true)

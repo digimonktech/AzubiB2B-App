@@ -1,9 +1,9 @@
-import {Images} from '@/assets/images/images';
-import {fontFamily, reCol} from '@/utils/configuration';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {Button, Checkbox} from 'native-base';
-import React, {useEffect, useRef, useState} from 'react';
-import {useForm} from 'react-hook-form';
+import { Images } from '@/assets/images/images';
+import { fontFamily, reCol } from '@/utils/configuration';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Button, Checkbox } from 'native-base';
+import React, { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
   Alert,
   Dimensions,
@@ -17,36 +17,37 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {applySchema} from './schema';
+import { applySchema } from './schema';
 import FormInput from './FormInput';
 import TextAreaInput from './FormArea';
 import networkWithoutToken from '@/networkApi/networkWithoutToken';
-import {IApply} from './interface';
+import { IApply } from './interface';
 import Loader from './Loader';
 import Globals from '@/utils/Globals';
-import {getApiCall, getApiCall1} from '@/utils/ApiHandler';
-import {useIsFocused} from '@react-navigation/native';
-import {RichEditor} from 'react-native-pell-rich-editor';
+import { getApiCall, getApiCall1 } from '@/utils/ApiHandler';
+import { useIsFocused } from '@react-navigation/native';
+import { RichEditor } from 'react-native-pell-rich-editor';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'react-native-image-picker';
 import RenderHTML from 'react-native-render-html';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 const width = Dimensions.get('window').width;
 interface IndustryProps {
   id: number;
   name: string;
 }
 const industryFlatData: IndustryProps[] = [
-  {id: 1, name: 'Industry 1'},
-  {id: 2, name: 'Industry 2'},
-  {id: 3, name: 'Industry 3'},
-  {id: 4, name: 'Industry 4'},
-  {id: 5, name: 'Industry 5'},
-  {id: 6, name: 'Industry 6'},
-  {id: 7, name: 'Industry 7'},
-  {id: 8, name: 'Industry 8'},
-  {id: 9, name: 'Industry 9'},
-  {id: 10, name: 'Industry 10'},
+  { id: 1, name: 'Industry 1' },
+  { id: 2, name: 'Industry 2' },
+  { id: 3, name: 'Industry 3' },
+  { id: 4, name: 'Industry 4' },
+  { id: 5, name: 'Industry 5' },
+  { id: 6, name: 'Industry 6' },
+  { id: 7, name: 'Industry 7' },
+  { id: 8, name: 'Industry 8' },
+  { id: 9, name: 'Industry 9' },
+  { id: 10, name: 'Industry 10' },
 ];
 
 interface LocationProps {
@@ -55,9 +56,9 @@ interface LocationProps {
 }
 
 const locationFlatData: LocationProps[] = [
-  {id: 1, name: 'Location 1'},
-  {id: 2, name: 'Location 2'},
-  {id: 3, name: 'Location 3'},
+  { id: 1, name: 'Location 1' },
+  { id: 2, name: 'Location 2' },
+  { id: 3, name: 'Location 3' },
   // Add more locations as needed
 ];
 
@@ -66,8 +67,8 @@ interface ModalLocationProps {
   setVisibleLocation: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const renderIndustrtyData = ({item}: {item: IndustryProps}) => {
-  const {name} = item;
+const renderIndustrtyData = ({ item }: { item: IndustryProps }) => {
+  const { name } = item;
   return (
     <View style={styles.renderView}>
       <Text>{name}</Text>
@@ -102,7 +103,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
   deviceId,
 }) => {
   console.log('model open ');
-  
+
   console.log('ApplySaveData mk', applyData);
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<any>([]);
@@ -115,7 +116,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
   const comId = useSelector((state: any) => state.companyId?.companyId);
   const [selectedImageShow, setSelectedImageShow] = useState<any>([]);
   const isfocused = useIsFocused();
-  const {control, handleSubmit, setValue} = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       Email: '',
       Name: '',
@@ -127,7 +128,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
   });
   const ContentData = async () => {
     try {
-      let res = await getApiCall1({url: 'manage_content'});
+      let res = await getApiCall1({ url: 'manage_content' });
       if (res.status == 200) {
         setContent(res?.data?.jobCoverLetter);
         setCoverLabel(res?.data.coverLetterFieldName);
@@ -195,13 +196,13 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
     );
   };
 
-  
+
   const onSubmit: any = async (values: IApply) => {
     setLoading(true);
     applyApi(values);
   };
   const renderItemImage = (item: any) => {
-    const {uri} = item.item;
+    const { uri } = item.item;
     const removeImage = (uriToRemove: any) => {
       // Use the filter method to remove the image at the specified index
       const updatedImageList = selectedImageShow.filter(
@@ -222,8 +223,8 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
           marginTop: 20,
         }}>
         <Image
-          source={{uri: uri}}
-          style={{height: '100%', width: '100%'}}
+          source={{ uri: uri }}
+          style={{ height: '100%', width: '100%' }}
           borderRadius={15}
         />
         <TouchableOpacity
@@ -290,7 +291,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
     <Modal animationType="slide" visible={visibleApply} transparent={true}>
       <ScrollView contentContainerStyle={styles.modalBgView}>
         <View style={styles.modalMainView}>
-          <View style={[styles.flexView, {marginVertical: 10}]}>
+          <View style={[styles.flexView, { marginVertical: 10 }]}>
             {showPrivacy ? (
               <Text style={styles.headingText}>{'Datenschutz & AGB'}</Text>
             ) : (
@@ -302,8 +303,8 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
           </View>
           {showPrivacy ? (
             <ScrollView>
-              <View style={{marginHorizontal: 15}}>
-                <RenderHTML source={{html: content}} />
+              <View style={{ marginHorizontal: 15 }}>
+                <RenderHTML source={{ html: content }} />
               </View>
             </ScrollView>
           ) : (
@@ -317,17 +318,17 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
                       selectedImage.length > 3 && selectedImage.length <= 6
                         ? '75%'
                         : selectedImage.length === 3
-                        ? '60%'
-                        : '50%',
+                          ? '60%'
+                          : '50%',
                   },
                 ]}>
-                <Text style={[styles.headingText, {fontSize: 15}]}>
+                <Text style={[styles.headingText, { fontSize: 15 }]}>
                   {applyData?.jobTitle}
                 </Text>
                 <Text
                   style={[
                     styles.headingText,
-                    {fontSize: 15, marginTop: 10, color: '#ff9046'},
+                    { fontSize: 15, marginTop: 10, color: '#ff9046' },
                   ]}>
                   {applyData?.company?.companyName}
                 </Text>
@@ -346,12 +347,12 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
                       alignItems: 'center',
                     }}>
                     <Text
-                      style={{color: 'white', textDecorationLine: 'underline'}}>
+                      style={{ color: 'white', textDecorationLine: 'underline' }}>
                       {'Job Link'}
                     </Text>
                   </TouchableOpacity>
                 )}
-                <Text style={[styles.labelText, {marginTop: 10}]}>
+                <Text style={[styles.labelText, { marginTop: 10 }]}>
                   {'Vorname/Nachname'}
                 </Text>
                 <FormInput
@@ -372,7 +373,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
                 </Text>
                 <FormInput
                   name="Mobile"
-                  style={{fontSize: 12}}
+                  style={{ fontSize: 12 }}
                   placeholder={'Hier eingeben'}
                   borderColor={reCol().color.BDRCLR}
                   control={control}
@@ -397,7 +398,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
                   }}>
                   <ScrollView
                     showsVerticalScrollIndicator={true}
-                    style={{height: 80}}>
+                    style={{ height: 80 }}>
                     <RichEditor
                       ref={richRef}
                       initialContentHTML={content}
@@ -408,7 +409,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
                     />
                   </ScrollView>
                 </View>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   {selectedImage.length > 0 ? (
                     <FlatList
                       data={selectedImageShow}
@@ -418,7 +419,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
                     />
                   ) : (
                     <TouchableOpacity
-                      style={{flexDirection: 'row', marginTop: 15}}
+                      style={{ flexDirection: 'row', marginTop: 15 }}
                       onPress={() => launchImageLibrary()}>
                       <Image
                         source={Images.addGallery}
@@ -465,8 +466,8 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
                           selectedImage.length === 4
                             ? '40%'
                             : selectedImage.length === 3
-                            ? '8%'
-                            : '75%',
+                              ? '8%'
+                              : '75%',
                         bottom: selectedImage.length === 3 ? '-40%' : '15%',
                         // marginRight: selectedImage.length === 4 ? '40%' : '10%'
                       }}
@@ -576,7 +577,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
   const richRef: any = useRef();
   const isfocused = useIsFocused();
   const comId = useSelector((state: any) => state.companyId?.companyId);
-  const {control, handleSubmit, setValue} = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       Email: '',
       Name: '',
@@ -588,14 +589,18 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
   });
   const ContentData = async () => {
     try {
-      let res = await getApiCall1({url: 'manage_content'});
+      let res = await getApiCall1({ url: 'manage_content' });
+      console.log('ContentData job res => ', res);
+
       if (res.status == 200) {
         setContent(res?.data?.jobCoverLetter);
         setCoverLabel(res?.data.coverLetterFieldName);
         setFlag(true);
       }
     } catch (e) {
-      alert(e);
+      // alert(e);
+      console.log('ContentData job Error => ', e);
+
     } finally {
     }
   };
@@ -695,7 +700,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
     richRef.current.blurContentEditor(); // This would call the blurContentEditor method if it exists in your RichEditor component
   };
   const renderItemImage = (item: any) => {
-    const {uri} = item.item;
+    const { uri } = item.item;
     const removeImage = (uriToRemove: any) => {
       // Use the filter method to remove the image at the specified index
       const updatedImageList = selectedImageShow.filter(
@@ -716,8 +721,8 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
           marginTop: 20,
         }}>
         <Image
-          source={{uri: uri}}
-          style={{height: '100%', width: '100%'}}
+          source={{ uri: uri }}
+          style={{ height: '100%', width: '100%' }}
           borderRadius={15}
         />
         <TouchableOpacity
@@ -750,7 +755,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
     <Modal animationType="slide" visible={visibleApply} transparent={true}>
       <ScrollView contentContainerStyle={styles.modalBgView}>
         <View style={styles.modalMainView}>
-          <View style={[styles.flexView, {marginVertical: 10}]}>
+          <View style={[styles.flexView, { marginVertical: 10 }]}>
             {showPrivacy ? (
               <Text style={styles.headingText}>{'Datenschutz & AGB'}</Text>
             ) : (
@@ -762,8 +767,8 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
           </View>
           {showPrivacy ? (
             <ScrollView>
-              <View style={{marginHorizontal: 15}}>
-                <RenderHTML source={{html: content}} />
+              <View style={{ marginHorizontal: 15 }}>
+                <RenderHTML source={{ html: content }} />
               </View>
             </ScrollView>
           ) : (
@@ -776,17 +781,17 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
                       selectedImage.length > 3 && selectedImage.length <= 6
                         ? '75%'
                         : selectedImage.length === 3
-                        ? '60%'
-                        : '50%',
+                          ? '60%'
+                          : '50%',
                   },
                 ]}>
-                <Text style={[styles.headingText, {fontSize: 15}]}>
+                <Text style={[styles.headingText, { fontSize: 15 }]}>
                   {applyData?.jobTitle}
                 </Text>
                 <Text
                   style={[
                     styles.headingText,
-                    {fontSize: 15, marginTop: 10, color: '#ff9046'},
+                    { fontSize: 15, marginTop: 10, color: '#ff9046' },
                   ]}>
                   {applyData?.company?.companyName}
                 </Text>
@@ -805,12 +810,12 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
                       alignItems: 'center',
                     }}>
                     <Text
-                      style={{color: 'white', textDecorationLine: 'underline'}}>
+                      style={{ color: 'white', textDecorationLine: 'underline' }}>
                       {'Job Link'}
                     </Text>
                   </TouchableOpacity>
                 )}
-                <Text style={[styles.labelText, {marginTop: 10}]}>
+                <Text style={[styles.labelText, { marginTop: 10 }]}>
                   {'Vorname/Nachname'}
                 </Text>
                 <FormInput
@@ -832,7 +837,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
                 <FormInput
                   name="Mobile"
                   placeholder={'Hier eingeben'}
-                  style={{fontSize: 12}}
+                  style={{ fontSize: 12 }}
                   borderColor={reCol().color.BDRCLR}
                   control={control}
                 />
@@ -856,7 +861,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
                   }}>
                   <ScrollView
                     showsVerticalScrollIndicator={true}
-                    style={{height: 80}}>
+                    style={{ height: 80 }}>
                     <RichEditor
                       ref={richRef}
                       initialContentHTML={content}
@@ -867,7 +872,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
                     />
                   </ScrollView>
                 </View>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   {selectedImage.length > 0 ? (
                     <FlatList
                       data={selectedImageShow}
@@ -877,7 +882,7 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
                     />
                   ) : (
                     <TouchableOpacity
-                      style={{flexDirection: 'row', marginTop: 15}}
+                      style={{ flexDirection: 'row', marginTop: 15 }}
                       onPress={() => launchImageLibrary()}>
                       <Image
                         source={Images.addGallery}
@@ -924,8 +929,8 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
                           selectedImage.length === 4
                             ? '40%'
                             : selectedImage.length === 3
-                            ? '8%'
-                            : '75%',
+                              ? '8%'
+                              : '75%',
                         bottom: selectedImage.length === 3 ? '-40%' : '15%',
                       }}
                       onPress={() => launchImageLibrary()}>
@@ -1021,6 +1026,8 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
   setVisibleAppointment,
   appointmentData,
 }) => {
+  console.log('appointmentData data => ', appointmentData);
+
   const [content, setContent] = useState<any>([]);
   const [loading, setLoading] = useState(false);
   const [coverLabel, setCoverLabel] = useState<any>([]);
@@ -1032,19 +1039,28 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
   const [selectedImageShow, setSelectedImageShow] = useState<any>([]);
   const [isChecked, setIsChecked] = useState(false);
   const richRef: any = useRef();
+
+  console.log('content => ', content);
+  console.log('coverLabel => ', coverLabel);
+
+
   const ContentData = async () => {
     try {
-      let res = await getApiCall({url: 'manage_content'});
+      // let res = await getApiCall({ url: 'manage_content' });
+      let res = await getApiCall1({ url: 'manage_content' });
+      // console.log('ContentData res mk => ', res.data);
+
       if (res.status == 200) {
         setContent(res?.data?.appointment);
         setCoverLabel(res?.data?.appointmentFieldName);
         setFlag(true);
       }
     } catch (e) {
-      alert(e);
-    } finally {
+      console.log('ContentData Error ', e);
     }
   };
+
+
   const launchImageLibrary = async () => {
     let options: any = {
       // includeBase64: true,
@@ -1098,7 +1114,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
       console.error('Error retrieving data: ', error);
     }
   };
-  const {control, handleSubmit, setValue} = useForm({
+  const { control, handleSubmit, setValue } = useForm({
     defaultValues: {
       Email: '',
       Name: '',
@@ -1108,35 +1124,100 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
     },
     resolver: yupResolver(applySchema),
   });
+  // const takeAppointmentApi = async (values: IApply) => {
+  //   const body: any = new FormData();
+  //   body.append('companyId', appointmentData._id);
+  //   body.append('applicantName', values.Name);
+  //   body.append('email', values.Email);
+  //   body.append('phone', values.Mobile || '');
+  //   body.append('aboutMe', values.About || '');
+  //   body.append('coverLetter', content);
+  //   if (selectedImageShow.length > 0) {
+  //     selectedImageShow.forEach((image: any) => {
+  //       body.append('attachment', image);
+  //     });
+  //   }
+  //   console.log('BodyOfAddAppointment', body);
+  //   // const response = await networkWithoutToken
+  //   //   .createMobileOtp()
+  //   //   .addAppointment(body);
+  //   // console.log('ResponseOfAddAppointment => ', response);
+  //   // setLoading(false);
+  //   // if (response?.data?.message?.trim() == 'success') {
+  //   //   setSuccess(true);
+  //   // }
+
+  //   const response = await axios.post(`https://azubi.api.digimonk.net/api/v1/admin/appointment-form`, body);
+  //   console.log('res appointment => ', response);
+  //   setLoading(false);
+
+
+  // };
+
   const takeAppointmentApi = async (values: IApply) => {
-    const body: any = new FormData();
-    body.append('companyId', appointmentData._id);
-    body.append('applicantName', values.Name);
-    body.append('email', values.Email);
-    body.append('phone', values.Mobile || '');
-    body.append('aboutMe', values.About || '');
-    body.append('coverLetter', content);
-    if (selectedImageShow.length > 0) {
-      selectedImageShow.forEach((image: any) => {
-        body.append('attachment', image);
-      });
-    }
-    // console.log('BodyOfAddAppointment', body);
-    const response = await networkWithoutToken
-      .createMobileOtp()
-      .addAppointment(body);
-    // console.log('ResponseOfAddAppointment', response);
-    setLoading(false);
-    if (response?.data?.message?.trim() == 'success') {
-      setSuccess(true);
+    console.log('values ', values);
+    
+    try {
+      setLoading(true);
+
+      const body = new FormData();
+
+      body.append('companyId', appointmentData._id);
+      body.append('name', values.Name);
+      body.append('email', values.Email);
+      body.append('phone', values.Mobile || '');
+      body.append('aboutMe', values.About || '');
+      body.append('appointment', content);
+
+      if (selectedImageShow?.length > 0) {
+        selectedImageShow.forEach((image: any, index: number) => {
+          body.append('attachment', {
+            uri: image.uri,
+            type: image.type || 'image/jpeg',
+            name: image.fileName || `attachment_${index}.jpg`,
+          } as any);
+        });
+      }
+
+      const response = await axios.post(
+        'https://azubi.api.digimonk.net/api/v1/admin/appointment-form',
+        body,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+
+      console.log('Appointment response => ', response.data);
+
+      if (response.status === 200) {
+        setSuccess(true);
+        setVisibleAppointment(false);
+        Alert.alert(
+          'Herzlichen Glückwunsch!',
+          'Deine Terminvereinbarung wurde erfolgreich versendet.',
+        );
+      }
+    } catch (error: any) {
+      console.log(
+        'Appointment API error => ',
+        error?.response?.data || error.message,
+      );
+    } finally {
+      setLoading(false);
     }
   };
+
+
   const onSubmit: any = async (values: IApply) => {
+    console.log('onSubmit values => ', values);
+
     setLoading(true);
-    takeAppointmentApi(values);
+    await takeAppointmentApi(values);
   };
   const renderItemImage = (item: any) => {
-    const {uri} = item.item;
+    const { uri } = item.item;
     const removeImage = (uriToRemove: any) => {
       // Use the filter method to remove the image at the specified index
       const updatedImageList = selectedImageShow.filter(
@@ -1157,8 +1238,8 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
           marginTop: 20,
         }}>
         <Image
-          source={{uri: uri}}
-          style={{height: '100%', width: '100%'}}
+          source={{ uri: uri }}
+          style={{ height: '100%', width: '100%' }}
           borderRadius={15}
         />
         <TouchableOpacity
@@ -1205,7 +1286,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
       <ScrollView contentContainerStyle={styles.modalBgView}>
         {success == false ? (
           <View style={styles.modalMainView}>
-            <View style={[styles.flexView, {marginVertical: 10}]}>
+            <View style={[styles.flexView, { marginVertical: 10 }]}>
               {showPrivacy ? (
                 <Text style={styles.headingText}>{'Datenschutz & AGB'}</Text>
               ) : (
@@ -1217,8 +1298,8 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
             </View>
             {showPrivacy ? (
               <ScrollView>
-                <View style={{marginHorizontal: 15}}>
-                  <RenderHTML source={{html: content}} />
+                <View style={{ marginHorizontal: 15 }}>
+                  <RenderHTML source={{ html: content }} />
                 </View>
               </ScrollView>
             ) : (
@@ -1231,14 +1312,14 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                         selectedImage.length > 3 && selectedImage.length <= 6
                           ? '75%'
                           : selectedImage.length === 3
-                          ? '60%'
-                          : '50%',
+                            ? '60%'
+                            : '50%',
                     },
                   ]}>
-                  <Text style={[styles.headingText, {fontSize: 15}]}>
-                    {appointmentData.companyName}
+                  <Text style={[styles.headingText, { fontSize: 15 }]}>
+                    {appointmentData.companyname}
                   </Text>
-                  <Text style={[styles.labelText, {marginTop: 10}]}>
+                  <Text style={[styles.labelText, { marginTop: 10 }]}>
                     {'Vorname/Nachname'}
                   </Text>
                   <FormInput
@@ -1260,7 +1341,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                   <FormInput
                     name="Mobile"
                     placeholder="Hier eingeben"
-                    style={{fontSize: 12}}
+                    style={{ fontSize: 12 }}
                     borderColor={reCol().color.BDRCLR}
                     control={control}
                   />
@@ -1284,7 +1365,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                     }}>
                     <ScrollView
                       showsVerticalScrollIndicator={true}
-                      style={{height: 80}}>
+                      style={{ height: 80 }}>
                       <RichEditor
                         ref={richRef}
                         initialContentHTML={content}
@@ -1295,8 +1376,9 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                       />
                     </ScrollView>
                   </View>
-                  <View style={{flexDirection: 'row'}}>
-                    {selectedImage.length > 0 ? (
+                  <View style={{ flexDirection: 'row' }}>
+                    {/* image section */}
+                    {/* {selectedImage.length > 0 ? (
                       <FlatList
                         data={selectedImageShow}
                         // @ts-ignore
@@ -1305,7 +1387,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                       />
                     ) : (
                       <TouchableOpacity
-                        style={{flexDirection: 'row', marginTop: 15}}
+                        style={{ flexDirection: 'row', marginTop: 15 }}
                         onPress={() => launchImageLibrary()}>
                         <Image
                           source={Images.addGallery}
@@ -1325,7 +1407,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                             },
                           ]}>{`Bewerbungsunterlagen Datei(en)              auswählen (optional)`}</Text>
                       </TouchableOpacity>
-                    )}
+                    )} */}
                     {selectedImage.length < 3 && selectedImage.length != 0 && (
                       <TouchableOpacity
                         style={{
@@ -1353,8 +1435,8 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                             selectedImage.length === 4
                               ? '40%'
                               : selectedImage.length === 3
-                              ? '8%'
-                              : '75%',
+                                ? '8%'
+                                : '75%',
                           bottom: selectedImage.length === 3 ? '-40%' : '15%',
                         }}
                         onPress={() => launchImageLibrary()}>
@@ -1416,7 +1498,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                       justifyContent: 'center',
                       height: 50,
                       backgroundColor: isChecked
-                        ? reCol().color.BTNCOLOR
+                        ? '#faa029ff'
                         : 'gray',
                       borderRadius: 10,
                       top: 15,
@@ -1425,10 +1507,10 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                     }}
                     disabled={isChecked ? false : true}
                     activeOpacity={0.5}
-                    onPress={() => handleSubmit(onSubmit)()}>
+                    onPress={handleSubmit(onSubmit)}>
                     <Image
                       source={require('../assets/images/sms-tracking.png')}
-                      style={{height: 20, width: 20}}
+                      style={{ height: 20, width: 20 }}
                       resizeMode="contain"
                       tintColor={'#fff'}
                     />
@@ -1449,7 +1531,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
         ) : (
           <View style={styles.modalMainView}>
             <ScrollView>
-              <View style={{flex: 1, width: '95%', alignSelf: 'center'}}>
+              <View style={{ flex: 1, width: '95%', alignSelf: 'center' }}>
                 <View style={styles.flexView}>
                   <Text style={styles.headingText}>{'Direktbewerbung'}</Text>
                   <TouchableOpacity
@@ -1462,14 +1544,14 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                 <View
                   style={[
                     styles.main,
-                    {alignSelf: 'center', alignItems: 'center'},
+                    { alignSelf: 'center', alignItems: 'center' },
                   ]}>
                   <Image
                     source={require('../assets/images/Successfull.jpeg')}
-                    style={{height: 200, width: 200}}
+                    style={{ height: 200, width: 200 }}
                     resizeMode="contain"
                   />
-                  <Text style={[styles.headingText, {marginTop: 30}]}>
+                  <Text style={[styles.headingText, { marginTop: 30 }]}>
                     {'Glückwunsch!'}
                   </Text>
                   <Text style={styles.labelText}>
@@ -1486,7 +1568,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                   onPress={() => {
                     setSuccess(false), setVisibleAppointment(false);
                   }}
-                  style={{marginTop: 15}}
+                  style={{ marginTop: 15 }}
                   borderRadius={10}>
                   {'Zur Startseite'}
                 </Button>
@@ -1511,19 +1593,19 @@ export const ModalJobPic: React.FC<ModalJobDetailImageProps> = ({
           <View
             style={[
               styles.flexView,
-              {flexDirection: 'column', alignItems: 'flex-end'},
+              { flexDirection: 'column', alignItems: 'flex-end' },
             ]}>
             {/* <Text style={styles.headingText}>{'Jetzt direkt bewerben'}</Text> */}
             <TouchableOpacity onPress={() => setVisibleJobImage(false)}>
               <Image source={Images.modalClose} style={styles.closeImg} />
             </TouchableOpacity>
           </View>
-          <View style={{height: 400, marginHorizontal: 15}}>
+          <View style={{ height: 400, marginHorizontal: 15 }}>
             <Image
-              source={{uri: Globals.BASE_URL + imageData}}
+              source={{ uri: Globals.BASE_URL + imageData }}
               resizeMode="cover"
               borderRadius={10}
-              style={{height: 400, width: '100%'}}
+              style={{ height: 400, width: '100%' }}
             />
           </View>
         </View>
@@ -1541,7 +1623,7 @@ export const ModalIndustry: React.FC<ModalIndustryProps> = ({
       <View style={styles.modalBgView}>
         <View style={styles.modalIndustryView}>
           <ScrollView>
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <View style={styles.flexView}>
                 <Text style={styles.headingText}>Select Industry</Text>
                 <TouchableOpacity onPress={() => setVisibleIndustry(false)}>
@@ -1561,8 +1643,8 @@ export const ModalIndustry: React.FC<ModalIndustryProps> = ({
                     fontWeight: 'bold',
                   }}
                   size={'lg'}
-                  onPress={() => {}}
-                  style={{marginTop: 15}}
+                  onPress={() => { }}
+                  style={{ marginTop: 15 }}
                   borderRadius={10}>
                   Appointment
                 </Button>
@@ -1589,7 +1671,7 @@ export const ModalLocation: React.FC<ModalLocationProps> = ({
       <View style={styles.modalBgView}>
         <View style={styles.modalIndustryView}>
           <ScrollView>
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <View style={styles.flexView}>
                 <Text style={styles.headingText}>Select Location</Text>
                 <TouchableOpacity onPress={() => setVisibleLocation(false)}>
@@ -1599,7 +1681,7 @@ export const ModalLocation: React.FC<ModalLocationProps> = ({
               <View style={styles.main}>
                 <FlatList
                   data={locationFlatData}
-                  renderItem={({item}) => (
+                  renderItem={({ item }) => (
                     <TouchableOpacity
                       onPress={() => handleLocationSelect(item.name)}>
                       <View style={styles.renderView}>
@@ -1627,7 +1709,7 @@ export const ModalSuccessfull: React.FC<ModalIndustryProps> = ({
       <View style={styles.modalBgView}>
         <View style={styles.modalIndustryView}>
           <ScrollView>
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1 }}>
               <View style={styles.flexView}>
                 <Text style={styles.headingText}>Appointment Successful</Text>
                 <TouchableOpacity onPress={() => setVisibleIndustry(false)}>
@@ -1637,7 +1719,7 @@ export const ModalSuccessfull: React.FC<ModalIndustryProps> = ({
               <View style={styles.main}>
                 <Image
                   source={require('../assets/images/correct.png')}
-                  style={{height: 100, width: 100}}
+                  style={{ height: 100, width: 100 }}
                   resizeMode="contain"
                 />
                 <Text style={styles.headingText}>Yippieh!</Text>
@@ -1650,8 +1732,8 @@ export const ModalSuccessfull: React.FC<ModalIndustryProps> = ({
                     fontWeight: 'bold',
                   }}
                   size={'lg'}
-                  onPress={() => {}}
-                  style={{marginTop: 15}}
+                  onPress={() => { }}
+                  style={{ marginTop: 15 }}
                   borderRadius={10}>
                   Home
                 </Button>
@@ -1691,7 +1773,8 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   headingText: {
-    color: reCol().color.BDRCLR,
+    // color: reCol().color.BDRCLR,
+    color: '#222',
     fontFamily: fontFamily.poppinsBold,
     fontSize: 20,
     fontWeight: 'bold',

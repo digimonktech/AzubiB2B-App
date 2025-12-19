@@ -185,6 +185,8 @@ const DetailsCompany = ({ navigation, route }) => {
 
 
   const renderJobCard = ({ item }) => {
+    // console.log("render card => ", item);
+
     const isSaved = savedJobs.includes(item._id);
 
     // Extract Safe Values
@@ -204,6 +206,7 @@ const DetailsCompany = ({ navigation, route }) => {
             onPress={() => navigation.navigate('DetailsJobs', { item })}
             activeOpacity={0.6}
           >
+
             {/* Job Title */}
             <Text style={styles.nameTxt} numberOfLines={2}>
               {item?.jobTitle || '--'}
@@ -293,6 +296,15 @@ const DetailsCompany = ({ navigation, route }) => {
               <Image style={{ height: 20, width: 24 }} resizeMode="contain"
                 source={require('../../assets/images/sms-tracking.png')}
               />
+
+              <Text style={{
+                color: '#646262ff',
+                fontSize: 10,
+                fontWeight: '500',
+                marginTop: 6
+              }}>
+                E-Mail
+              </Text>
             </TouchableOpacity>
 
             {/* Like Button */}
@@ -781,7 +793,7 @@ const DetailsCompany = ({ navigation, route }) => {
         />
 
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{
             width: '100%',
             alignSelf: 'center',
@@ -813,7 +825,7 @@ const DetailsCompany = ({ navigation, route }) => {
             }}>
             {'Direktbewerbung absenden'}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View style={{ height: 40 }} />
       </View>
     );
@@ -843,13 +855,17 @@ const DetailsCompany = ({ navigation, route }) => {
   const getJobsDetails = async id => {
     try {
       setLoader(true);
-      let res = await getApiCall({ url: 'job/' + id });
+      let res = await getApiCall({ url: 'admin/job/' + id });
+      console.log('getJobsDetails by Id => ', res);
+
       if (res.status == 200) {
         setJobDetails(res.data);
         setVisibleApply(true);
       }
     } catch (e) {
-      alert(e);
+      // alert(e);
+      console.log('getJobsDetails Error by Id =>', e);
+
     } finally {
       setLoader(false);
       setVisibleApply(true);
@@ -857,7 +873,7 @@ const DetailsCompany = ({ navigation, route }) => {
   };
 
   const companyProfileUrl = Globals.BASE_URL + item.profileIcon
-  console.log('companyProfile ', item);
+  // console.log('companyProfile ', item);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -1061,7 +1077,8 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   nameTxt: {
-    color: reCol().color.BDRCLR,
+    // color: reCol().color.BDRCLR,
+    color: '#222',
     fontFamily: fontFamily.poppinsBold,
     fontWeight: 'bold',
     fontSize: 13,
