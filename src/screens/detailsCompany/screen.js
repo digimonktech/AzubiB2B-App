@@ -94,7 +94,7 @@ const DetailsCompany = ({ navigation, route }) => {
       let res = await getApiCall({
         url: `admin/jobs?companyId=${item?._id}`,
       });
-      // console.log('Company Jobs res ', res);
+      console.log('Company Jobs res ', res);
 
       if (res.status === 200) {
         setCompanyJobList(res.data)
@@ -372,17 +372,19 @@ const DetailsCompany = ({ navigation, route }) => {
   };
 
   const renderImages = ({ item }) => {
-    // console.log('renderImages ', item);
+    console.log('renderImages ', item);
     const imageUrl = Globals.BASE_URL + item?.file
     console.log('imageUrl ', imageUrl);
     return (
       <TouchableOpacity
         style={[styles.locView, { marginTop: 10, marginRight: 10 }]}
-        onPress={() => {
-          setDetailImage(item), setVisibleImage(true);
-        }}>
+        // onPress={() => {
+        //   setDetailImage(item), setVisibleImage(true);
+        // }}
+        activeOpacity={0.9}
+      >
         <Image
-          source={{ uri: Globals.BASE_URL + item.file }}
+          source={{ uri: 'https://api.kundenzugang-recruiting.app/' + item.file }}
           style={styles.camPic}
           resizeMode="contain"
         />
@@ -621,7 +623,7 @@ const DetailsCompany = ({ navigation, route }) => {
   };
 
   const renderCompanyDetails = ({ item }) => {
-    // console.log('renderCompanyDetails', item);
+    console.log('renderCompanyDetails mk =>', item);
     const cleanHtmlContent = html => {
       return html?.replace(/<p><br><\/p>/g, '');
     };
@@ -654,17 +656,36 @@ const DetailsCompany = ({ navigation, route }) => {
           <Text style={styles.aboutComText}>{item?.email ?? '--'}</Text>
         </TouchableOpacity>
         <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>{'Webseite'}</Text>
-        <TouchableOpacity onPress={() => Linking.openURL(item?.websiteLink)}>
-          {/* <Text style={[styles.aboutComText, { color: '#222' }]}>{item?.websiteLink ?? '--'}</Text> */}
-          <Text style={[styles.aboutComText, { color: '#222' }]}>{'https://www.britannica.com/topic/German-language'}</Text>
 
+        {/* website link */}
+        <TouchableOpacity
+          disabled={!item?.websiteLink}
+          onPress={() => {
+            if (item?.websiteLink) {
+              Linking.openURL(item.websiteLink);
+            }
+          }}
+        >
+          <Text style={[styles.aboutComText, { color: '#222' }]}>
+            {item?.websiteLink && item.websiteLink.trim() !== ''
+              ? item.websiteLink
+              : '--'}
+          </Text>
         </TouchableOpacity>
+
+
         <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
           {'Telefonnummer'}
         </Text>
-        <TouchableOpacity>
-          {/* <Text style={styles.aboutComText}>{item?.phoneNumber ?? '--'}</Text> */}
-          <Text style={styles.aboutComText}>6232762406</Text>
+        <TouchableOpacity
+          disabled={!item?.phoneNumber}
+
+        >
+          <Text style={styles.aboutComText}>
+            {item?.phoneNumber && item.phoneNumber.trim() !== ''
+              ? item.phoneNumber
+              : '--'}
+          </Text>
         </TouchableOpacity>
         {/* <RenderHTML
           style={styles.aboutComText}
@@ -678,20 +699,17 @@ const DetailsCompany = ({ navigation, route }) => {
         </Text>
 
         <Text style={styles.aboutComText}>
-          {item?.companyname ?? 'some'} {COMPANY_DESCRIPTION}
+          {item?.description && item.description.trim() !== ''
+            ? item.description
+            : '--'}
         </Text>
 
 
 
 
 
-        {/* <FlatList
-          data={item?.companyImages}
-          // companyImages
-          renderItem={renderImages}
-          keyExtractor={index => index.toString()}
-          numColumns={2}
-        /> */}
+
+
 
         {item?.videoLink != '' && (
           <YoutubePlayer
@@ -714,7 +732,10 @@ const DetailsCompany = ({ navigation, route }) => {
           {'Social links'}
         </Text>
 
+
+
         <View
+
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -722,39 +743,133 @@ const DetailsCompany = ({ navigation, route }) => {
             paddingHorizontal: 10,
           }}
         >
-          {SOCIAL_ICONS.map((social) => (
-            <TouchableOpacity
-              key={social.label}
-              activeOpacity={0.7}
+
+          {/* IG */}
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingVertical: 10,
+              borderRadius: 10,
+            }}
+
+            disabled={!item?.instagram
+            }
+            onPress={() => {
+              if (item?.instagram
+              ) {
+                Linking.openURL(item.instagram
+                );
+              }
+            }}
+
+          >
+            <Image
+              source={require('../../assets/images/instagram.png')}
               style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingVertical: 10,
-                borderRadius: 10,
+                width: 45,
+                height: 45,
+                marginBottom: 6,
+                resizeMode: 'contain',
+              }}
+            />
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '600',
+                color: '#000',
+                textAlign: 'center',
               }}
             >
-              <Image
-                source={social.icon}
-                style={{
-                  width: 45,
-                  height: 45,
-                  marginBottom: 6,
-                  resizeMode: 'contain',
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: '600',
-                  color: '#000',
-                  textAlign: 'center',
-                }}
-              >
-                {social.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
+              {'Instagram'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* FB */}
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingVertical: 10,
+              borderRadius: 10,
+            }}
+
+            disabled={!item?.facebook}
+            onPress={() => {
+              if (item?.facebook) {
+                Linking.openURL(item.facebook);
+              }
+            }}
+
+          >
+            <Image
+              source={require('../../assets/images/faceBook.png')}
+              style={{
+                width: 45,
+                height: 45,
+                marginBottom: 6,
+                resizeMode: 'contain',
+              }}
+            />
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '600',
+                color: '#000',
+                textAlign: 'center',
+              }}
+            >
+              {'FaceBook'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* X */}
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingVertical: 10,
+              borderRadius: 10,
+            }}
+
+            disabled={!item?.
+              twitter}
+            onPress={() => {
+              if (item?.
+                twitter) {
+                Linking.openURL(item.
+                  twitter);
+              }
+            }}
+
+          >
+            <Image
+              source={require('../../assets/images/X.png')}
+              style={{
+                width: 45,
+                height: 45,
+                marginBottom: 6,
+                resizeMode: 'contain',
+              }}
+            />
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '600',
+                color: '#000',
+                textAlign: 'center',
+              }}
+            >
+              {'X'}
+            </Text>
+          </TouchableOpacity>
+
         </View>
 
 
@@ -763,34 +878,15 @@ const DetailsCompany = ({ navigation, route }) => {
           {'Gallery'}
         </Text>
 
+       
+
         <FlatList
-          data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-          keyExtractor={(item) => item.toString()}
-          numColumns={3}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                marginVertical: 8,
-              }}
-            >
-              <Image
-                source={require('../../assets/images/gallery.png')}
-                style={{
-                  width: 100,
-                  height: 100,
-                  borderRadius: 10,
-                  resizeMode: 'cover',
-                }}
-              />
-            </View>
-          )}
-          contentContainerStyle={{
-            paddingVertical: 10,
-            gap: 8,
-          }}
+          data={item?.companyImages}
+          renderItem={renderImages}
+          keyExtractor={index => index.toString()}
+          numColumns={2}
         />
+
 
 
         {/* <TouchableOpacity
@@ -872,8 +968,7 @@ const DetailsCompany = ({ navigation, route }) => {
     }
   };
 
-  const companyProfileUrl = Globals.BASE_URL + item.profileIcon
-  // console.log('companyProfile ', item);
+  console.log('companyProfile => ', flatData[0]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -893,7 +988,7 @@ const DetailsCompany = ({ navigation, route }) => {
                   source={require('../../assets/images/locationDetail.png')}
                   style={styles.locImage}
                 />
-                <Text style={styles.locTxt}>{item?.city?.name ?? '--'}</Text>
+                <Text style={styles.locTxt}>{flatData[0]?.city?.name ?? '--'}</Text>
               </View>
 
               {/* Contact Person */}
@@ -902,7 +997,7 @@ const DetailsCompany = ({ navigation, route }) => {
                   source={require('../../assets/images/contactDetail.png')}
                   style={styles.locImage}
                 />
-                <Text style={styles.locTxt}>{item?.contactPerson ?? '--'}</Text>
+                <Text style={styles.locTxt}>{flatData[0]?.contactPerson ?? '--'}</Text>
               </View>
 
               {/* Industry */}
@@ -912,7 +1007,7 @@ const DetailsCompany = ({ navigation, route }) => {
                   style={styles.locImage}
                 />
                 <Text style={styles.locTxt}>
-                  {item?.industryName?.industryName ?? '--'}
+                  {flatData[0]?.industryName?.industryName ?? '--'}
                 </Text>
               </View>
             </View>
@@ -922,7 +1017,7 @@ const DetailsCompany = ({ navigation, route }) => {
               <Image
                 source={
                   item.profileIcon
-                    ? { uri: Globals.BASE_URL + item.profileIcon }
+                    ? { uri: 'https://api.kundenzugang-recruiting.app/' + item.profileIcon }
                     : require('../../assets/images/gallery.png')
                 }
                 style={styles.headingImage}

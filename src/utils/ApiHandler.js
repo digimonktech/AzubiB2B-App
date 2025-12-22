@@ -1,6 +1,9 @@
 import Globals from '../utils/Globals';
 import axios from 'axios';
-import {Alert} from 'react-native';
+import { Alert } from 'react-native';
+
+
+
 // Call post Api
 export function postApiCall(param) {
   var url = param.url;
@@ -57,8 +60,12 @@ export function getApiCall(param) {
   var url = param.url;
   var params = param.params;
 
+  //  development url =>. Globals.API_URL
+  // production url => Globals.BACKEND_URL_LIVE
+
+
   return axios
-    .get(Globals.API_URL.concat(url), {
+    .get(Globals.BACKEND_URL_LIVE.concat(url), {
       headers: {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + Globals.token,

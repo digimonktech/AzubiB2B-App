@@ -1,4 +1,4 @@
-package com.jobb2b
+package com.companyJobApp
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

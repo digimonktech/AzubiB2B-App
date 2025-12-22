@@ -1,5 +1,6 @@
 export default {
   WEBSITE_URL_LIVE: '',
+  BACKEND_URL_LIVE: 'https://api.kundenzugang-recruiting.app/api/v1/',
   API_URL: 'https://azubi.api.digimonk.net/api/v1/',
   API_URL1: 'https://api.azubiregional.de/api/v1/',
   BASE_URL: 'https://azubi.api.digimonk.net/',
