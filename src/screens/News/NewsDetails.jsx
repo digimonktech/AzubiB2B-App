@@ -16,8 +16,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 
-const BASE_URL = 'https://azubi.api.digimonk.net/api/v1';
-const IMAGE_BASE = 'https://azubi.api.digimonk.net/';
+const BASE_URL = 'https://api.kundenzugang-recruiting.app/api/v1';
+const IMAGE_BASE = 'https://api.kundenzugang-recruiting.app/';
 
 const NewsDetails = () => {
   const route = useRoute();

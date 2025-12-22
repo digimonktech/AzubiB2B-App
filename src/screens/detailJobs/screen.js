@@ -1143,11 +1143,7 @@ const DetailsJobs = ({navigation, route}) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}>
-                      {showLoadImage && (
-                        <View style={styles.indicatorView}>
-                          <ActivityIndicator size="small" color="gray" />
-                        </View>
-                      )}
+                      
                       <Image
                         style={{
                           height: '100%',
@@ -1157,8 +1153,8 @@ const DetailsJobs = ({navigation, route}) => {
                         resizeMode="cover"
                         source={{
                           uri: allData
-                            ? Globals.BASE_URL + allData.companyId?.profileIcon
-                            : Globals.BASE_URL + item?.companyId?.profileIcon,
+                            ? 'https://api.kundenzugang-recruiting.app/' + allData.companyId?.profileIcon
+                            : 'https://api.kundenzugang-recruiting.app/' + item?.companyId?.profileIcon,
                         }}
                         onLoad={handleLoad}
                       />

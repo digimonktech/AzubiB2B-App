@@ -185,7 +185,7 @@ const DetailsCompany = ({ navigation, route }) => {
 
 
   const renderJobCard = ({ item }) => {
-    // console.log("render card => ", item);
+    console.log("render Job card => ", item);
 
     const isSaved = savedJobs.includes(item._id);
 
@@ -226,8 +226,11 @@ const DetailsCompany = ({ navigation, route }) => {
                 <Image
                   style={{ height: '100%', width: '100%' }}
                   resizeMode="center"
+                  // source={{
+                  //   uri: Globals.BACKEND_URL_LIVE.concat(item?.companyId?.profileIcon),
+                  // }}
                   source={{
-                    uri: Globals.BASE_URL.concat(item?.companyId?.profileIcon || ''),
+                    uri: 'https://api.kundenzugang-recruiting.app/api/v1/' + item?.companyId?.profileIcon,
                   }}
                 />
               </View>
@@ -627,7 +630,7 @@ const DetailsCompany = ({ navigation, route }) => {
     const cleanHtmlContent = html => {
       return html?.replace(/<p><br><\/p>/g, '');
     };
-    const cleanedData = cleanHtmlContent(item?.companyDescription);
+    const cleanedData = cleanHtmlContent(item?.description);
     // const extractVideoId = url => {
     //   const videoIdMatch = url.match(
     //     /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)?|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
@@ -687,22 +690,18 @@ const DetailsCompany = ({ navigation, route }) => {
               : '--'}
           </Text>
         </TouchableOpacity>
-        {/* <RenderHTML
-          style={styles.aboutComText}
-          enableExperimentalMarginCollapsing={true}
-          source={{ html: cleanedData }}
-        /> */}
+        
 
 
         <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
           {'Discription'}
         </Text>
 
-        <Text style={styles.aboutComText}>
-          {item?.description && item.description.trim() !== ''
-            ? item.description
-            : '--'}
-        </Text>
+        <RenderHTML
+          style={styles.aboutComText}
+          enableExperimentalMarginCollapsing={true}
+          source={{ html: cleanedData }}
+        />
 
 
 

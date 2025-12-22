@@ -50,7 +50,7 @@ const News = () => {
     const fetchAllCompanies = async () => {
         try {
             const response = await axios.get(
-                'https://azubi.api.digimonk.net/api/v1/admin/companies'
+                'https://api.kundenzugang-recruiting.app/api/v1/admin/companies'
             );
             console.log('all companies ', response);
             
@@ -78,9 +78,11 @@ const News = () => {
     }
 
     const RenderCard = ({ item }) => {
+        console.log('new item => ', item);
+        
         const cleanDescription = stripHtml(item.description) || 'No description available';
         const imageUrl = item.profileIcon
-            ? { uri: Globals.BASE_URL + item.profileIcon }
+            ? { uri: 'https://api.kundenzugang-recruiting.app/' + item.profileIcon }
             : require('../../assets/images/gallery.png');
 
             console.log('imageUrl => ', imageUrl);

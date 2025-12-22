@@ -359,7 +359,7 @@ const Jobs = props => {
                 <Image
                   style={{ height: '100%', width: '100%', borderRadius: 10 }}
                   resizeMode="cover"
-                  source={{ uri: Globals.BASE_URL + item?.companyId.profileIcon }}
+                  source={{ uri: 'https://api.kundenzugang-recruiting.app/' + item?.companyId.profileIcon }}
                   onLoad={handleLoad}
                 />
               </View>
