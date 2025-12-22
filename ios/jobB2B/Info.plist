@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>jobB2B</string>
+	<string>CompanyJobApp</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -57,7 +57,8 @@
 <key>LSSupportsOpeningDocumentsInPlace</key>
 <true/>
 
-
+<key>NSCameraUsageDescription</key>
+	<string>CompanyJobApp needs access to your camera.</string>
 
 
 	<key>UIAppFonts</key>
