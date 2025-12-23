@@ -1,4 +1,4 @@
-import React, {useState, useLayoutEffect, useEffect, useCallback} from 'react';
+import React, { useState, useLayoutEffect, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -15,38 +15,39 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import {Images} from '@/assets/images/images';
-import {fontFamily, reCol} from '@/utils/configuration';
-import {Divider} from 'native-base';
-import {ModalApply, ModalIndustry, ModalJobPic} from '@/component/Modal';
+import { Images } from '@/assets/images/images';
+import { fontFamily, reCol } from '@/utils/configuration';
+import { Divider } from 'native-base';
+import { ModalApply, ModalIndustry, ModalJobPic } from '@/component/Modal';
 import BackHeader from '@/component/BackHeader';
-import {getApiCall} from '@/utils/ApiHandler';
+import { getApiCall } from '@/utils/ApiHandler';
 import Globals from '@/utils/Globals';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {RenderHTML} from 'react-native-render-html';
-import {ModalLocation} from '@/component/ModalLocation';
-import {useCity} from '@/Context/CityProvider';
+import { RenderHTML } from 'react-native-render-html';
+import { ModalLocation } from '@/component/ModalLocation';
+import { useCity } from '@/Context/CityProvider';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import WebView from 'react-native-webview';
 import Share from 'react-native-share';
-const width = Dimensions.get('window').width;
+// const width = Dimensions.get('window').width;
+const { width, height } = Dimensions.get('window');
 
-const DetailsJobs = ({navigation, route}) => {
+const DetailsJobs = ({ navigation, route }) => {
   const [visibleApply, setVisibleApply] = useState(false);
   const [visibleIndustry, setVisibleIndustry] = useState(false);
   const [visibleLocation, setVisibleLocation] = useState(false);
   const [visibleImage, setVisibleImage] = useState(false);
   const [detailImage, setDetailImage] = useState('');
   const [loading, setLoading] = useState(false);
-  const {allData} = route.params;
+  const { allData } = route.params;
   // console.log('allData...', allData, 'allData...');
-  const {item} = route.params;
+  const { item } = route.params;
   // console.log('ITEM...', item, '...ITEM');
   const [jobDetails, setJobDetails] = useState([]);
   const [jobListing, setJobListing] = useState([]);
-  const {selectedCityId} = useCity();
+  const { selectedCityId } = useCity();
   const [playing, setPlaying] = useState(false);
   const [savedJobs, setSavedJobs] = useState([]);
   const [showLoadImage, setShowLoadImage] = useState(true);
@@ -78,7 +79,7 @@ const DetailsJobs = ({navigation, route}) => {
       id: 3,
       txt: 'Installation, configuration and updating of hardware and software components',
     },
-    {id: 4, txt: 'Support of servers, databases and cloud infrastructures'},
+    { id: 4, txt: 'Support of servers, databases and cloud infrastructures' },
   ];
 
   const flatWish = [
@@ -94,17 +95,17 @@ const DetailsJobs = ({navigation, route}) => {
       id: 3,
       txt: 'Willingness to learn, ability to work in a team and analytical thinking skills',
     },
-    {id: 4, txt: 'Reliability and commitment to training'},
+    { id: 4, txt: 'Reliability and commitment to training' },
   ];
 
   const flatOffer = [
-    {id: 1, txt: 'An agile environment with modern methods and equipment'},
-    {id: 2, txt: 'Exciting and varied customer projects'},
+    { id: 1, txt: 'An agile environment with modern methods and equipment' },
+    { id: 2, txt: 'Exciting and varied customer projects' },
     {
       id: 3,
       txt: 'Open communication and a successful and committed team that looks forward to seeing you',
     },
-    {id: 4, txt: 'Personal and appreciative interaction'},
+    { id: 4, txt: 'Personal and appreciative interaction' },
   ];
 
   useEffect(() => {
@@ -119,7 +120,7 @@ const DetailsJobs = ({navigation, route}) => {
     // console.log('getJobsDetails...', id);
     try {
       setLoading(true);
-      let res = await getApiCall({url: 'admin/job/' + id});
+      let res = await getApiCall({ url: 'admin/job/' + id });
       // console.log('getJobsDetails1...', res);
       if (res.status == 200) {
         setJobDetails(res.data);
@@ -132,8 +133,8 @@ const DetailsJobs = ({navigation, route}) => {
     }
   };
 
-  const renderItem = ({item}) => {
-    const {txt} = item;
+  const renderItem = ({ item }) => {
+    const { txt } = item;
     return (
       <View style={styles.bulletView}>
         <Text style={styles.dotText}>.</Text>
@@ -142,11 +143,11 @@ const DetailsJobs = ({navigation, route}) => {
     );
   };
 
-  const renderImage = ({item}) => {
+  const renderImage = ({ item }) => {
     return (
       <FlatList
         data={[item]}
-        renderItem={({item: imageItem}) => (
+        renderItem={({ item: imageItem }) => (
           <TouchableOpacity
             style={{
               height: 160,
@@ -170,7 +171,7 @@ const DetailsJobs = ({navigation, route}) => {
                 alignSelf: 'center',
               }}
               resizeMode="cover"
-              source={{uri: Globals.BASE_URL + imageItem?.filepath}}
+              source={{ uri: Globals.BASE_URL + imageItem?.filepath }}
             />
           </TouchableOpacity>
         )}
@@ -180,7 +181,7 @@ const DetailsJobs = ({navigation, route}) => {
     );
   };
 
-  const renderDocs = ({item}) => {
+  const renderDocs = ({ item }) => {
     return (
       <View
         style={{
@@ -191,7 +192,7 @@ const DetailsJobs = ({navigation, route}) => {
           alignItems: 'center',
         }}>
         <Image
-          style={{height: 20, width: 20}}
+          style={{ height: 20, width: 20 }}
           resizeMode="contain"
           source={require('../../assets/images/Frame.png')}
         />
@@ -211,14 +212,14 @@ const DetailsJobs = ({navigation, route}) => {
     );
   };
 
-  const renderJobs = ({item}) => {
-    const {jobTitle} = item;
+  const renderJobs = ({ item }) => {
+    const { jobTitle } = item;
     const isSaved = savedJobs.includes(item._id);
     return (
       <View>
-        <View style={[styles.renderMainView, {width: '93%', flex: 1}]}>
+        <View style={[styles.renderMainView, { width: '93%', flex: 1 }]}>
           <TouchableOpacity
-            style={{width: '80%', paddingHorizontal: 10, paddingVertical: 10}}
+            style={{ width: '80%', paddingHorizontal: 10, paddingVertical: 10 }}
             activeOpacity={0.5}
             onPress={() => {
               getJobsDetails(item._id);
@@ -243,15 +244,15 @@ const DetailsJobs = ({navigation, route}) => {
                   justifyContent: 'center',
                 }}>
                 <Image
-                  style={{height: '100%', width: '100%', borderRadius: 50}}
+                  style={{ height: '100%', width: '100%', borderRadius: 50 }}
                   resizeMode="cover"
-                  source={{uri: Globals.BASE_URL + item.companyLogo}}
+                  source={{ uri: Globals.BASE_URL + item.companyLogo }}
                 />
               </View>
               <Text
                 style={[
                   styles.nameTxt,
-                  {color: reCol().color.BTNCOLOR, left: 10},
+                  { color: reCol().color.BTNCOLOR, left: 10 },
                 ]}
                 numberOfLines={2}>
                 {item.company}
@@ -306,7 +307,7 @@ const DetailsJobs = ({navigation, route}) => {
               </View>
             </View>
           </TouchableOpacity>
-          <View style={{width: '100%'}}>
+          <View style={{ width: '100%' }}>
             <TouchableOpacity
               style={{
                 height: '50%',
@@ -323,7 +324,7 @@ const DetailsJobs = ({navigation, route}) => {
                 setVisibleApply(true);
               }}>
               <Image
-                style={{height: 20, width: 24}}
+                style={{ height: 20, width: 24 }}
                 resizeMode="contain"
                 source={require('../../assets/images/sms-tracking.png')}
               />
@@ -339,7 +340,7 @@ const DetailsJobs = ({navigation, route}) => {
               }}
               onPress={() => saveJob(item)}>
               <Image
-                style={{height: 20, width: 24}}
+                style={{ height: 20, width: 24 }}
                 resizeMode="contain"
                 source={
                   isSaved
@@ -454,7 +455,7 @@ const DetailsJobs = ({navigation, route}) => {
               <FlatList
                 data={[1, 2, 3, 4]}
                 keyExtractor={item => item.toString()}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                   <SkeletonPlaceholder.Item
                     flexDirection="row"
                     alignItems="center"
@@ -512,7 +513,7 @@ const DetailsJobs = ({navigation, route}) => {
               <FlatList
                 data={[1, 1, 1, 1]}
                 keyExtractor={item => item.toString()}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                   <SkeletonPlaceholder.Item
                     flexDirection="row"
                     alignItems="center"
@@ -534,7 +535,7 @@ const DetailsJobs = ({navigation, route}) => {
             </SkeletonPlaceholder.Item>
           </SkeletonPlaceholder>
 
-          <View style={[styles.locView, {paddingVertical: 20}]}>
+          <View style={[styles.locView, { paddingVertical: 20 }]}>
             <SkeletonPlaceholder>
               <SkeletonPlaceholder.Item flexDirection="row" alignItems="center">
                 <SkeletonPlaceholder.Item
@@ -571,7 +572,7 @@ const DetailsJobs = ({navigation, route}) => {
               marginTop={15}
             />
           </SkeletonPlaceholder>
-          <View style={{height: 40}} />
+          <View style={{ height: 40 }} />
         </View>
       </View>
     );
@@ -627,13 +628,18 @@ const DetailsJobs = ({navigation, route}) => {
     }
   };
 
-  const renderJobsDetails = ({item, index}) => {
+  const renderJobsDetails = ({ item, index }) => {
     console.log('renderJobsDetails', item);
     const originalDateString = item.createdAt;
     const formattedDate = formatDate(originalDateString);
     const cleanHtmlContent = html => {
-      return html?.replace(/<p><br><\/p>/g, '');
+      if (!html) return '';
+      return html
+        .replace(/<p><br><\/p>/gi, '')
+        .replace(/<br\s*\/?>/gi, '')
+        .trim();
     };
+
     const cleanedData = cleanHtmlContent(item?.jobDescription);
     // const extractVideoId = url => {
     //   const videoIdMatch = url.match(
@@ -643,6 +649,8 @@ const DetailsJobs = ({navigation, route}) => {
     //   return videoIdMatch ? videoIdMatch[1] : null;
     // };
     // const videoIds = temp?.map(extractVideoId);
+
+
 
     const extractVideoId = url => {
       const regex = /(?:v=|\/(?!.*\/)([a-zA-Z0-9_-]{11}))(?!.*\?.*\bindex\b)/;
@@ -654,92 +662,101 @@ const DetailsJobs = ({navigation, route}) => {
       ? item.videoLink
       : 'https://www.youtube.com/';
     const videoId = extractVideoId(videoUrl);
+
     return (
-      <View>
-        <View style={styles.jobDetailBox}>
-          <View style={styles.mainFlexView}>
-            <Text
-              style={[
-                styles.nameTxt,
-                {color: reCol().color.BDRCLR},
-              ]}>{`Kontakt`}</Text>
-            <Text
-              style={[
-                styles.locTxt,
-                {fontSize: 12, fontFamily: fontFamily.poppinsRegular},
-              ]}>
-              {item?.industryName?.industryName}
-            </Text>
-            <View style={styles.locView}>
-              <Image
-                source={Images.location}
-                style={[styles.locImage, {tintColor: reCol().color.BTNCOLOR}]}
-              />
-              <Text style={styles.locTxt}>
-                {item?.city?.map(city => city.name).join(', ')}
-              </Text>
-            </View>
-            <View style={styles.locView}>
-              <Image source={Images.callingIcn} style={styles.locImage} />
-              <TouchableOpacity>
-                <Text style={styles.locTxt}>
-                  {item?.phoneNumber}
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.locView}>
-              <Image source={Images.smsIcn} style={styles.locImage} />
-              <TouchableOpacity
-                onPress={() => openGmail(item?.companyId?.email)}>
-                <Text style={styles.locTxt}>{item?.companyId?.email}</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.locView}>
-              <Image source={Images.smsIcn} style={styles.locImage} />
-              <TouchableOpacity
-                onPress={() => openGmail(item?.additionalEmail)}>
-                <Text style={styles.locTxt}>{item?.additionalEmail}</Text>
-              </TouchableOpacity>
-            </View>
-            {/* <View style={styles.locView}>
-                            <Image source={Images.globalIcn} style={styles.locImage} />
-                            <TouchableOpacity>
-                                <Text style={styles.locTxt}>{item?.company?.website}</Text>
-                            </TouchableOpacity>
-                        </View> */}
-            {item?.additionalData?.length > 0 &&
-              item?.additionalData?.map(itemMap => {
-                return (
-                  <View style={styles.locView}>
-                    <Image
-                      source={{
-                        uri: Globals.BASE_URL + itemMap?.image?.filepath,
-                      }}
-                      style={styles.locImage}
-                    />
-                    <TouchableOpacity>
-                      <Text style={styles.locTxt}>{itemMap?.text}</Text>
-                    </TouchableOpacity>
-                  </View>
-                );
-              })}
-          </View>
-          <View style={styles.mainFlexView1}>
-            {showLoadImage1 && (
-              <View style={styles.indicatorView}>
-                <ActivityIndicator size="small" color="gray" />
-              </View>
-            )}
+      <View style={{
+        backgroundColor: reCol().color.WHITE,
+        marginHorizontal: 10,
+        borderRadius: 10,
+        elevation: 2,
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        marginBottom: 10,
+      }}>
+        <View style={{}}>
+          <Text
+            style={[
+              styles.nameTxt,
+              { color: reCol().color.BDRCLR },
+            ]}>{`Kontakt`}</Text>
+          <Text
+            style={[
+              styles.locTxt,
+              { fontSize: 12, fontFamily: fontFamily.poppinsRegular },
+            ]}>
+            {item?.industryName?.industryName}
+          </Text>
+          <View style={styles.locView}>
             <Image
-              source={{
-                uri: Globals.BASE_URL + item?.companyId?.profileIcon,
-              }}
-              style={styles.headingImage}
-              onLoad={handleLoad1}
-              resizeMode="contain"
+              source={Images.location}
+              style={[styles.locImage, { tintColor: reCol().color.BTNCOLOR }]}
             />
+            <Text style={styles.locTxt}>
+              {item?.city?.map(city => city.name).join(', ')}
+            </Text>
+          </View>
+          <View style={styles.locView}>
+            <Image source={Images.callingIcn} style={styles.locImage} />
+            <TouchableOpacity>
+              <Text style={styles.locTxt}>
+                {item?.phoneNumber}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.locView}>
+            <Image source={Images.smsIcn} style={styles.locImage} />
+            <TouchableOpacity
+              onPress={() => openGmail(item?.companyId?.email)}>
+              <Text style={styles.locTxt}>{item?.companyId?.email}</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.locView}>
+            <Image source={Images.smsIcn} style={styles.locImage} />
+            <TouchableOpacity
+              onPress={() => openGmail(item?.additionalEmail)}>
+              <Text style={styles.locTxt}>{item?.additionalEmail}</Text>
+            </TouchableOpacity>
           </View>
         </View>
+
+        <Text style={{
+          color: '#494747ff',
+          fontWeight: 'bold',
+          fontSize: 16,
+          marginBottom: 4,
+          marginTop: 4,
+        }}>{'Job Description'}</Text>
+
+        <RenderHTML
+          contentWidth={Dimensions.get('window').width}
+          source={{ html: cleanedData }}
+          tagsStyles={{
+            p: {
+              marginVertical: 3,
+              color: '#646464',
+            },
+          }}
+        />
+
+        {/* yt video */}
+
+        {videoId && (
+          <YoutubePlayer
+            height={230}
+            play={playing}
+            videoId={videoId}
+            onChangeState={onStateChange}
+            webViewStyle={{
+              borderRadius: 20,
+              borderCurve: 'circular',
+              marginTop: 30,
+              elevation: 10,
+            }}
+          />
+        )}
+
+
+        {/* google map url */}
         {item?.mapUrl && (
           <TouchableOpacity
             style={[
@@ -761,7 +778,7 @@ const DetailsJobs = ({navigation, route}) => {
                 {
                   alignSelf: 'center',
                   paddingLeft: 15,
-                  color: reCol().color.BDRCLR,
+                  color: '#222',
                 },
               ]}>
               Standort / Route anzeigen
@@ -778,13 +795,15 @@ const DetailsJobs = ({navigation, route}) => {
               }}
               activeOpacity={0.5}>
               <Image
-                style={{height: 20, width: 24}}
+                style={{ height: 20, width: 24 }}
                 resizeMode="contain"
                 source={require('../../assets/images/shiftArrow.png')}
               />
             </View>
           </TouchableOpacity>
         )}
+
+        {/* location url */}
         {item?.locationUrl && (
           <TouchableOpacity
             style={[
@@ -806,7 +825,7 @@ const DetailsJobs = ({navigation, route}) => {
                 {
                   alignSelf: 'center',
                   paddingLeft: 15,
-                  color: reCol().color.BDRCLR,
+                  color: '#222',
                 },
               ]}>
               {item?.locationField || 'Erfahre mehr über uns'}
@@ -823,228 +842,429 @@ const DetailsJobs = ({navigation, route}) => {
               }}
               activeOpacity={0.5}>
               <Image
-                style={{height: 20, width: 24}}
+                style={{ height: 20, width: 24 }}
                 resizeMode="contain"
                 source={require('../../assets/images/shiftArrow.png')}
               />
             </View>
           </TouchableOpacity>
         )}
-        {item?.embeddedCode !== '' ? (
-          <View style={[styles.jobDetailBox, styles.jobDetailBox1]}>
-            <WebView
-              scalesPageToFit={true}
-              bounces={false}
-              onLoad={syntheticEvent => {
-                const {nativeEvent} = syntheticEvent;
-                setLoading(nativeEvent.loading);
-              }}
-              javaScriptEnabled
-              style={{height: 60}}
-              source={{
-                html: `
-                        <!DOCTYPE html>
-                        <html>
-                          <body>
-                            <div id="baseDiv">${item?.embeddedCode}</div> 
-                          </body>
-                        </html>
-                  `,
-              }}
-              automaticallyAdjustContentInsets={false}
-            />
-          </View>
-        ) : null}
-        <View style={[styles.jobDetailBox, styles.jobDetailBox1]}>
-          <Text style={[styles.titleText, {color: reCol().color.BDRCLR}]}>
-            {'Jobbeschreibung'}
-          </Text>
-          {/* <Text style={styles.aboutComText}>{item.jobDescription}</Text> */}
-          <RenderHTML
-            tagsStyles={{
-              p: {
-                marginVertical: 3, // Removes the vertical margin
-                color: '#646464',
-              },
-            }}
-            enableExperimentalMarginCollapsing={true}
-            source={{html: cleanedData}}
-          />
-          {/* <Text style={styles.titleText}>{'Über das Unternehmen'}</Text> */}
-          {/* <Text style={styles.aboutComText}>{item?.company?.companyDescription}</Text> */}
-          {/* <RenderHTML
-                        tagsStyles={{
-                            p: {
-                                marginVertical: 3, // Removes the vertical margin
-                                color: '#646464'
-                            }
-                        }}
-                        source={{ html: item?.company?.companyDescription }}
-                    /> */}
-          <Text style={[styles.titleText, {color: reCol().color.BDRCLR}]}>
-            {'Berufsbezeichnung'}
-          </Text>
-          <Text style={styles.aboutComText}>{item?.jobTitle}</Text>
-          {/* <Text style={styles.titleText}>{'Ihre Aufgaben'}</Text>
-                    <FlatList
-                        data={flatTasks}
-                        renderItem={renderItem}
-                        scrollEnabled={false}
-                        showsVerticalScrollIndicator={false}
-                    />
-                    <Text style={styles.titleText}>{'Wir wünschen}</Text>
-                    <FlatList
-                        data={flatWish}
-                        renderItem={renderItem}
-                        scrollEnabled={false}
-                        showsVerticalScrollIndicator={false}
-                    /> */}
-          {item?.jobImages?.length > 0 && (
-            <>
-              <Text style={[styles.titleText, {color: reCol().color.BDRCLR}]}>
-                {'Bilder-/Videogalerie'}
-              </Text>
-              {/* <FlatList
-                data={item?.jobImages}
-                renderItem={renderImage}
-                scrollEnabled={false}
-                showsVerticalScrollIndicator={false}
-                numColumns={2}
-              /> */}
-              <Image
-                style={{
-                  height: 100,
-                  width: 100,
-                  borderRadius: 10,
-                  alignSelf: 'center',
-                }}
-                resizeMode="cover"
-                source={{uri: Globals.BASE_URL + item.jobImages}}
-              />
-            </>
-          )}
-          {item?.videoLink != '' && (
-            <YoutubePlayer
-              height={230}
-              play={playing}
-              //   playList={videoIds}
-              // playList={['QRt7LjqJ45k', 'fHsa9DqmId8']}
-              videoId={videoId}
-              onChangeState={onStateChange}
-              webViewStyle={{
-                borderRadius: 20,
-                borderCurve: 'circular',
-                top: 30,
-                elevation: 10,
-              }}
-            />
-          )}
 
-          {/* <Text style={styles.titleText}>{'Wir bieten'}</Text>
-                    <FlatList
-                        data={flatOffer}
-                        renderItem={renderItem}
-                        scrollEnabled={false}
-                        showsVerticalScrollIndicator={false}
-                    /> */}
-          <Text style={[styles.titleText, {color: reCol().color.BDRCLR}]}>
-            {'Adresse'}
-          </Text>
-          <Text style={styles.aboutComText}>
-            {item.address} {item.zipCode}
-          </Text>
-          <Image source={Images.dividerLine} style={styles.lineDivider} />
 
-          {/* <FlatList
-                        data={item?.attachments}
-                        renderItem={renderDocs}
-                        scrollEnabled={false}
-                        showsVerticalScrollIndicator={false}
-                        numColumns={2}
-                    /> */}
+        <TouchableOpacity
+          style={{
+            width: '100%',
+            alignSelf: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: 50,
+            backgroundColor: '#f58916ff',
+            borderRadius: 10,
 
-          {/* <Image source={Images.dividerLine} style={styles.lineDivider} /> */}
-
-          <View style={[styles.locView, {paddingVertical: 20}]}>
-            <Text
-              style={[
-                styles.titleText,
-                {paddingTop: 0, fontWeight: '400', color: reCol().color.BDRCLR},
-              ]}>
-              {'ID'}:
-            </Text>
-            <Text
-              style={[
-                styles.aboutComText,
-                {
-                  paddingTop: 2,
-                  fontWeight: '400',
-                  paddingLeft: 2,
-                  fontSize: 12,
-                },
-              ]}>
-              {item?._id?.slice(0, 8)}...
-            </Text>
-            <Divider
-              orientation="vertical"
-              alignSelf={'center'}
-              marginLeft={'10%'}
-            />
-            <Text
-              style={[
-                styles.titleText,
-                {
-                  paddingTop: 0,
-                  fontWeight: '400',
-                  paddingLeft: '10%',
-                  color: reCol().color.BDRCLR,
-                },
-              ]}>
-              {'Datum'}:
-            </Text>
-            <Text
-              style={[
-                styles.aboutComText,
-                {
-                  paddingTop: 2,
-                  fontWeight: '400',
-                  paddingLeft: 5,
-                  fontSize: 12,
-                },
-              ]}>
-              {originalDateString ? formattedDate : ''}
-            </Text>
-          </View>
-          <Image source={Images.dividerLine} style={styles.lineDivider} />
-
-          <TouchableOpacity
+          }}
+          activeOpacity={0.5}
+          onPress={() => {
+            setVisibleApply(true);
+          }}>
+          <Text
             style={{
-              width: '100%',
-              alignSelf: 'center',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 50,
-              backgroundColor: reCol().color.BTNCOLOR,
-              borderRadius: 10,
-              top: 15,
-            }}
-            activeOpacity={0.5}
-            onPress={() => {
-              setVisibleApply(true);
+              fontFamily: fontFamily.poppinsSeBold,
+              fontSize: 16,
+              color: '#fff',
             }}>
-            <Text
-              style={{
-                fontFamily: fontFamily.poppinsSeBold,
-                fontSize: 16,
-                color: '#fff',
-              }}>
-              {'Jetzt bewerben'}
-            </Text>
-          </TouchableOpacity>
-          <View style={{height: 40}} />
-        </View>
+            {'Jetzt bewerben'}
+          </Text>
+        </TouchableOpacity>
+
+
       </View>
-    );
+    )
+    // return (
+    //   <View>
+    //     <View style={styles.jobDetailBox}>
+    //       <View style={styles.mainFlexView}>
+    //         <Text
+    //           style={[
+    //             styles.nameTxt,
+    //             {color: reCol().color.BDRCLR},
+    //           ]}>{`Kontakt`}</Text>
+    //         <Text
+    //           style={[
+    //             styles.locTxt,
+    //             {fontSize: 12, fontFamily: fontFamily.poppinsRegular},
+    //           ]}>
+    //           {item?.industryName?.industryName}
+    //         </Text>
+    //         <View style={styles.locView}>
+    //           <Image
+    //             source={Images.location}
+    //             style={[styles.locImage, {tintColor: reCol().color.BTNCOLOR}]}
+    //           />
+    //           <Text style={styles.locTxt}>
+    //             {item?.city?.map(city => city.name).join(', ')}
+    //           </Text>
+    //         </View>
+    //         <View style={styles.locView}>
+    //           <Image source={Images.callingIcn} style={styles.locImage} />
+    //           <TouchableOpacity>
+    //             <Text style={styles.locTxt}>
+    //               {item?.phoneNumber}
+    //             </Text>
+    //           </TouchableOpacity>
+    //         </View>
+    //         <View style={styles.locView}>
+    //           <Image source={Images.smsIcn} style={styles.locImage} />
+    //           <TouchableOpacity
+    //             onPress={() => openGmail(item?.companyId?.email)}>
+    //             <Text style={styles.locTxt}>{item?.companyId?.email}</Text>
+    //           </TouchableOpacity>
+    //         </View>
+    //         <View style={styles.locView}>
+    //           <Image source={Images.smsIcn} style={styles.locImage} />
+    //           <TouchableOpacity
+    //             onPress={() => openGmail(item?.additionalEmail)}>
+    //             <Text style={styles.locTxt}>{item?.additionalEmail}</Text>
+    //           </TouchableOpacity>
+    //         </View>
+    //        
+    //         {item?.additionalData?.length > 0 &&
+    //           item?.additionalData?.map(itemMap => {
+    //             return (
+    //               <View style={styles.locView}>
+    //                 <Image
+    //                   source={{
+    //                     uri: Globals.BASE_URL + itemMap?.image?.filepath,
+    //                   }}
+    //                   style={styles.locImage}
+    //                 />
+    //                 <TouchableOpacity>
+    //                   <Text style={styles.locTxt}>{itemMap?.text ?? '--'}</Text>
+    //                 </TouchableOpacity>
+    //               </View>
+    //             );
+    //           })}
+    //       </View>
+    //       <View style={styles.mainFlexView1}>
+    //         {showLoadImage1 && (
+    //           <View style={styles.indicatorView}>
+    //             <ActivityIndicator size="small" color="gray" />
+    //           </View>
+    //         )}
+    //         <Image
+    //           source={{
+    //             uri: Globals.BASE_URL + item?.companyId?.profileIcon,
+    //           }}
+    //           style={styles.headingImage}
+    //           onLoad={handleLoad1}
+    //           resizeMode="contain"
+    //         />
+    //       </View>
+    //     </View>
+    //     {item?.mapUrl && (
+    //       <TouchableOpacity
+    //         style={[
+    //           styles.jobDetailBox,
+    //           {
+    //             flexDirection: 'row',
+    //             height: 50,
+    //             paddingVertical: 0,
+    //             paddingHorizontal: 0,
+    //             marginVertical: 0,
+    //           },
+    //         ]}
+    //         onPress={() => {
+    //           Linking.openURL(item.mapUrl);
+    //         }}>
+    //         <Text
+    //           style={[
+    //             styles.nameTxt,
+    //             {
+    //               alignSelf: 'center',
+    //               paddingLeft: 15,
+    //               color: '#222',
+    //             },
+    //           ]}>
+    //           Standort / Route anzeigen
+    //         </Text>
+    //         <View
+    //           style={{
+    //             height: 50,
+    //             width: '15%',
+    //             backgroundColor: '#0096A438',
+    //             borderTopRightRadius: 10,
+    //             borderBottomRightRadius: 10,
+    //             justifyContent: 'center',
+    //             alignItems: 'center',
+    //           }}
+    //           activeOpacity={0.5}>
+    //           <Image
+    //             style={{height: 20, width: 24}}
+    //             resizeMode="contain"
+    //             source={require('../../assets/images/shiftArrow.png')}
+    //           />
+    //         </View>
+    //       </TouchableOpacity>
+    //     )}
+    //     {item?.locationUrl && (
+    //       <TouchableOpacity
+    //         style={[
+    //           styles.jobDetailBox,
+    //           {
+    //             flexDirection: 'row',
+    //             height: 50,
+    //             paddingVertical: 0,
+    //             paddingHorizontal: 0,
+    //             marginVertical: 10,
+    //           },
+    //         ]}
+    //         onPress={() => {
+    //           Linking.openURL(item?.locationUrl);
+    //         }}>
+    //         <Text
+    //           style={[
+    //             styles.nameTxt,
+    //             {
+    //               alignSelf: 'center',
+    //               paddingLeft: 15,
+    //               color: '#222',
+    //             },
+    //           ]}>
+    //           {item?.locationField || 'Erfahre mehr über uns'}
+    //         </Text>
+    //         <View
+    //           style={{
+    //             height: 50,
+    //             width: '15%',
+    //             backgroundColor: '#0096A438',
+    //             borderTopRightRadius: 10,
+    //             borderBottomRightRadius: 10,
+    //             justifyContent: 'center',
+    //             alignItems: 'center',
+    //           }}
+    //           activeOpacity={0.5}>
+    //           <Image
+    //             style={{height: 20, width: 24}}
+    //             resizeMode="contain"
+    //             source={require('../../assets/images/shiftArrow.png')}
+    //           />
+    //         </View>
+    //       </TouchableOpacity>
+    //     )}
+    //     {item?.embeddedCode !== '' ? (
+    //       <View style={[styles.jobDetailBox, styles.jobDetailBox1]}>
+    //         <WebView
+    //           scalesPageToFit={true}
+    //           bounces={false}
+    //           onLoad={syntheticEvent => {
+    //             const {nativeEvent} = syntheticEvent;
+    //             setLoading(nativeEvent.loading);
+    //           }}
+    //           javaScriptEnabled
+    //           style={{height: 60}}
+    //           source={{
+    //             html: `
+    //                     <!DOCTYPE html>
+    //                     <html>
+    //                       <body>
+    //                         <div id="baseDiv">${item?.embeddedCode}</div> 
+    //                       </body>
+    //                     </html>
+    //               `,
+    //           }}
+    //           automaticallyAdjustContentInsets={false}
+    //         />
+    //       </View>
+    //     ) : null}
+    //     <View style={[styles.jobDetailBox, styles.jobDetailBox1]}>
+    //       <Text style={[styles.titleText, {color: '#222'}]}>
+    //         {'Jobbeschreibung'}
+    //       </Text>
+    //       {/* <Text style={styles.aboutComText}>{item.jobDescription}</Text> */}
+    //       <RenderHTML
+    //         tagsStyles={{
+    //           p: {
+    //             marginVertical: 3, // Removes the vertical margin
+    //             color: '#646464',
+    //           },
+    //         }}
+    //         enableExperimentalMarginCollapsing={true}
+    //         source={{html: cleanedData}}
+    //       />
+    //       {/* <Text style={styles.titleText}>{'Über das Unternehmen'}</Text> */}
+    //       {/* <Text style={styles.aboutComText}>{item?.company?.companyDescription}</Text> */}
+    //       {/* <RenderHTML
+    //                     tagsStyles={{
+    //                         p: {
+    //                             marginVertical: 3, // Removes the vertical margin
+    //                             color: '#646464'
+    //                         }
+    //                     }}
+    //                     source={{ html: item?.company?.companyDescription }}
+    //                 /> */}
+    //       <Text style={[styles.titleText, {color: reCol().color.BDRCLR}]}>
+    //         {'Berufsbezeichnung'}
+    //       </Text>
+    //       <Text style={styles.aboutComText}>{item?.jobTitle}</Text>
+    //       {/* <Text style={styles.titleText}>{'Ihre Aufgaben'}</Text>
+    //                 <FlatList
+    //                     data={flatTasks}
+    //                     renderItem={renderItem}
+    //                     scrollEnabled={false}
+    //                     showsVerticalScrollIndicator={false}
+    //                 />
+    //                 <Text style={styles.titleText}>{'Wir wünschen}</Text>
+    //                 <FlatList
+    //                     data={flatWish}
+    //                     renderItem={renderItem}
+    //                     scrollEnabled={false}
+    //                     showsVerticalScrollIndicator={false}
+    //                 /> */}
+    //       {item?.jobImages?.length > 0 && (
+    //         <>
+    //           <Text style={[styles.titleText, {color: reCol().color.BDRCLR}]}>
+    //             {'Bilder-/Videogalerie'}
+    //           </Text>
+    //           {/* <FlatList
+    //             data={item?.jobImages}
+    //             renderItem={renderImage}
+    //             scrollEnabled={false}
+    //             showsVerticalScrollIndicator={false}
+    //             numColumns={2}
+    //           /> */}
+    //           <Image
+    //             style={{
+    //               height: 100,
+    //               width: 100,
+    //               borderRadius: 10,
+    //               alignSelf: 'center',
+    //             }}
+    //             resizeMode="cover"
+    //             source={{uri: Globals.BASE_URL + item.jobImages}}
+    //           />
+    //         </>
+    //       )}
+    //       {item?.videoLink != '' && (
+    //         <YoutubePlayer
+    //           height={230}
+    //           play={playing}
+    //           //   playList={videoIds}
+    //           // playList={['QRt7LjqJ45k', 'fHsa9DqmId8']}
+    //           videoId={videoId}
+    //           onChangeState={onStateChange}
+    //           webViewStyle={{
+    //             borderRadius: 20,
+    //             borderCurve: 'circular',
+    //             top: 30,
+    //             elevation: 10,
+    //           }}
+    //         />
+    //       )}
+
+    //       {/* <Text style={styles.titleText}>{'Wir bieten'}</Text>
+    //                 <FlatList
+    //                     data={flatOffer}
+    //                     renderItem={renderItem}
+    //                     scrollEnabled={false}
+    //                     showsVerticalScrollIndicator={false}
+    //                 /> */}
+    //       <Text style={[styles.titleText, {color: '#222'}]}>
+    //         {'Adresse'}
+    //       </Text>
+    //       <Text style={styles.aboutComText}>
+    //         {item.address} {item.zipCode}
+    //       </Text>
+    //       <Image source={Images.dividerLine} style={styles.lineDivider} />
+
+    //       {/* <FlatList
+    //                     data={item?.attachments}
+    //                     renderItem={renderDocs}
+    //                     scrollEnabled={false}
+    //                     showsVerticalScrollIndicator={false}
+    //                     numColumns={2}
+    //                 /> */}
+
+    //       {/* <Image source={Images.dividerLine} style={styles.lineDivider} /> */}
+
+    //       <View style={[styles.locView, {paddingVertical: 20}]}>
+    //         <Text
+    //           style={[
+    //             styles.titleText,
+    //             {paddingTop: 0, fontWeight: '400', color: reCol().color.BDRCLR},
+    //           ]}>
+    //           {'ID'}:
+    //         </Text>
+    //         <Text
+    //           style={[
+    //             styles.aboutComText,
+    //             {
+    //               paddingTop: 2,
+    //               fontWeight: '400',
+    //               paddingLeft: 2,
+    //               fontSize: 12,
+    //             },
+    //           ]}>
+    //           {item?._id?.slice(0, 8)}...
+    //         </Text>
+    //         <Divider
+    //           orientation="vertical"
+    //           alignSelf={'center'}
+    //           marginLeft={'10%'}
+    //         />
+    //         <Text
+    //           style={[
+    //             styles.titleText,
+    //             {
+    //               paddingTop: 0,
+    //               fontWeight: '400',
+    //               paddingLeft: '10%',
+    //               color: reCol().color.BDRCLR,
+    //             },
+    //           ]}>
+    //           {'Datum'}:
+    //         </Text>
+    //         <Text
+    //           style={[
+    //             styles.aboutComText,
+    //             {
+    //               paddingTop: 2,
+    //               fontWeight: '400',
+    //               paddingLeft: 5,
+    //               fontSize: 12,
+    //             },
+    //           ]}>
+    //           {originalDateString ? formattedDate : ''}
+    //         </Text>
+    //       </View>
+    //       <Image source={Images.dividerLine} style={styles.lineDivider} />
+
+    //       <TouchableOpacity
+    //         style={{
+    //           width: '100%',
+    //           alignSelf: 'center',
+    //           alignItems: 'center',
+    //           justifyContent: 'center',
+    //           height: 50,
+    //           backgroundColor: reCol().color.BTNCOLOR,
+    //           borderRadius: 10,
+    //           top: 15,
+    //         }}
+    //         activeOpacity={0.5}
+    //         onPress={() => {
+    //           setVisibleApply(true);
+    //         }}>
+    //         <Text
+    //           style={{
+    //             fontFamily: fontFamily.poppinsSeBold,
+    //             fontSize: 16,
+    //             color: '#fff',
+    //           }}>
+    //           {'Jetzt bewerben'}
+    //         </Text>
+    //       </TouchableOpacity>
+    //       <View style={{height: 40}} />
+    //     </View>
+    //   </View>
+    // );
   };
   useEffect(() => {
     const fetchData = async () => {
@@ -1112,10 +1332,10 @@ const DetailsJobs = ({navigation, route}) => {
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground style={styles.container} source={Images.bgImage}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
           {!loading && (
             <TouchableHighlight underlayColor={'none'}>
-              <View style={[styles.renderMainView, {width: '93%', flex: 1}]}>
+              <View style={[styles.renderMainView, { width: '93%', flex: 1 }]}>
                 <View
                   style={{
                     width: '80%',
@@ -1123,7 +1343,7 @@ const DetailsJobs = ({navigation, route}) => {
                     paddingVertical: 10,
                   }}>
                   <Text
-                    style={[styles.nameTxt, {color: reCol().color.BDRCLR}]}
+                    style={[styles.nameTxt, { color: reCol().color.BDRCLR }]}
                     numberOfLines={2}>
                     {item?.jobTitle}
                   </Text>
@@ -1143,11 +1363,7 @@ const DetailsJobs = ({navigation, route}) => {
                         alignItems: 'center',
                         justifyContent: 'center',
                       }}>
-                      {showLoadImage && (
-                        <View style={styles.indicatorView}>
-                          <ActivityIndicator size="small" color="gray" />
-                        </View>
-                      )}
+
                       <Image
                         style={{
                           height: '100%',
@@ -1157,8 +1373,8 @@ const DetailsJobs = ({navigation, route}) => {
                         resizeMode="cover"
                         source={{
                           uri: allData
-                            ? Globals.BASE_URL + allData.companyId?.profileIcon
-                            : Globals.BASE_URL + item?.companyId?.profileIcon,
+                            ? 'https://api.kundenzugang-recruiting.app/' + allData.companyId?.profileIcon
+                            : 'https://api.kundenzugang-recruiting.app/' + item?.companyId?.profileIcon,
                         }}
                         onLoad={handleLoad}
                       />
@@ -1166,7 +1382,7 @@ const DetailsJobs = ({navigation, route}) => {
                     <Text
                       style={[
                         styles.nameTxt,
-                        {color: reCol().color.BTNCOLOR, left: 10},
+                        { color: reCol().color.BTNCOLOR, left: 10 },
                       ]}>
                       {allData
                         ? allData.companyId?.companyname
@@ -1186,7 +1402,7 @@ const DetailsJobs = ({navigation, route}) => {
                   <View style={styles.locView}>
                     <View
                       style={{
-                        backgroundColor:  '#4bad0aff',
+                        backgroundColor: '#4bad0aff',
                         // reCol().color.EMLCLR
                         borderRadius: 2,
                         height: 20,
@@ -1241,7 +1457,7 @@ const DetailsJobs = ({navigation, route}) => {
                     {/* <Text style={styles.mwdTxt}>(m/w/d)</Text> */}
                   </View>
                 </View>
-                <View style={{width: '100%'}}>
+                <View style={{ width: '100%' }}>
                   <TouchableOpacity
                     style={{
                       height: '50%',
@@ -1257,7 +1473,7 @@ const DetailsJobs = ({navigation, route}) => {
                       setVisibleApply(true);
                     }}>
                     <Image
-                      style={{height: 20, width: 24}}
+                      style={{ height: 20, width: 24 }}
                       resizeMode="contain"
                       source={require('../../assets/images/sms-tracking.png')}
                     />
@@ -1275,7 +1491,7 @@ const DetailsJobs = ({navigation, route}) => {
                       saveJob(item);
                     }}>
                     <Image
-                      style={{height: 20, width: 24}}
+                      style={{ height: 20, width: 24 }}
                       resizeMode="contain"
                       source={
                         isSaved
@@ -1315,8 +1531,8 @@ const DetailsJobs = ({navigation, route}) => {
         applyData: jobDetails,
         deviceId: id,
       })}
-      {ModalIndustry({visibleIndustry, setVisibleIndustry})}
-      {ModalLocation({visibleLocation, setVisibleLocation, navigation})}
+      {ModalIndustry({ visibleIndustry, setVisibleIndustry })}
+      {ModalLocation({ visibleLocation, setVisibleLocation, navigation })}
       {ModalJobPic({
         visibleJobImage: visibleImage,
         setVisibleJobImage: setVisibleImage,
@@ -1331,6 +1547,7 @@ export default DetailsJobs;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: height,
   },
   jobDetailBox: {
     marginHorizontal: 15,
@@ -1343,14 +1560,14 @@ const styles = StyleSheet.create({
     elevation: 10,
     justifyContent: 'space-between',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
   },
   jobDetailBox1: {
     flexDirection: 'column',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
     marginVertical: 5,
@@ -1431,7 +1648,7 @@ const styles = StyleSheet.create({
     height: 1.2,
     width: '95%',
   },
-  naviImg: {height: 25, width: 25},
+  naviImg: { height: 25, width: 25 },
   btnTxt: {},
   renderMainView: {
     marginVertical: 10,
@@ -1440,7 +1657,7 @@ const styles = StyleSheet.create({
     // marginHorizontal: 10,
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
     shadowRadius: 2,
     elevation: 5,

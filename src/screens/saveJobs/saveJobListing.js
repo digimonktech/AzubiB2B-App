@@ -140,7 +140,7 @@ const SaveJobListing = () => {
                   source={{
                     uri:
                       item?.companyId?.profileIcon
-                        ? Globals.BASE_URL + item.companyId.profileIcon
+                        ? 'https://api.kundenzugang-recruiting.app/' + item.companyId.profileIcon
                         : undefined,
                   }}
                   defaultSource={Images.fallbackLogo}

@@ -18,7 +18,7 @@ import Globals from '@/utils/Globals';
 
 const { width } = Dimensions.get('window'); // Device width for responsive UI
 
-const BASE_URL = 'https://azubi.api.digimonk.net/api/v1';
+const BASE_URL = 'https://api.kundenzugang-recruiting.app/api/v1'; 
 
 const CompanyNews = () => {
     const route = useRoute();
@@ -78,7 +78,7 @@ const CompanyNews = () => {
 
                     {item.images?.[0]?.file ? (
                         <Image
-                            source={{ uri: `https://azubi.api.digimonk.net/${item.images[0].file}` }}
+                            source={{ uri: `https://api.kundenzugang-recruiting.app/${item.images[0].file}` }}
                             style={styles.thumbImage}
                         />
                     ) : (
@@ -114,6 +114,9 @@ const CompanyNews = () => {
                     renderItem={renderNews}
                     contentContainerStyle={{ padding: 16 }}
                     showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={<View>
+                        <Text style={{ textAlign: 'center', marginTop: 20, color: '#222' }}>No news available.</Text>  
+                    </View>}
                 />
             </ImageBackground>
         </SafeAreaView>
