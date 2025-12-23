@@ -85,7 +85,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "2.0"
     }
     signingConfigs {
         debug {
@@ -95,9 +95,9 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file("my-release-key.keystore")
+            storeFile file("my-release-key.jks")
             storePassword "digimonk"
-            keyAlias "my_key_alias"
+            keyAlias "mykey"
             keyPassword "digimonk"
     }
     }
