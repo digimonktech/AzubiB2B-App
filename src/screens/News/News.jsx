@@ -52,6 +52,8 @@ const News = () => {
             const response = await axios.get(
                 'https://azubi.api.digimonk.net/api/v1/admin/companies'
             );
+            console.log('all companies ', response);
+            
             const data = response?.data?.data?.companies?.companies || [];
             setCompanies(data);
         } catch (error) {
@@ -81,6 +83,8 @@ const News = () => {
             ? { uri: Globals.BASE_URL + item.profileIcon }
             : require('../../assets/images/gallery.png');
 
+            console.log('imageUrl => ', imageUrl);
+            
         return (
             <TouchableOpacity activeOpacity={0.8} style={styles.cardContainer} onPress={() => handleNavigation(item)}>
                 <View style={styles.imagePlaceholder}>

@@ -69,9 +69,11 @@ const Companies = (props) => {
     // 1 fetch all companies
     const fetchAllCompanies = async () => {
         try {
-            const response = await axios.get(
-                'https://azubi.api.digimonk.net/api/v1/admin/companies'
-            );
+            // const response = await axios.get(
+            //     'https://azubi.api.digimonk.net/api/v1/admin/companies'
+            // );
+
+            const response = await axios.get(`${Globals.BACKEND_URL_LIVE}admin/companies`);
 
             const data = response?.data?.data?.companies
 
@@ -286,7 +288,7 @@ const Companies = (props) => {
             } else if (type === "terms") {
                 navigation.navigate('CompanyTrems');
             } else if (type === "privacy") {
-                navigation.navigate('CompanyPrivacy', {item});
+                navigation.navigate('CompanyPrivacy', { item });
             } else if (type === "JobWall") {
                 navigation.navigate('CompanyJobWall', { item });
             } else if (type === 'kontakt') {
@@ -295,7 +297,8 @@ const Companies = (props) => {
         };
 
         return (
-            <View
+            <TouchableOpacity activeOpacity={0.7}
+                onPress={() => navigation.navigate('DetailsCompany', { item })}
                 style={{
                     height: 150,
                     width: '90%',
@@ -329,7 +332,7 @@ const Companies = (props) => {
                         source={
                             profileIcon === ''
                                 ? require('../../assets/images/gallery.png')
-                                : { uri: Globals.BASE_URL + profileIcon }
+                                : { uri: 'https://api.kundenzugang-recruiting.app/' + profileIcon }
                         }
                     />
                 </View>
@@ -434,7 +437,7 @@ const Companies = (props) => {
                     </TouchableOpacity>
 
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     };
 

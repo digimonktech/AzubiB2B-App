@@ -1,42 +1,46 @@
-import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, {useEffect} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
 import ScreenProvider from './navigation/screenProvider';
 import ThemeProvider from './themeProvider';
 import SplashScreen from 'react-native-splash-screen';
-import { Provider } from 'react-redux';
-// import { myStore } from './redux/store/myStore';
-import { store, persistor } from './redux/store/myStore';
-import { PersistGate } from "redux-persist/integration/react";
+import {Provider} from 'react-redux';
+import {store, persistor} from './redux/store/myStore';
+import {PersistGate} from 'redux-persist/integration/react';
 
-import { CityProvider } from './Context/CityProvider';
-import { CityAlertsProvider } from './Context/CityProviderAlerts';
-import { LogBox, Alert, PermissionsAndroid, Platform, StatusBar } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import messaging, {
-  FirebaseMessagingTypes,
-} from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance } from '@notifee/react-native';
-import { AppRegistry } from 'react-native';
+import {CityProvider} from './Context/CityProvider';
+import {CityAlertsProvider} from './Context/CityProviderAlerts';
+import {
+  LogBox,
+  Alert,
+  PermissionsAndroid,
+  Platform,
+  StatusBar,
+} from 'react-native';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+
+import notifee, {AndroidImportance} from '@notifee/react-native';
+import {AppRegistry} from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 import {
   NotificationListner,
   requestNotificationPermission,
 } from './utils/CommonUtill';
-import { CompanyProvider } from './Context/CompanyId';
+import {CompanyProvider} from './Context/CompanyId';
 
 // Suppress all log warnings
 LogBox.ignoreAllLogs(true);
 
 // // Define headless task for background messages
-const YourHeadlessTask = async (
-  remoteMessage: FirebaseMessagingTypes.RemoteMessage,
-) => {
-  console.log('Background Message:', remoteMessage);
-};
+// const YourHeadlessTask = async (
+//   remoteMessage: FirebaseMessagingTypes.RemoteMessage,
+// ) => {
+//   console.log('Background Message:', remoteMessage);
+// };
 
-AppRegistry.registerHeadlessTask(
-  'ReactNativeFirebaseMessagingHeadlessTask',
-  () => YourHeadlessTask,
-);
+// AppRegistry.registerHeadlessTask(
+//   'ReactNativeFirebaseMessagingHeadlessTask',
+//   () => YourHeadlessTask,
+// );
 
 const requestUserPermission = async () => {
   try {
@@ -83,34 +87,6 @@ const requestUserPermission = async () => {
   }
 };
 
-;
-
-// const linking = {
-//   prefixes: ['https://azubib2b.com', 'azubib2b://'],
-//   config: {
-//     screens: {
-//       DrawerDashboard: {
-//         screens: {
-//           Tab: {
-//             screens: {
-//               "Meine Daten": "meine-daten",
-//               "Aktuelle Jobs": {
-//                 path: "aktuelle-jobs",
-//                 parse: {
-//                   companyId: (id: any) => `${id}`,
-//                 },
-//               },
-//               DetailsJobs: "job-detail/:id",
-//               DetailsCompany: "company/:id",
-//             },
-//           },
-//         },
-//       },
-//     },
-//   },
-// };
-
-
 const linking = {
   prefixes: ['jobb2b://jobs/', 'jobb2b://'],
   config: {
@@ -119,21 +95,21 @@ const linking = {
         screens: {
           Tab: {
             screens: {
-              "Meine Daten": "meine-daten",
-              "Aktuelle Jobs": {
-                path: "aktuelle-jobs",
+              'Meine Daten': 'meine-daten',
+              'Aktuelle Jobs': {
+                path: 'aktuelle-jobs',
                 parse: {
                   companyId: (companyId: string) => `${companyId}`,
                 },
               },
               DetailsJobs: {
-                path: "job-detail/:id",
+                path: 'job-detail/:id',
                 parse: {
                   id: (id: string) => `${id}`,
                 },
               },
               DetailsCompany: {
-                path: "company/:id",
+                path: 'company/:id',
                 parse: {
                   id: (id: string) => `${id}`,
                 },
@@ -146,7 +122,6 @@ const linking = {
   },
 };
 
-
 const App: React.FC = () => {
   // Request user permission and initialize notification listener
   useEffect(() => {
@@ -155,10 +130,8 @@ const App: React.FC = () => {
     NotificationListner();
   }, []);
 
-  // Display local notification using Notifee
-  const displayNotification = async (
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage,
-  ) => {
+  // // Display local notification using Notifee
+  const displayNotification = async remoteMessage => {
     if (remoteMessage.notification) {
       await notifee.displayNotification({
         title: remoteMessage.notification.title,
@@ -171,73 +144,70 @@ const App: React.FC = () => {
     }
   };
 
-  // // Handle FCM messages for both foreground and background states
-  // useEffect(() => {
-  //   const handleFCMMessage = async (
-  //     remoteMessage: FirebaseMessagingTypes.RemoteMessage,
-  //   ) => {
-  //     console.log('FCM Message:', remoteMessage);
-  //     // Display notification if app is in the foreground
-  //     await displayNotification(remoteMessage);
-  //   };
+  // // // Handle FCM messages for both foreground and background states
+  useEffect(() => {
+    const handleFCMMessage = async (remoteMessage: any) => {
+      console.log('FCM Message:', remoteMessage);
+      // Display notification if app is in the foreground
+      await displayNotification(remoteMessage);
+    };
 
-  //   // Listener for foreground messages
-  //   const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
-  //     handleFCMMessage(remoteMessage);
-  //   });
+    // Listener for foreground messages
+    const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
+      handleFCMMessage(remoteMessage);
+    });
 
-  //   // Listener for background messages
-  //   messaging().setBackgroundMessageHandler(async remoteMessage => {
-  //     handleFCMMessage(remoteMessage);
-  //   });
+    // Listener for background messages
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+      handleFCMMessage(remoteMessage);
+    });
 
-  //   // Cleanup
-  //   return () => {
-  //     unsubscribeForeground();
-  //   };
-  // }, []);
+    // Cleanup
+    return () => {
+      unsubscribeForeground();
+    };
+  }, []);
 
-  // // Get and log the device FCM token
+  // // // Get and log the device FCM token
   useEffect(() => {
     const getToken = async () => {
       try {
+        // 1️⃣ Register for remote messages
         await messaging().registerDeviceForRemoteMessages();
+
+        // 2️⃣ Get FCM token
         const token = await messaging().getToken();
-        console.log('Device FCM Token:', token);
+
+        // console.log('FCM token:', token);
       } catch (error) {
-        console.error('Error fetching FCM token:', error);
+        console.log('Error fetching FCM token:', error);
       }
     };
 
     getToken();
   }, []);
 
-  // // Create a notification channel for Android
-  // useEffect(() => {
-  //   const createNotificationChannel = async () => {
-  //     await notifee.createChannel({
-  //       id: 'default',
-  //       name: 'Default Channel',
-  //       importance: AndroidImportance.HIGH,
-  //     });
-  //   };
+  // // // Create a notification channel for Android
+  useEffect(() => {
+    const createNotificationChannel = async () => {
+      await notifee.createChannel({
+        id: 'default',
+        name: 'Default Channel',
+        importance: AndroidImportance.HIGH,
+      });
+    };
 
-  //   createNotificationChannel();
-  // }, []);
+    createNotificationChannel();
+  }, []);
 
-  // Hide the splash screen once the app is loaded
+  // // Hide the splash screen once the app is loaded
   useEffect(() => {
     SplashScreen.hide();
   }, []);
 
-
-
-
-
-
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{flex: 1}}>
         <StatusBar barStyle="light-content" />
 
         {/* GLOBAL CONTEXT SHOULD WRAP NAVIGATION */}
@@ -256,26 +226,9 @@ const App: React.FC = () => {
             </PersistGate>
           </Provider>
         </CompanyProvider>
-
       </SafeAreaView>
     </SafeAreaProvider>
   );
-
-
-
 };
 
 export default App;
-
-
-{/* <Provider store={myStore}>
-            <CityProvider>
-              <CityAlertsProvider>
-                <NavigationContainer linking={linking}>
-                  <ThemeProvider>
-                    <ScreenProvider />
-                  </ThemeProvider>
-                </NavigationContainer>
-              </CityAlertsProvider>
-            </CityProvider>
-          </Provider> */}

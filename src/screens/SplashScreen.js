@@ -15,45 +15,49 @@ export let manageSavedJob = '';
 export default function SplashScreen({ navigation }) {
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const initializeApp = async () => {
-  //     try {
-  //       // 1️⃣ FCM Token fetch
-  //       await messaging().registerDeviceForRemoteMessages();
-  //       const token = await messaging().getToken();
-  //       console.log('----------Token-----------', token);
+  useEffect(() => {
+    console.log('SplashScreen mounted');
 
-  //       // 2️⃣ Company API call
-  //       await getCompany(token);
+    const initializeApp = async () => {
+      try {
+        console.log('Initializing app...');
 
-  //       // 3️⃣ Deep link check
-  //       const url = await Linking.getInitialURL();
-  //       console.log('Deep link URL:', url);
+        // 1️⃣ FCM Token fetch
+        await messaging().registerDeviceForRemoteMessages();
+        const token = await messaging().getToken();
+        console.log('----------Token-----------', token);
 
-  //       if (url) {
-  //         // Example: http://azubib2b/aktuelle-jobs
-  //         if (url.includes('aktuelle-jobs')) {
-  //           // navigation.replace('Aktuelle Jobs'); // tera Jobs tab ka screen name
-  //         } else {
-  //           // navigation.replace('DrawerDashboard'); // fallback
-  //         }
-  //       } else {
-  //         // 4️⃣ Normal flow if no deep link
-  //         setTimeout(() => {
-  //           // navigation.replace('DrawerDashboard');
-  //         }, 2000);
-  //       }
-  //     } catch (error) {
-  //       console.error('Splash init error:', error);
-  //       // fallback navigation on error
-  //       navigation.replace('DrawerDashboard');
-  //     } finally {
-  //       // setLoading(false); // Loader hide
-  //     }
-  //   };
+        // 2️⃣ Company API call
+        await getCompany(token);
 
-  //   initializeApp();
-  // }, []);
+        // // 3️⃣ Deep link check
+        // const url = await Linking.getInitialURL();
+        // console.log('Deep link URL:', url);
+
+        // if (url) {
+        //   // Example: http://azubib2b/aktuelle-jobs
+        //   if (url.includes('aktuelle-jobs')) {
+        //     // navigation.replace('Aktuelle Jobs'); // tera Jobs tab ka screen name
+        //   } else {
+        //     // navigation.replace('DrawerDashboard'); // fallback
+        //   }
+        // } else {
+        //   // 4️⃣ Normal flow if no deep link
+        //   setTimeout(() => {
+        //     // navigation.replace('DrawerDashboard');
+        //   }, 2000);
+        // }
+      } catch (error) {
+        console.error('Splash init error:', error);
+        // fallback navigation on error
+        // navigation.replace('DrawerDashboard');
+      } finally {
+        // setLoading(false); // Loader hide
+      }
+    };
+
+    initializeApp();
+  }, []);
 
 
   // useEffect(() => {
@@ -211,26 +215,31 @@ export default function SplashScreen({ navigation }) {
   // }, [navigation, dispatch]);
 
   const getCompany = async deviceToken => {
-    console.log('deviceToken', deviceToken);
+    console.log('deviceToken mk => ', deviceToken);
 
     try {
-      const res = await getApiCall({
-        url: `admin/get-app-color`,
-      });
-      log('res company data', res);
+      // const res = await getApiCall({
+      //   url: `admin/get-app-color`,
+      // });
+      // log('res company data', res);
 
       const d_token = await getApiCall({
         url: `admin/device-token?deviceId=${deviceToken}`,
       });
 
-      if (res?.status === 200) {
-        colorDynamic1 = res.data.headingOneColor;
-        colorDynamic2 = res.data.headingTwoColor;
-        manageEmail = res.data.manageEmail;
-        manageSavedJob = res.data.manageSavedJob;
-      }
+      console.log('d_token api => ', d_token);
+
+
+      // if (res?.status === 200) {
+      //   colorDynamic1 = res.data.headingOneColor;
+      //   colorDynamic2 = res.data.headingTwoColor;
+      //   manageEmail = res.data.manageEmail;
+      //   manageSavedJob = res.data.manageSavedJob;
+      // }
     } catch (error) {
-      alert('Error fetching company data: ' + error.message);
+      // alert('Error fetching company data: ' + error.message);
+      console.log('getCompany error => ', error.message);
+
     }
   };
 

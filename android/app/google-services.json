@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "190940709924",
-    "project_id": "azubib2b",
-    "storage_bucket": "azubib2b.firebasestorage.app"
+    "project_number": "426371506040",
+    "project_id": "company-job-app",
+    "storage_bucket": "company-job-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:190940709924:android:feb9d2d7ca0188478344b1",
+        "mobilesdk_app_id": "1:426371506040:android:e23298d1b4c5f1c48a328d",
         "android_client_info": {
-          "package_name": "com.jobb2b"
+          "package_name": "com.companyJobApp"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC35Fr64li93TXI1S531H1fzayPvBUStzI"
+          "current_key": "AIzaSyBcJ5u8bGajDknrOdumNqTJYDo9RNzO5ho"
         }
       ],
       "services": {
