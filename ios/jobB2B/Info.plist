@@ -42,6 +42,16 @@
 <key>NSPhotoLibraryAddUsageDescription</key>
 <string>Azubi B2B Requires storage permission</string>
 
+<!-- Push Notifications -->
+<key>NSUserNotificationUsageDescription</key>
+<string>We use notifications to keep you informed about important updates, jobs, and alerts.</string>
+
+<!-- Remote Notifications (Background / FCM) -->
+<key>UIBackgroundModes</key>
+<array>
+  <string>remote-notification</string>
+</array>
+
 <key>LSApplicationQueriesSchemes</key>
 <array>
   <string>whatsapp</string>
