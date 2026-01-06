@@ -79,9 +79,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.companyJobApp"
+    namespace "com.companyJobAppp"
     defaultConfig {
-        applicationId "com.companyJobApp"
+        applicationId "com.companyJobAppp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -95,9 +95,9 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file("my-release-key.keystore")
+            storeFile file("my-release-key.jks")
             storePassword "digimonk"
-            keyAlias "my_key_alias"
+            keyAlias "mykey"
             keyPassword "digimonk"
     }
     }
