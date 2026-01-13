@@ -108,6 +108,9 @@ const Register = ({ navigation }) => {
     try {
       setLoading(true);
       let res = await getApiCall1({ url: 'manage_content/home-page-v2' });
+
+      console.log('html data res ', res);
+      
       if (res.status == 200) {
         setContentHead(res.data.welcomeMessageForApp.heading);
         setContentSubHead(res.data.welcomeMessageForApp.subHeading);
@@ -332,7 +335,7 @@ const Register = ({ navigation }) => {
                     styles.dobValTextSize
                   }>{`${date}/${month}/${year}`}</Text>
               ) : (
-                <Text style={styles.dobValTextSize}>Date of birth</Text>
+                <Text style={styles.dobValTextSize}>Geburtsdatum eingeben</Text>
               )}
               <Image source={Images.calendar1} style={styles.calPicStyle} />
             </TouchableOpacity>
@@ -417,7 +420,8 @@ const Register = ({ navigation }) => {
                 onChange={() => setIsChecked(!isChecked)}
               />
               <Text style={styles.labelText}>
-                {`Ich akzeptiere die elektronische Speicherung meiner Daten gemäß der `}
+                {`Ich akzeptiere die elektronische Speicherung
+meiner Daten gemäß der Datenschutzerklärung`}
               </Text>
             </TouchableOpacity>
             <View
@@ -559,7 +563,8 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.poppinsBold,
     fontWeight: '500',
     marginLeft: 10,
-    fontSize: 13,
+    fontSize: 12,
+    textAlign: 'left',
   },
   checkboxTouch: {
     flexDirection: 'row',

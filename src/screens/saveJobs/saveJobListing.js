@@ -298,7 +298,7 @@ const SaveJobListing = () => {
                 color: '#222',
                 fontWeight: '500',
                 fontSize: 16
-              }} >No Gespeichert</Text>
+              }} >Noch keine Ergebnisse</Text>
             </View>}
           />
         </View>

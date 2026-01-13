@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState, useMemo, useCallback } from 'react';
 import {
     Dimensions,
     StyleSheet,
@@ -11,49 +11,40 @@ import {
 
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Image } from 'native-base';
+import { useSelector } from 'react-redux';
+
 import MainHeader from '@/component/MainHeader';
 import { fontFamily, reCol } from '@/utils/configuration';
 import { Images } from '@/assets/images/images';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image } from 'native-base';
-import Globals from '@/utils/Globals';
 
-const { width } = Dimensions.get('screen');
+const { width, height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
-// Fallback when API returns empty
-const fallbackNews = [
-    {
-        id: '1',
-        companyname: 'Tech Corp Expands',
-        description: 'Leading software company opens new offices in major cities.',
-    },
-    {
-        id: '2',
-        companyname: 'AI Market Growth',
-        description: 'Artificial Intelligence transforms business operations.',
-    },
-];
+// ================= Utils =================
 
-const NEWS = 'Artificial Intelligence transforms business operations.'
+const stripHtml = (html = '') => html.replace(/<[^>]*>/g, '').trim();
 
-// Remove HTML tags from description
-const stripHtml = (htmlString = '') => htmlString.replace(/<[^>]*>/g, '').trim();
+// ================= Component =================
 
 const News = () => {
     const navigation = useNavigation();
+
     const [companies, setCompanies] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    console.log('News ', companies)
+    const CompaniesList = useSelector(
+        (state) => state.showcompaniesList.list || []
+    );
 
+    // ================= API =================
 
     const fetchAllCompanies = async () => {
         try {
             const response = await axios.get(
                 'https://api.kundenzugang-recruiting.app/api/v1/admin/companies'
             );
-            console.log('all companies ', response);
-            
+
             const data = response?.data?.data?.companies?.companies || [];
             setCompanies(data);
         } catch (error) {
@@ -67,33 +58,52 @@ const News = () => {
         fetchAllCompanies();
     }, []);
 
+    // ================= HEADER =================
+
     useLayoutEffect(() => {
         navigation.setOptions({
-            header: () => <MainHeader title={'News'} />,
+            header: () => <MainHeader title="News" />,
         });
     }, [navigation]);
 
-    const handleNavigation = (item) => {
-        navigation.navigate('CompanyNews', { item })
-    }
+    // ================= FILTER =================
 
-    const RenderCard = ({ item }) => {
-        console.log('new item => ', item);
-        
-        const cleanDescription = stripHtml(item.description) || 'No description available';
+    const filteredCompanies = useMemo(() => {
+        if (!companies.length || !CompaniesList.length) return [];
+
+        const idSet = new Set(CompaniesList.map(c => c._id));
+        return companies.filter(item => idSet.has(item._id));
+
+    }, [companies, CompaniesList]);
+
+    // ================= NAVIGATION =================
+
+    const handleNavigation = useCallback((item) => {
+        navigation.navigate('CompanyNews', { item });
+    }, [navigation]);
+
+    // ================= RENDER ITEM =================
+
+    const RenderCard = React.memo(({ item }) => {
+        const cleanDescription =
+            stripHtml(item.description) || 'No description available';
+
         const imageUrl = item.profileIcon
-            ? { uri: 'https://api.kundenzugang-recruiting.app/' + item.profileIcon }
+            ? { uri: `https://api.kundenzugang-recruiting.app/${item.profileIcon}` }
             : require('../../assets/images/gallery.png');
 
-            console.log('imageUrl => ', imageUrl);
-            
         return (
-            <TouchableOpacity activeOpacity={0.8} style={styles.cardContainer} onPress={() => handleNavigation(item)}>
+            <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.cardContainer}
+                onPress={() => handleNavigation(item)}
+            >
                 <View style={styles.imagePlaceholder}>
                     <Image
                         style={styles.image}
                         resizeMode="cover"
                         source={imageUrl}
+                        alt="company"
                     />
                 </View>
 
@@ -101,27 +111,48 @@ const News = () => {
                     <Text style={styles.titleText}>
                         {item.companyname || 'Unknown Company'}
                     </Text>
-                    <Text style={[styles.descText, { fontWeight: '600' }]} numberOfLines={1}>
+                    <Text
+                        style={[styles.descText, { fontWeight: '600' }]}
+                        numberOfLines={1}
+                    >
                         {cleanDescription}
                     </Text>
-                    {/* <Text style={[styles.descText, { fontWeight: 'bold' }]} numberOfLines={1}>
-                        <Text style={{ color: '#0c7496ff', fontWeight: 'bold', fontSize: 14 }}>News : </Text>{NEWS}
-                    </Text> */}
                 </View>
             </TouchableOpacity>
         );
-    };
+    });
 
-    const dataToDisplay = loading || companies.length === 0 ? fallbackNews : companies;
+    const renderItem = useCallback(
+        ({ item }) => <RenderCard item={item} />,
+        []
+    );
+
+    const keyExtractor = useCallback(
+        (item, index) => item._id || item.id || index.toString(),
+        []
+    );
+
+    // ================= EMPTY STATE =================
+
+    const EmptyList = () => (
+        <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+                Keine Neuigkeiten verfügbar
+            </Text>
+        </View>
+    );
+
+    // ================= UI =================
 
     return (
         <SafeAreaView style={styles.safeArea}>
             <ImageBackground style={styles.container} source={Images.bgImage}>
                 <FlatList
-                    data={dataToDisplay}
-                    renderItem={RenderCard}
-                    keyExtractor={(item, index) => item._id || item.id || index.toString()}
+                    data={loading ? [] : filteredCompanies}
+                    renderItem={renderItem}
+                    keyExtractor={keyExtractor}
                     contentContainerStyle={{ paddingBottom: 20 }}
+                    ListEmptyComponent={!loading ? <EmptyList /> : null}
                     showsVerticalScrollIndicator={false}
                 />
             </ImageBackground>
@@ -131,6 +162,8 @@ const News = () => {
 
 export default News;
 
+// ================= Styles =================
+
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
@@ -139,14 +172,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 10,
-    },
-    heading: {
-        width: '92%',
-        alignSelf: 'center',
-        fontSize: 18,
-        fontFamily: fontFamily.poppinsSemiBold,
-        color: reCol().color.BLACK,
-        marginBottom: 10,
     },
     cardContainer: {
         width: '92%',
@@ -190,5 +215,15 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: fontFamily.poppinsLight,
         color: reCol().color.GRAY,
+    },
+    emptyContainer: {
+        height: SCREEN_HEIGHT - 200,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyText: {
+        color: '#222',
+        fontWeight: '700',
+        fontSize: 18,
     },
 });

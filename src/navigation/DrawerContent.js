@@ -30,10 +30,13 @@ export function DrawerContent(props) {
 
   const shareEmail = async () => {
     const shareOptions = {
-      subject: 'AzubiRegional.de APP Empfehlung',
+      subject: 'CompanyJob APP Empfehlung',
       message: `Hey,
-schau dir die AzubiRegional APP an: hier findest du regionale TOP-Unternehmen mit attraktiven Ausbildungs- und dualen Studienangeboten in deiner Nähe 😉🚀🤘🏻👍 #startedurch`,
-      title: 'AzubiRegional',
+schau dir die CompanyJob APP an: hier
+findest du regionale TOP-Unternehmen mit
+attraktiven Ausbildungs-, Jobs- und dualen
+dualen Studienangeboten in de 😉🚀🤘🏻👍 #startedurch`,
+      title: 'CompanyJob APP Empfehlung',
     };
     try {
       await Share.open(shareOptions);
@@ -219,7 +222,7 @@ schau dir die AzubiRegional APP an: hier findest du regionale TOP-Unternehmen mi
                 source={require('../assets/images/rate.png')}
               />
             )}
-            label="Azubi Regional App bewerten"
+            label="CompanyJob.App bewerten"
             labelStyle={styles.labelStyle}
           />
           <Divider />

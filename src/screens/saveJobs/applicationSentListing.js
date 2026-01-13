@@ -285,7 +285,7 @@ const ApplicationSentListing = () => {
                 color: '#222',
                 fontWeight: '500',
                 fontSize: 16
-              }} >No Bewerbungen</Text>
+              }} >Noch keine Ergebnisse</Text>
             </View>}
           />
         </View>
