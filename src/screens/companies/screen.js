@@ -625,7 +625,7 @@ const Companies = (props) => {
                                 />
 
                                 <TextInput
-                                    placeholder="Berufsbezeichnung, Stichwörter oder Unternehmen"
+                                    placeholder="Firmenname hier eingeben ..."
                                     value={searchValue}
                                     onChangeText={setSearchValue}
                                     style={{ flex: 1, fontSize: 12, color: '#333', paddingVertical: 0 }}
@@ -661,12 +661,15 @@ const Companies = (props) => {
                             data={showCompaniesList}
                             renderItem={renderItem}
                             showsVerticalScrollIndicator={false}
-                            ListEmptyComponent={<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: 500 }} >
+                            ListEmptyComponent={<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', height: 500, }} >
                                 <Text style={{
+                                    width: '65%',
                                     fontSize: 18,
                                     color: '#1f1b1bff',
                                     fontWeight: 'bold',
-                                }}>No Unternehmen found</Text>
+                                    textAlign: 'center',
+                                }}>Noch keine Ergebnisse –
+                                    starte deine Suche oben</Text>
                             </View>}
                         />
                     }

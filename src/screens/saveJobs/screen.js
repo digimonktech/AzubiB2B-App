@@ -95,11 +95,13 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 15,
     fontFamily: fontFamily.poppinsRegular,
+    fontWeight: '700',
   },
   touchStyle: {
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    borderRadius: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+   
     alignItems: 'center',
   },
 });

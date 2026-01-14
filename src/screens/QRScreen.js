@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Pressable, Text } from 'react-native';
 import { Camera, useCameraDevice, useCodeScanner } from 'react-native-vision-camera';
 import { useNavigation } from '@react-navigation/native';
+import { color } from 'react-native-elements/dist/helpers';
 
 export default function QRScanner() {
     const navigation = useNavigation();
@@ -58,6 +59,16 @@ export default function QRScanner() {
                 codeScanner={codeScanner}
             />
 
+            {/* close X */}
+            {/* close X */}
+            <Pressable
+                onPress={() => navigation.goBack()}
+                style={styles.closeBtn}
+            >
+                <Text style={styles.closeText}>X</Text>
+            </Pressable>
+
+
             {/* Overlay */}
             <View style={styles.overlay}>
                 <View style={styles.scanBox} />
@@ -79,4 +90,25 @@ const styles = StyleSheet.create({
         borderColor: '#00FF88',
         borderRadius: 12,
     },
+
+    closeBtn: {
+        position: 'absolute',
+        top: 40,        // status bar ke niche
+        right: 25,
+        zIndex: 10,
+        backgroundColor: 'rgba(0,0,0,0.4)',
+        borderRadius: 30,
+        width: 60,
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    closeText: {
+        color: 'white',
+        fontSize: 28,
+        fontWeight: '400',
+    },
+
+
 });
