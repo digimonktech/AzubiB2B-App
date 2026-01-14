@@ -355,7 +355,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = jobB2B/jobB2B.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = BMMQKTP9LH;
+				DEVELOPMENT_TEAM = 28X4TQYFP8;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = jobB2B/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -369,7 +369,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.azubib2b.reactnative;
+				PRODUCT_BUNDLE_IDENTIFIER = com.companyjobapp;
 				PRODUCT_NAME = jobB2B;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -385,7 +385,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = jobB2B/jobB2B.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = BMMQKTP9LH;
+				DEVELOPMENT_TEAM = 28X4TQYFP8;
 				INFOPLIST_FILE = jobB2B/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -398,7 +398,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.azubib2b.reactnative;
+				PRODUCT_BUNDLE_IDENTIFIER = com.companyjobapp;
 				PRODUCT_NAME = jobB2B;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

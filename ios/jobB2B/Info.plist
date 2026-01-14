@@ -20,57 +20,51 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>jobb2b</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>jobb2b</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+		<string>mailto</string>
+		<string>instagram</string>
+		<string>instagram-stories</string>
+		<string>fb</string>
+		<string>facebook-stories</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-	<key>NSAllowsArbitraryLoads</key>
-<true/>
-<key>NSExceptionDomains</key>
-  <key>localhost</key>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
+		<key>NSExceptionDomains</key>
+		<string>localhost</string>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
-
-	<key>NSPhotoLibraryUsageDescription</key>
-<string>Azubi B2B Requires storage permission</string>
-
-<key>NSPhotoLibraryAddUsageDescription</key>
-<string>Azubi B2B Requires storage permission</string>
-
-<!-- Push Notifications -->
-<key>NSUserNotificationUsageDescription</key>
-<string>We use notifications to keep you informed about important updates, jobs, and alerts.</string>
-
-<!-- Remote Notifications (Background / FCM) -->
-<key>UIBackgroundModes</key>
-<array>
-  <string>remote-notification</string>
-</array>
-
-<key>LSApplicationQueriesSchemes</key>
-<array>
-  <string>whatsapp</string>
-  <string>mailto</string>
-  <string>instagram</string>
-  <string>instagram-stories</string>
-  <string>fb</string>
-  <string>facebook-stories</string>
-</array>
-
-<key>UIFileSharingEnabled</key>
-<true/>
-<key>LSSupportsOpeningDocumentsInPlace</key>
-<true/>
-
-<key>NSCameraUsageDescription</key>
+	<key>NSCameraUsageDescription</key>
 	<string>CompanyJobApp needs access to your camera.</string>
-
-
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app does not access your location.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Azubi B2B Requires storage permission</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Azubi B2B Requires storage permission</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>We use notifications to keep you informed about important updates, jobs, and alerts.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Century Gothic.ttf</string>
@@ -102,6 +96,12 @@
 		<string>Zocial.ttf</string>
 		<string>Fontisto.ttf</string>
 	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -116,17 +116,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-
-	<key>CFBundleURLTypes</key>
-<array>
-  <dict>
-    <key>CFBundleURLName</key>
-    <string>jobb2b</string>
-    <key>CFBundleURLSchemes</key>
-    <array>
-      <string>jobb2b</string>
-    </array>
-  </dict>
-</array>
 </dict>
 </plist>
