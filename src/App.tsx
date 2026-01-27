@@ -208,7 +208,7 @@ const App: React.FC = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar barStyle="light-content" />
+        <StatusBar barStyle="dark-content" />
 
         {/* GLOBAL CONTEXT SHOULD WRAP NAVIGATION */}
         <CompanyProvider>

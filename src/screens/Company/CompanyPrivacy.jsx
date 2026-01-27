@@ -1,23 +1,25 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
     StyleSheet,
-    Text,
     View,
     ScrollView,
     ActivityIndicator,
+    useWindowDimensions,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
+import RenderHTML from 'react-native-render-html';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import BackHeader from '@/component/BackHeader';
 import { fontFamily, reCol } from '@/utils/configuration';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CompanyPrivacy = () => {
     const navigation = useNavigation();
     const route = useRoute();
+    const { width } = useWindowDimensions();
 
-    const [privacyPolicy, setPrivacyPolicy] = useState(null);
+    const [htmlContent, setHtmlContent] = useState('');
     const [loading, setLoading] = useState(true);
 
     /* ---------------- Header ---------------- */
@@ -29,59 +31,86 @@ const CompanyPrivacy = () => {
 
     /* ---------------- API ---------------- */
     useEffect(() => {
-        if (!route.params?.item?._id) {
+        const policyId = route?.params?.item?._id;
+
+        if (!policyId) {
             setLoading(false);
             return;
         }
 
         const fetchPrivacyPolicy = async () => {
             try {
-                const response = await axios.get(
-                    `https://azubi.api.digimonk.net/api/v1/admin/privacy-policy/${route.params.item._id}`,
+                const res = await axios.get(
+                    `https://api.kundenzugang-recruiting.app/api/v1/admin/privacy-policy/${policyId}`,
                 );
 
-                setPrivacyPolicy(response.data?.data || null);
-            } catch (error) {
-                console.log(
-                    'Privacy policy error => ',
-                    error?.response?.data || error.message,
-                );
+                setHtmlContent(res?.data?.data?.description || '');
+            } catch (e) {
+                setHtmlContent('');
             } finally {
                 setLoading(false);
             }
         };
 
         fetchPrivacyPolicy();
-    }, [route.params?.item?._id]);
+    }, [route?.params?.item?._id]);
 
     /* ---------------- Render ---------------- */
-    return (
-        <SafeAreaView style={styles.container}>
-            {loading ? (
+    if (loading) {
+        return (
+            <SafeAreaView style={styles.container}>
                 <View style={styles.loaderView}>
                     <ActivityIndicator size="large" color={reCol().color.BDRCLR} />
                 </View>
-            ) : (
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.contentContainer}
-                >
-                    <View style={styles.card}>
-                        <Text style={styles.titleText}>Privacy Policy</Text>
+            </SafeAreaView>
+        );
+    }
 
-                        <View style={styles.divider} />
-
-                        <Text style={styles.bodyText}>
-                            {privacyPolicy?.description || 'No privacy policy available.'}
-                        </Text>
-                    </View>
-                </ScrollView>
-            )}
+    return (
+        <SafeAreaView style={styles.container}>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.contentContainer}
+            >
+                <View style={styles.card}>
+                    {htmlContent ? (
+                        <RenderHTML
+                            contentWidth={width}
+                            source={{ html: htmlContent }}
+                            tagsStyles={htmlStyles}
+                        />
+                    ) : null}
+                </View>
+            </ScrollView>
         </SafeAreaView>
     );
 };
 
 export default CompanyPrivacy;
+
+
+
+const htmlStyles = {
+    h2: {
+        fontSize: 20,
+        fontFamily: fontFamily.poppinsBold,
+        color: '#222',
+        marginBottom: 10,
+    },
+    h3: {
+        fontSize: 16,
+        fontFamily: fontFamily.poppinsSemiBold,
+        marginTop: 14,
+        marginBottom: 6,
+    },
+    p: {
+        fontSize: 14,
+        lineHeight: 22,
+        fontFamily: fontFamily.poppinsRegular,
+        color: '#444',
+    },
+};
+
 
 
 const styles = StyleSheet.create({
@@ -98,7 +127,7 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     card: {
-        padding: 16,
+        padding: 10,
     },
     titleText: {
         fontSize: 18,

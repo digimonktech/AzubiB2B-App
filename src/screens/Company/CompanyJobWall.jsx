@@ -47,8 +47,11 @@ const CompanyJobWall = () => {
         const fetchBanners = async () => {
             try {
                 const res = await axios.get(
-                    `https://azubi.api.digimonk.net/api/v1/admin/job-banners?companyId=${companyId}`,
+                    `https://api.kundenzugang-recruiting.app/api/v1/admin/job-banners?companyId=${companyId}`,
                 );
+
+                console.log('banner response with id ', res);
+                
                 setBanners(res.data?.data || []);
             } catch (e) {
                 console.log('Job banner error => ', e);
@@ -82,7 +85,7 @@ const CompanyJobWall = () => {
     const renderItem = ({ item }) => (
         <View style={styles.item}>
             <Image
-                source={{ uri: Globals.BASE_URL + item.images }}
+                source={{ uri: 'https://api.kundenzugang-recruiting.app/' + item.images }}
                 style={styles.image}
                 resizeMode="cover"
             />

@@ -35,6 +35,8 @@ const CompanyNews = () => {
                 `${BASE_URL}/admin/all-news/${route.params?.item?._id}`
             );
 
+            // console.log('company  news res => ', response);
+            
             if (response.status === 200) {
                 const newsData = response?.data?.data?.news || [];
                 setNews(newsData);
@@ -69,14 +71,14 @@ const CompanyNews = () => {
     };
 
     const renderNews = ({ item }) => {
-        const img = item.images[0].file
+        // const img = item.images[0].file
         // console.log('img ', img);
 
         return (
             <TouchableOpacity activeOpacity={0.7} onPress={() => handleNavigation(item)}>
                 <View style={styles.card}>
 
-                    {item.images?.[0]?.file ? (
+                    {item.images[0]?.file ? (
                         <Image
                             source={{ uri: `https://api.kundenzugang-recruiting.app/${item.images[0].file}` }}
                             style={styles.thumbImage}

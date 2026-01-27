@@ -31,6 +31,9 @@ const ApplicationSentListing = () => {
         url: 'admin/applications',
       });
 
+      console.log('Bewerbungen list ', res);
+      
+
       if (res.status == 200) {
         console.log('ResponseDataofapplylistings', res.data);
         setFlatData(res.data);
@@ -59,6 +62,9 @@ const ApplicationSentListing = () => {
       let res = await delApiCall({
         url: 'admin/application/' + jobId,
       });
+
+      console.log('Remove application response', res);
+
       if (res.status == 200) {
         getAllJobs();
       }
@@ -95,10 +101,8 @@ const ApplicationSentListing = () => {
     ]);
   };
   const renderItem = ({ item }) => {
-    // console.log('Item ', item);
-
-    // console.log('...ITEM...', item, '...ITEM...');
-    // const isSaved = savedJobs.includes(item._id);
+    console.log('job item ', item);
+    
     return (
       <TouchableHighlight underlayColor={'none'}>
         <View style={styles.renderMainView}>
@@ -253,7 +257,7 @@ const ApplicationSentListing = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}
-              onPress={() => removeAlert(item._id)}>
+              onPress={() => removeAlert(item?._id)}>
               <Image
                 style={{ height: 30, width: 30 }}
                 resizeMode="contain"

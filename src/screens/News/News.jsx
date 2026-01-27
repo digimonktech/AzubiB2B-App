@@ -113,7 +113,7 @@ const News = () => {
                     </Text>
                     <Text
                         style={[styles.descText, { fontWeight: '600' }]}
-                        numberOfLines={1}
+                        numberOfLines={2}
                     >
                         {cleanDescription}
                     </Text>
@@ -206,15 +206,15 @@ const styles = StyleSheet.create({
         width: width * 0.65,
     },
     titleText: {
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: fontFamily.poppinsBold,
         color: reCol().color.BLACK,
-        marginBottom: 4,
     },
     descText: {
         fontSize: 12,
         fontFamily: fontFamily.poppinsLight,
         color: reCol().color.GRAY,
+        width: '80%',
     },
     emptyContainer: {
         height: SCREEN_HEIGHT - 200,

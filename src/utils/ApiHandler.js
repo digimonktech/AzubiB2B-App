@@ -125,6 +125,8 @@ export function patchApiCall(param) {
 }
 export function delApiCall(param) {
   var url = param.url;
+  console.log('del url ', Globals.API_URL.concat(url));
+  
   var params = param.params;
   return axios
     .delete(Globals.API_URL.concat(url), {

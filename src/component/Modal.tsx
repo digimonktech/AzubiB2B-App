@@ -1026,7 +1026,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
   setVisibleAppointment,
   appointmentData,
 }) => {
-  console.log('appointmentData data => ', appointmentData);
+  // console.log('appointmentData data => ', appointmentData);
 
   const [content, setContent] = useState<any>([]);
   const [loading, setLoading] = useState(false);
@@ -1040,8 +1040,8 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
   const [isChecked, setIsChecked] = useState(false);
   const richRef: any = useRef();
 
-  console.log('content => ', content);
-  console.log('coverLabel => ', coverLabel);
+  // console.log('content => ', content);
+  // console.log('coverLabel => ', coverLabel);
 
 
   const ContentData = async () => {
@@ -1156,7 +1156,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
 
   const takeAppointmentApi = async (values: IApply) => {
     console.log('values ', values);
-    
+
     try {
       setLoading(true);
 
@@ -1602,7 +1602,7 @@ export const ModalJobPic: React.FC<ModalJobDetailImageProps> = ({
           </View>
           <View style={{ height: 400, marginHorizontal: 15 }}>
             <Image
-              source={{ uri: Globals.BASE_URL + imageData }}
+              source={{ uri: 'https://api.kundenzugang-recruiting.app/' + imageData?.file }}
               resizeMode="cover"
               borderRadius={10}
               style={{ height: 400, width: '100%' }}
