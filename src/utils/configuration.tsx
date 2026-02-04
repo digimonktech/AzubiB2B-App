@@ -32,7 +32,7 @@ export const screenName = {
   DETAILSCOMPANY: 'DetailsCompany',
 };
 export const urlApi = {
-  PRODUCTION: 'https://api.kundenzugang-recruiting.app/',
+  PRODUCTION: 'https://api.kundenzugang-recruiting.app/api/v1/',
   DEVELOPMENT: 'https://azubi.api.digimonk.net/api/v1/',
   DEVELOPMENTIMAGE: 'https://api.azubiregional.de/',
 

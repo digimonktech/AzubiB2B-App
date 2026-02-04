@@ -40,6 +40,8 @@ export default function PrivacyPolicy({ navigation, route }) {
         try {
             setLoading(true);
             let res = await getApiCall1({ url: 'manage_content' });
+            console.log('privacy res => ', res);
+            
             if (res.status == 200) {
                 setContent(res?.data)
             }

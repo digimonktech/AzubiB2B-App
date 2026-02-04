@@ -73,7 +73,7 @@ const DetailsCompany = ({ navigation, route }) => {
   const [contIcon, setContIcon] = useState();
   const [companyJobs, setCompanyJobs] = useState([]);
   const { item } = route.params;
-  // console.log('ItemsOfCompanyDetails', item);
+  console.log('ItemsOfCompanyDetails', item);
   const { selectedCityId } = useCity();
   const [jobDetails, setJobDetails] = useState([]);
   const [loader, setLoader] = useState(false);
@@ -85,6 +85,9 @@ const DetailsCompany = ({ navigation, route }) => {
   };
 
   // console.log('company jobs list => ', companyJobList);
+
+  // console.log('flagData ', flatData);
+  
 
 
   const fetchCompanyJobsList = async () => {
@@ -224,13 +227,10 @@ const DetailsCompany = ({ navigation, route }) => {
                   justifyContent: 'center',
                 }}>
                 <Image
-                  style={{ height: '100%', width: '100%' }}
-                  resizeMode="center"
-                  // source={{
-                  //   uri: Globals.BACKEND_URL_LIVE.concat(item?.companyId?.profileIcon),
-                  // }}
+                  style={{ height: '100%', width: '100%', borderRadius: 5, borderWidth: 1, borderColor: '#ccc' }}
+                  resizeMode="cover"
                   source={{
-                    uri: 'https://api.kundenzugang-recruiting.app/api/v1/' + item?.companyId?.profileIcon,
+                    uri: 'https://api.kundenzugang-recruiting.app/' + item?.companyId?.profileIcon,
                   }}
                 />
               </View>
@@ -381,15 +381,15 @@ const DetailsCompany = ({ navigation, route }) => {
     return (
       <TouchableOpacity
         style={[styles.locView, { marginTop: 10, marginRight: 10 }]}
-        // onPress={() => {
-        //   setDetailImage(item), setVisibleImage(true);
-        // }}
+        onPress={() => {
+          setDetailImage(item), setVisibleImage(true);
+        }}
         activeOpacity={0.9}
       >
         <Image
           source={{ uri: 'https://api.kundenzugang-recruiting.app/' + item.file }}
           style={styles.camPic}
-          resizeMode="contain"
+          resizeMode="cover"
         />
       </TouchableOpacity>
     );
@@ -626,7 +626,7 @@ const DetailsCompany = ({ navigation, route }) => {
   };
 
   const renderCompanyDetails = ({ item }) => {
-    console.log('renderCompanyDetails mk =>', item);
+    console.log('renderCompanyDetails mk =>', item?.videoLink);
     const cleanHtmlContent = html => {
       return html?.replace(/<p><br><\/p>/g, '');
     };
@@ -710,7 +710,7 @@ const DetailsCompany = ({ navigation, route }) => {
 
 
 
-        {item?.videoLink != '' && (
+        {/* {item?.videoLink != '' && (
           <YoutubePlayer
             height={230}
             play={playing}
@@ -724,7 +724,7 @@ const DetailsCompany = ({ navigation, route }) => {
               elevation: 10,
             }}
           />
-        )}
+        )} */}
 
         {/* social links */}
         <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
@@ -1015,12 +1015,12 @@ const DetailsCompany = ({ navigation, route }) => {
             <View style={styles.mainFlexView1}>
               <Image
                 source={
-                  item.profileIcon
-                    ? { uri: 'https://api.kundenzugang-recruiting.app/' + item.profileIcon }
-                    : require('../../assets/images/gallery.png')
+                  
+                     { uri: 'https://api.kundenzugang-recruiting.app/' + flatData[0]?.profileIcon }
+                    
                 }
                 style={styles.headingImage}
-                resizeMode="contain"
+                resizeMode="cover"
                 onLoad={handleLoad}
               />
             </View>
@@ -1195,10 +1195,10 @@ const styles = StyleSheet.create({
     width: '15%',
   },
   headingImage: {
-    height: 90,
-    width: 90,
+    height: 100,
+    width: 100,
     alignSelf: 'center',
-    borderRadius: 20,
+    borderRadius: 10,
   },
   aboutComText: {
     color: '#222',

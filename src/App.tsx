@@ -1,14 +1,14 @@
-import React, {useEffect} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
 import ScreenProvider from './navigation/screenProvider';
 import ThemeProvider from './themeProvider';
 import SplashScreen from 'react-native-splash-screen';
-import {Provider} from 'react-redux';
-import {store, persistor} from './redux/store/myStore';
-import {PersistGate} from 'redux-persist/integration/react';
+import { Provider } from 'react-redux';
+import { store, persistor } from './redux/store/myStore';
+import { PersistGate } from 'redux-persist/integration/react';
 
-import {CityProvider} from './Context/CityProvider';
-import {CityAlertsProvider} from './Context/CityProviderAlerts';
+import { CityProvider } from './Context/CityProvider';
+import { CityAlertsProvider } from './Context/CityProviderAlerts';
 import {
   LogBox,
   Alert,
@@ -16,16 +16,16 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
-import notifee, {AndroidImportance} from '@notifee/react-native';
-import {AppRegistry} from 'react-native';
+import notifee, { AndroidImportance } from '@notifee/react-native';
+import { AppRegistry } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import {
   NotificationListner,
   requestNotificationPermission,
 } from './utils/CommonUtill';
-import {CompanyProvider} from './Context/CompanyId';
+import { CompanyProvider } from './Context/CompanyId';
 
 // Suppress all log warnings
 LogBox.ignoreAllLogs(true);
@@ -207,8 +207,8 @@ const App: React.FC = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{flex: 1}}>
-        <StatusBar barStyle="light-content" />
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar barStyle="dark-content" />
 
         {/* GLOBAL CONTEXT SHOULD WRAP NAVIGATION */}
         <CompanyProvider>

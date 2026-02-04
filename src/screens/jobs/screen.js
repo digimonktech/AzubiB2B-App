@@ -75,7 +75,7 @@ const Jobs = props => {
 
   // console.log('filteredJobs ', filteredJobs);
 
-  console.log('Company ID => ', route.params?.companyId);
+  // console.log('Company ID => ', route.params?.companyId);
 
 
 

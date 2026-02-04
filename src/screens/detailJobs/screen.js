@@ -766,7 +766,7 @@ const DetailsJobs = ({ navigation, route }) => {
                 height: 50,
                 paddingVertical: 0,
                 paddingHorizontal: 0,
-                marginVertical: 0,
+                marginVertical: 20,
               },
             ]}
             onPress={() => {
@@ -813,7 +813,7 @@ const DetailsJobs = ({ navigation, route }) => {
                 height: 50,
                 paddingVertical: 0,
                 paddingHorizontal: 0,
-                marginVertical: 10,
+                marginVertical: 20,
               },
             ]}
             onPress={() => {
@@ -1552,12 +1552,12 @@ const styles = StyleSheet.create({
   jobDetailBox: {
     marginHorizontal: 15,
     paddingHorizontal: 15,
-    marginVertical: 15,
+    marginVertical: 25,
     paddingVertical: 15,
     backgroundColor: reCol().color.WHITE,
     borderRadius: 10,
     flexDirection: 'row-reverse',
-    elevation: 10,
+    elevation: 2,
     justifyContent: 'space-between',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

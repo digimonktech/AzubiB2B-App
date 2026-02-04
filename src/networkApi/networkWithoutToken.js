@@ -4,7 +4,7 @@ import apiMonitor from "./monitor";
 import setInterceptor from './interceptor';
 const createMobileOtp = () => {
     const instanceMobile = create({
-        baseURL: urlApi.DEVELOPMENT,
+        baseURL: urlApi.PRODUCTION,
         timeout: 150000,
         headers: {
             'Content-Type': 'multipart/form-data',

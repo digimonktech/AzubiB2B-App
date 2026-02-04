@@ -273,9 +273,9 @@ const Companies = (props) => {
     }
 
     const RenderImageComponent = ({ item, navigation }) => {
-        // console.log('companyItem ', item);
+        console.log('companyItem ', item);
 
-        const { companyname, profileIcon } = item;
+        const { companyname, companyImages } = item;
         const [showLoadImage, setShowLoadImage] = useState(true);
         const [showMenu, setShowMenu] = useState(false);
 
@@ -330,9 +330,9 @@ const Companies = (props) => {
                         resizeMode="cover"
                         onLoadEnd={() => setShowLoadImage(false)}
                         source={
-                            profileIcon === ''
+                            item?.profileIcon === ''
                                 ? require('../../assets/images/gallery.png')
-                                : { uri: 'https://api.kundenzugang-recruiting.app/' + profileIcon }
+                                : { uri: 'https://api.kundenzugang-recruiting.app/' + item?.profileIcon  }
                         }
                     />
                 </View>
