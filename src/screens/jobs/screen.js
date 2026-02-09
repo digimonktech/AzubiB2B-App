@@ -32,6 +32,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCompany } from '@/Context/CompanyId';
 import { addJobsFromCompany, removeJob } from '@/redux/reducers/companiesJobList';
 import { addCompany } from '@/redux/reducers/companiesList';
+import FastImage from 'react-native-fast-image';
 
 
 const { height, width } = Dimensions.get('screen');
@@ -310,7 +311,7 @@ const Jobs = props => {
     console.log('removejob ', item);
     dispatch(removeJob(item._id))
 
-    
+
 
   }
 
@@ -351,17 +352,21 @@ const Jobs = props => {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                {/* {showLoadImage && (
-                  <View style={styles.indicatorView}>
-                    <ActivityIndicator size="small" color="gray" />
-                  </View>
-                )} */}
-                <Image
+
+                <FastImage
                   style={{ height: '100%', width: '100%', borderRadius: 10 }}
-                  resizeMode="cover"
-                  source={{ uri: 'https://api.kundenzugang-recruiting.app/' + item?.companyId.profileIcon }}
+                  resizeMode={FastImage.resizeMode.cover}
                   onLoad={handleLoad}
+                  source={{
+                    uri:
+                      'https://api.kundenzugang-companyjob.app/' +
+                      item?.companyId?.profileIcon,
+                    priority: FastImage.priority.high,
+                    cache: FastImage.cacheControl.immutable,
+                  }}
                 />
+
+
               </View>
               <Text
                 style={[
@@ -480,7 +485,7 @@ const Jobs = props => {
                 }
               />
             </TouchableOpacity>
-            
+
             {/* delete */}
             <TouchableOpacity
               style={{
@@ -641,7 +646,7 @@ const Jobs = props => {
     try {
       setLoader(true);
       let res = await getApiCall({ url: 'admin/job/' + id });
-      console.log('message details res' , res);
+      console.log('message details res', res);
 
       if (res.status == 200) {
         setJobDetails(res.data);

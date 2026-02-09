@@ -42,7 +42,7 @@ const News = () => {
     const fetchAllCompanies = async () => {
         try {
             const response = await axios.get(
-                'https://api.kundenzugang-recruiting.app/api/v1/admin/companies'
+                'https://api.kundenzugang-companyjob.app/api/v1/admin/companies'
             );
 
             const data = response?.data?.data?.companies?.companies || [];
@@ -89,7 +89,7 @@ const News = () => {
             stripHtml(item.description) || 'No description available';
 
         const imageUrl = item.profileIcon
-            ? { uri: `https://api.kundenzugang-recruiting.app/${item.profileIcon}` }
+            ? { uri: `https://api.kundenzugang-companyjob.app/${item.profileIcon}` }
             : require('../../assets/images/gallery.png');
 
         return (

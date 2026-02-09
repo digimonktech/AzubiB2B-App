@@ -335,7 +335,7 @@ const Companies = (props) => {
                                 ? require('../../assets/images/gallery.png')
                                 : {
                                     uri:
-                                        'https://api.kundenzugang-recruiting.app/' +
+                                        'https://api.kundenzugang-companyjob.app/' +
                                         item?.profileIcon,
                                     priority: FastImage.priority.normal,
                                     cache: FastImage.cacheControl.immutable,

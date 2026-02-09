@@ -18,7 +18,7 @@ import Globals from '@/utils/Globals';
 
 const { width } = Dimensions.get('window'); // Device width for responsive UI
 
-const BASE_URL = 'https://api.kundenzugang-recruiting.app/api/v1'; 
+const BASE_URL = 'https://api.kundenzugang-companyjob.app/api/v1';
 
 const CompanyNews = () => {
     const route = useRoute();
@@ -36,7 +36,7 @@ const CompanyNews = () => {
             );
 
             // console.log('company  news res => ', response);
-            
+
             if (response.status === 200) {
                 const newsData = response?.data?.data?.news || [];
                 setNews(newsData);
@@ -80,7 +80,7 @@ const CompanyNews = () => {
 
                     {item.images[0]?.file ? (
                         <Image
-                            source={{ uri: `https://api.kundenzugang-recruiting.app/${item.images[0].file}` }}
+                            source={{ uri: `https://api.kundenzugang-companyjob.app/${item.images[0].file}` }}
                             style={styles.thumbImage}
                         />
                     ) : (
@@ -117,7 +117,7 @@ const CompanyNews = () => {
                     contentContainerStyle={{ padding: 16 }}
                     showsVerticalScrollIndicator={false}
                     ListEmptyComponent={<View>
-                        <Text style={{ textAlign: 'center', marginTop: 20, color: '#222' }}>No news available.</Text>  
+                        <Text style={{ textAlign: 'center', marginTop: 20, color: '#222' }}>No news available.</Text>
                     </View>}
                 />
             </ImageBackground>

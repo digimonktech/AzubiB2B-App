@@ -48,7 +48,7 @@ const CompanyJobWall = () => {
         const fetchBanners = async () => {
             try {
                 const res = await axios.get(
-                    `https://api.kundenzugang-recruiting.app/api/v1/admin/job-banners?companyId=${companyId}`,
+                    `https://api.kundenzugang-companyjob.app/api/v1/admin/job-banners?companyId=${companyId}`,
                 );
 
                 console.log('banner response with id ', res);
@@ -89,7 +89,7 @@ const CompanyJobWall = () => {
             <FastImage
                 style={styles.image}
                 source={{
-                    uri: 'https://api.kundenzugang-recruiting.app/' + item.images,
+                    uri: 'https://api.kundenzugang-companyjob.app/' + item.images,
                     priority: FastImage.priority.normal,
                     cache: FastImage.cacheControl.immutable,
                 }}

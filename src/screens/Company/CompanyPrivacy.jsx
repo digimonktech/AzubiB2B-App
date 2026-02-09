@@ -5,6 +5,7 @@ import {
     ScrollView,
     ActivityIndicator,
     useWindowDimensions,
+    Text,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
@@ -41,7 +42,7 @@ const CompanyPrivacy = () => {
         const fetchPrivacyPolicy = async () => {
             try {
                 const res = await axios.get(
-                    `https://api.kundenzugang-recruiting.app/api/v1/admin/privacy-policy/${policyId}`,
+                    `https://api.kundenzugang-companyjob.app/api/v1/admin/privacy-policy/${policyId}`,
                 );
 
                 setHtmlContent(res?.data?.data?.description || '');
@@ -79,7 +80,7 @@ const CompanyPrivacy = () => {
                             source={{ html: htmlContent }}
                             tagsStyles={htmlStyles}
                         />
-                    ) : null}
+                    ) : <Text style={styles.h2} >No Pricay Policy</Text>}
                 </View>
             </ScrollView>
         </SafeAreaView>

@@ -242,7 +242,7 @@ const DetailsCompany = ({ navigation, route }) => {
                     item?.companyId?.profileIcon
                       ? {
                         uri:
-                          'https://api.kundenzugang-recruiting.app/' +
+                          'https://api.kundenzugang-companyjob.app/' +
                           item?.companyId?.profileIcon,
                         priority: FastImage.priority.normal,
                         cache: FastImage.cacheControl.immutable,
@@ -410,7 +410,7 @@ const DetailsCompany = ({ navigation, route }) => {
             item?.file
               ? {
                 uri:
-                  'https://api.kundenzugang-recruiting.app/' +
+                  'https://api.kundenzugang-companyjob.app/' +
                   item.file,
                 priority: FastImage.priority.normal,
                 cache: FastImage.cacheControl.web,
@@ -898,16 +898,31 @@ const DetailsCompany = ({ navigation, route }) => {
         </Text>
 
 
-
         <FlatList
-          data={item?.companyImages}
+          data={item?.companyImages || []}
           renderItem={renderImages}
-          keyExtractor={index => index.toString()}
+          keyExtractor={(item, index) =>
+            item?.id?.toString?.() || index.toString()
+          }
           numColumns={2}
-          ListEmptyComponent={<View>
-            <Text style={styles.titleText} >No Images </Text>
-          </View>}
+          ListEmptyComponent={() => (
+            <View style={{ alignItems: "center", marginTop: 20 }}>
+              <Text style={styles.titleText}>No Images</Text>
+            </View>
+          )}
+          contentContainerStyle={[
+            { paddingLeft: 30 },
+            (!item?.companyImages || item.companyImages.length === 0) && {
+              flex: 1,
+              justifyContent: "center",
+            },
+          ]}
+          columnWrapperStyle={{ justifyContent: "space-between" }}
+          showsVerticalScrollIndicator={false}
         />
+
+
+
 
 
 
@@ -1056,7 +1071,7 @@ const DetailsCompany = ({ navigation, route }) => {
                   flatData[0]?.profileIcon
                     ? {
                       uri:
-                        'https://api.kundenzugang-recruiting.app/' +
+                        'https://api.kundenzugang-companyjob.app/' +
                         flatData[0]?.profileIcon,
                       priority: FastImage.priority.normal,
                       cache: FastImage.cacheControl.immutable,

@@ -130,7 +130,7 @@ const DetailsJobs = ({ navigation, route }) => {
               }}
               resizeMode={FastImage.resizeMode.cover}
               source={{
-                uri: 'https://api.kundenzugang-recruiting.app' + imageItem?.file,
+                uri: 'https://api.kundenzugang-companyjob.app/' + imageItem?.file,
                 priority: FastImage.priority.high,
                 cache: FastImage.cacheControl.immutable,
               }}
@@ -996,20 +996,25 @@ const DetailsJobs = ({ navigation, route }) => {
                         justifyContent: 'center',
                       }}>
 
-                      <Image
+                      <FastImage
                         style={{
                           height: '100%',
                           width: '100%',
                           borderRadius: 10,
                         }}
-                        resizeMode="cover"
-                        source={{
-                          uri: allData
-                            ? 'https://api.kundenzugang-recruiting.app/' + allData.companyId?.profileIcon
-                            : 'https://api.kundenzugang-recruiting.app/' + item?.companyId?.profileIcon,
-                        }}
+                        resizeMode={FastImage.resizeMode.cover}
                         onLoad={handleLoad}
+                        source={{
+                          uri: allData?.companyId?.profileIcon
+                            ? allData.companyId.profileIcon
+                            : 'https://api.kundenzugang-companyjob.app/' +
+                            item?.companyId?.profileIcon,
+                          priority: FastImage.priority.high,
+                          cache: FastImage.cacheControl.web,
+                        }}
                       />
+
+
                     </View>
                     <Text
                       style={[

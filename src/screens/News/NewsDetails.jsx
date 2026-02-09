@@ -16,15 +16,15 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 
-const BASE_URL = 'https://api.kundenzugang-recruiting.app/api/v1';
-const IMAGE_BASE = 'https://api.kundenzugang-recruiting.app/';
+const BASE_URL = 'https://api.kundenzugang-companyjob.app/api/v1';
+const IMAGE_BASE = 'https://api.kundenzugang-companyjob.app/';
 
 const NewsDetails = () => {
   const route = useRoute();
   const navigation = useNavigation();
 
   // console.log('NewsDetails route => ', route.params);
-  
+
 
   const [newsDetails, setNewsDetails] = useState(null);
 
@@ -35,7 +35,7 @@ const NewsDetails = () => {
       );
 
       console.log('res ', response);
-      
+
       if (response.status === 200) {
         setNewsDetails(response?.data?.data || {});
       }
