@@ -16,6 +16,7 @@ import BackHeader from '@/component/BackHeader';
 import { fontFamily, reCol } from '@/utils/configuration';
 import Globals from '@/utils/Globals';
 import { Images } from '@/assets/images/images';
+import FastImage from 'react-native-fast-image';
 
 const { height, width } = Dimensions.get('screen');
 
@@ -51,7 +52,7 @@ const CompanyJobWall = () => {
                 );
 
                 console.log('banner response with id ', res);
-                
+
                 setBanners(res.data?.data || []);
             } catch (e) {
                 console.log('Job banner error => ', e);
@@ -84,10 +85,15 @@ const CompanyJobWall = () => {
     /* ---------------- Render Item ---------------- */
     const renderItem = ({ item }) => (
         <View style={styles.item}>
-            <Image
-                source={{ uri: 'https://api.kundenzugang-recruiting.app/' + item.images }}
+
+            <FastImage
                 style={styles.image}
-                resizeMode="cover"
+                source={{
+                    uri: 'https://api.kundenzugang-recruiting.app/' + item.images,
+                    priority: FastImage.priority.normal,
+                    cache: FastImage.cacheControl.immutable,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
             />
 
             <View style={styles.titleRow}>
@@ -187,7 +193,7 @@ const styles = StyleSheet.create({
         tintColor: reCol().color.EMLCLR,
         marginRight: 8,
     },
- 
+
     locationicon: {
         height: 16,
         width: 16,

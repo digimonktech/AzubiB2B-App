@@ -12,12 +12,10 @@ import {
   SafeAreaView,
   StyleSheet,
   Linking,
-  ActivityIndicator,
-  Platform,
+  RefreshControl,
 } from 'react-native';
 import { Images } from '@/assets/images/images';
 import { fontFamily, reCol } from '@/utils/configuration';
-import { Divider } from 'native-base';
 import { ModalApply, ModalIndustry, ModalJobPic } from '@/component/Modal';
 import BackHeader from '@/component/BackHeader';
 import { getApiCall } from '@/utils/ApiHandler';
@@ -29,9 +27,10 @@ import { useCity } from '@/Context/CityProvider';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
-import WebView from 'react-native-webview';
 import Share from 'react-native-share';
-// const width = Dimensions.get('window').width;
+import FastImage from 'react-native-fast-image';
+
+
 const { width, height } = Dimensions.get('window');
 
 const DetailsJobs = ({ navigation, route }) => {
@@ -41,10 +40,9 @@ const DetailsJobs = ({ navigation, route }) => {
   const [visibleImage, setVisibleImage] = useState(false);
   const [detailImage, setDetailImage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const { allData } = route.params;
-  // console.log('allData...', allData, 'allData...');
   const { item } = route.params;
-  // console.log('ITEM...', item, '...ITEM');
   const [jobDetails, setJobDetails] = useState([]);
   const [jobListing, setJobListing] = useState([]);
   const { selectedCityId } = useCity();
@@ -66,47 +64,6 @@ const DetailsJobs = ({ navigation, route }) => {
     }
   }, []);
 
-  const flatTasks = [
-    {
-      id: 1,
-      txt: 'Support in the planning, implementation and maintenance of IT systems and networks',
-    },
-    {
-      id: 2,
-      txt: 'Error analysis and resolution of IT problems in close collaboration with the IT team',
-    },
-    {
-      id: 3,
-      txt: 'Installation, configuration and updating of hardware and software components',
-    },
-    { id: 4, txt: 'Support of servers, databases and cloud infrastructures' },
-  ];
-
-  const flatWish = [
-    {
-      id: 1,
-      txt: 'High school diploma, technical college diploma or a good secondary school diploma with a strong interest in IT topics',
-    },
-    {
-      id: 2,
-      txt: 'Basic knowledge of operating systems (e.g. Windows, Linux) and network technologies',
-    },
-    {
-      id: 3,
-      txt: 'Willingness to learn, ability to work in a team and analytical thinking skills',
-    },
-    { id: 4, txt: 'Reliability and commitment to training' },
-  ];
-
-  const flatOffer = [
-    { id: 1, txt: 'An agile environment with modern methods and equipment' },
-    { id: 2, txt: 'Exciting and varied customer projects' },
-    {
-      id: 3,
-      txt: 'Open communication and a successful and committed team that looks forward to seeing you',
-    },
-    { id: 4, txt: 'Personal and appreciative interaction' },
-  ];
 
   useEffect(() => {
     getJobsDetails(item?._id);
@@ -124,7 +81,7 @@ const DetailsJobs = ({ navigation, route }) => {
       // console.log('getJobsDetails1...', res);
       if (res.status == 200) {
         setJobDetails(res.data);
-        // console.log('JobDetails', res.data);
+        console.log('JobDetails', res.data);
       }
     } catch (e) {
       alert(e);
@@ -160,19 +117,25 @@ const DetailsJobs = ({ navigation, route }) => {
               paddingRight: 10,
             }}
             onPress={() => {
-              setDetailImage(imageItem?.filepath), setVisibleImage(true);
+              setDetailImage(imageItem?.file), setVisibleImage(true);
             }}>
             {/* Access the filepath property for each image */}
-            <Image
+
+            <FastImage
               style={{
                 height: '100%',
                 width: '100%',
                 borderRadius: 20,
                 alignSelf: 'center',
               }}
-              resizeMode="cover"
-              source={{ uri: Globals.BASE_URL + imageItem?.filepath }}
+              resizeMode={FastImage.resizeMode.cover}
+              source={{
+                uri: 'https://api.kundenzugang-recruiting.app' + imageItem?.file,
+                priority: FastImage.priority.high,
+                cache: FastImage.cacheControl.immutable,
+              }}
             />
+
           </TouchableOpacity>
         )}
         keyExtractor={imageItem => imageItem?._id}
@@ -641,27 +604,39 @@ const DetailsJobs = ({ navigation, route }) => {
     };
 
     const cleanedData = cleanHtmlContent(item?.jobDescription);
-    // const extractVideoId = url => {
-    //   const videoIdMatch = url.match(
-    //     /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)?|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
-    //   );
-
-    //   return videoIdMatch ? videoIdMatch[1] : null;
-    // };
-    // const videoIds = temp?.map(extractVideoId);
 
 
 
-    const extractVideoId = url => {
-      const regex = /(?:v=|\/(?!.*\/)([a-zA-Z0-9_-]{11}))(?!.*\?.*\bindex\b)/;
-      const match = url.match(regex);
-      return match ? match[1] : null;
+
+    const extractVideoId = (url) => {
+      if (!url) return null;
+
+      const regExp =
+        /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?v=))([^#&?]*).*/;
+
+      const match = url.match(regExp);
+
+      return match && match[7].length === 11 ? match[7] : null;
     };
 
-    const videoUrl = item.videoLink
-      ? item.videoLink
-      : 'https://www.youtube.com/';
+
+    // console.log('vider url ', extractVideoId);
+
+
+    // const videoUrl = item.videoLink
+    //   ? item.videoLink
+    //   : 'https://www.youtube.com/';
+    // const videoId = extractVideoId(videoUrl);
+
+
+
+    const videoUrl = item?.videoLink || item?.embeddedCode;
     const videoId = extractVideoId(videoUrl);
+
+    console.log("Video URL:", videoUrl);
+    console.log("Video ID:", videoId);
+
+
 
     return (
       <View style={{
@@ -723,8 +698,7 @@ const DetailsJobs = ({ navigation, route }) => {
           color: '#494747ff',
           fontWeight: 'bold',
           fontSize: 16,
-          marginBottom: 4,
-          marginTop: 4,
+          marginVertical: 8,
         }}>{'Job Description'}</Text>
 
         <RenderHTML
@@ -738,119 +712,142 @@ const DetailsJobs = ({ navigation, route }) => {
           }}
         />
 
+        <Text style={styles.titleText}>
+          Images {item?.jobImages?.length}
+        </Text>
+
+        <FlatList
+          data={item.jobImages}
+          renderItem={renderImage}
+        // keyExtractor={}
+        />
+
         {/* yt video */}
-
-        {videoId && (
-          <YoutubePlayer
-            height={230}
-            play={playing}
-            videoId={videoId}
-            onChangeState={onStateChange}
-            webViewStyle={{
-              borderRadius: 20,
-              borderCurve: 'circular',
-              marginTop: 30,
-              elevation: 10,
-            }}
-          />
-        )}
+        <YoutubePlayer
+          height={230}
+          play={playing}
+          videoId={videoId}
+          onChangeState={onStateChange}
+          webViewStyle={{
+            borderRadius: 20,
+            borderCurve: 'circular',
+            marginTop: 30,
+            elevation: 10,
+          }}
+        />
 
 
-        {/* google map url */}
-        {item?.mapUrl && (
-          <TouchableOpacity
-            style={[
-              styles.jobDetailBox,
-              {
-                flexDirection: 'row',
-                height: 50,
-                paddingVertical: 0,
-                paddingHorizontal: 0,
-                marginVertical: 20,
-              },
-            ]}
-            onPress={() => {
-              Linking.openURL(item.mapUrl);
-            }}>
-            <Text
+
+
+        <View style={{
+          width: '100%',
+          marginTop: 25,
+          marginBottom: 20,
+        }}>
+          {/* google map url */}
+          {item?.mapUrl && (
+            <TouchableOpacity
               style={[
-                styles.nameTxt,
+                styles.jobDetailBox,
                 {
-                  alignSelf: 'center',
-                  paddingLeft: 15,
-                  color: '#222',
+                  flexDirection: 'row',
+                  height: 50,
+                  paddingVertical: 0,
+                  paddingHorizontal: 0,
+                  marginBottom: 20,
                 },
-              ]}>
-              Standort / Route anzeigen
-            </Text>
-            <View
-              style={{
-                height: 50,
-                width: '15%',
-                backgroundColor: '#0096A438',
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              activeOpacity={0.5}>
-              <Image
-                style={{ height: 20, width: 24 }}
-                resizeMode="contain"
-                source={require('../../assets/images/shiftArrow.png')}
-              />
-            </View>
-          </TouchableOpacity>
-        )}
+              ]}
+              onPress={() => {
+                Linking.openURL(item.mapUrl);
+              }}>
+              <Text
+                style={[
+                  styles.nameTxt,
+                  {
+                    alignSelf: 'center',
+                    paddingLeft: 15,
+                    color: '#222',
+                    width: '80%'
+                  },
+                ]}
+                numberOfLines={2}
+              >
+                Standort / Route anzeigen
+              </Text>
+              <View
+                style={{
+                  height: 50,
+                  width: '15%',
+                  backgroundColor: '#0096A438',
+                  borderTopRightRadius: 10,
+                  borderBottomRightRadius: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                activeOpacity={0.5}>
+                <Image
+                  style={{ height: 20, width: 24 }}
+                  resizeMode="contain"
+                  source={require('../../assets/images/shiftArrow.png')}
+                />
+              </View>
+            </TouchableOpacity>
+          )}
 
-        {/* location url */}
-        {item?.locationUrl && (
-          <TouchableOpacity
-            style={[
-              styles.jobDetailBox,
-              {
-                flexDirection: 'row',
-                height: 50,
-                paddingVertical: 0,
-                paddingHorizontal: 0,
-                marginVertical: 20,
-              },
-            ]}
-            onPress={() => {
-              Linking.openURL(item?.locationUrl);
-            }}>
-            <Text
+          {/* location url */}
+          {item?.locationUrl && (
+            <TouchableOpacity
               style={[
-                styles.nameTxt,
+                styles.jobDetailBox,
                 {
-                  alignSelf: 'center',
-                  paddingLeft: 15,
-                  color: '#222',
+                  flexDirection: 'row',
+                  height: 50,
+                  paddingVertical: 0,
+                  paddingHorizontal: 0,
+                  // marginVertical: 20,
                 },
-              ]}>
-              {item?.locationField || 'Erfahre mehr über uns'}
-            </Text>
-            <View
-              style={{
-                height: 50,
-                width: '15%',
-                backgroundColor: '#0096A438',
-                borderTopRightRadius: 10,
-                borderBottomRightRadius: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              activeOpacity={0.5}>
-              <Image
-                style={{ height: 20, width: 24 }}
-                resizeMode="contain"
-                source={require('../../assets/images/shiftArrow.png')}
-              />
-            </View>
-          </TouchableOpacity>
-        )}
+              ]}
+              onPress={() => {
+                Linking.openURL(item?.locationUrl);
+              }}>
+              <Text
+                style={[
+                  styles.nameTxt,
+                  {
+                    alignSelf: 'center',
+                    paddingLeft: 15,
+                    color: '#222',
+                    width: '80%'
+                  },
+                ]}
+                numberOfLines={2}
+              >
+                {item?.locationField || 'Erfahre mehr über uns'}
+
+              </Text>
+              <View
+                style={{
+                  height: 50,
+                  width: '15%',
+                  backgroundColor: '#0096A438',
+                  borderTopRightRadius: 10,
+                  borderBottomRightRadius: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                activeOpacity={0.5}>
+                <Image
+                  style={{ height: 20, width: 24 }}
+                  resizeMode="contain"
+                  source={require('../../assets/images/shiftArrow.png')}
+                />
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
 
 
+        {/* job appley button */}
         <TouchableOpacity
           style={{
             width: '100%',
@@ -879,393 +876,10 @@ const DetailsJobs = ({ navigation, route }) => {
 
       </View>
     )
-    // return (
-    //   <View>
-    //     <View style={styles.jobDetailBox}>
-    //       <View style={styles.mainFlexView}>
-    //         <Text
-    //           style={[
-    //             styles.nameTxt,
-    //             {color: reCol().color.BDRCLR},
-    //           ]}>{`Kontakt`}</Text>
-    //         <Text
-    //           style={[
-    //             styles.locTxt,
-    //             {fontSize: 12, fontFamily: fontFamily.poppinsRegular},
-    //           ]}>
-    //           {item?.industryName?.industryName}
-    //         </Text>
-    //         <View style={styles.locView}>
-    //           <Image
-    //             source={Images.location}
-    //             style={[styles.locImage, {tintColor: reCol().color.BTNCOLOR}]}
-    //           />
-    //           <Text style={styles.locTxt}>
-    //             {item?.city?.map(city => city.name).join(', ')}
-    //           </Text>
-    //         </View>
-    //         <View style={styles.locView}>
-    //           <Image source={Images.callingIcn} style={styles.locImage} />
-    //           <TouchableOpacity>
-    //             <Text style={styles.locTxt}>
-    //               {item?.phoneNumber}
-    //             </Text>
-    //           </TouchableOpacity>
-    //         </View>
-    //         <View style={styles.locView}>
-    //           <Image source={Images.smsIcn} style={styles.locImage} />
-    //           <TouchableOpacity
-    //             onPress={() => openGmail(item?.companyId?.email)}>
-    //             <Text style={styles.locTxt}>{item?.companyId?.email}</Text>
-    //           </TouchableOpacity>
-    //         </View>
-    //         <View style={styles.locView}>
-    //           <Image source={Images.smsIcn} style={styles.locImage} />
-    //           <TouchableOpacity
-    //             onPress={() => openGmail(item?.additionalEmail)}>
-    //             <Text style={styles.locTxt}>{item?.additionalEmail}</Text>
-    //           </TouchableOpacity>
-    //         </View>
-    //        
-    //         {item?.additionalData?.length > 0 &&
-    //           item?.additionalData?.map(itemMap => {
-    //             return (
-    //               <View style={styles.locView}>
-    //                 <Image
-    //                   source={{
-    //                     uri: Globals.BASE_URL + itemMap?.image?.filepath,
-    //                   }}
-    //                   style={styles.locImage}
-    //                 />
-    //                 <TouchableOpacity>
-    //                   <Text style={styles.locTxt}>{itemMap?.text ?? '--'}</Text>
-    //                 </TouchableOpacity>
-    //               </View>
-    //             );
-    //           })}
-    //       </View>
-    //       <View style={styles.mainFlexView1}>
-    //         {showLoadImage1 && (
-    //           <View style={styles.indicatorView}>
-    //             <ActivityIndicator size="small" color="gray" />
-    //           </View>
-    //         )}
-    //         <Image
-    //           source={{
-    //             uri: Globals.BASE_URL + item?.companyId?.profileIcon,
-    //           }}
-    //           style={styles.headingImage}
-    //           onLoad={handleLoad1}
-    //           resizeMode="contain"
-    //         />
-    //       </View>
-    //     </View>
-    //     {item?.mapUrl && (
-    //       <TouchableOpacity
-    //         style={[
-    //           styles.jobDetailBox,
-    //           {
-    //             flexDirection: 'row',
-    //             height: 50,
-    //             paddingVertical: 0,
-    //             paddingHorizontal: 0,
-    //             marginVertical: 0,
-    //           },
-    //         ]}
-    //         onPress={() => {
-    //           Linking.openURL(item.mapUrl);
-    //         }}>
-    //         <Text
-    //           style={[
-    //             styles.nameTxt,
-    //             {
-    //               alignSelf: 'center',
-    //               paddingLeft: 15,
-    //               color: '#222',
-    //             },
-    //           ]}>
-    //           Standort / Route anzeigen
-    //         </Text>
-    //         <View
-    //           style={{
-    //             height: 50,
-    //             width: '15%',
-    //             backgroundColor: '#0096A438',
-    //             borderTopRightRadius: 10,
-    //             borderBottomRightRadius: 10,
-    //             justifyContent: 'center',
-    //             alignItems: 'center',
-    //           }}
-    //           activeOpacity={0.5}>
-    //           <Image
-    //             style={{height: 20, width: 24}}
-    //             resizeMode="contain"
-    //             source={require('../../assets/images/shiftArrow.png')}
-    //           />
-    //         </View>
-    //       </TouchableOpacity>
-    //     )}
-    //     {item?.locationUrl && (
-    //       <TouchableOpacity
-    //         style={[
-    //           styles.jobDetailBox,
-    //           {
-    //             flexDirection: 'row',
-    //             height: 50,
-    //             paddingVertical: 0,
-    //             paddingHorizontal: 0,
-    //             marginVertical: 10,
-    //           },
-    //         ]}
-    //         onPress={() => {
-    //           Linking.openURL(item?.locationUrl);
-    //         }}>
-    //         <Text
-    //           style={[
-    //             styles.nameTxt,
-    //             {
-    //               alignSelf: 'center',
-    //               paddingLeft: 15,
-    //               color: '#222',
-    //             },
-    //           ]}>
-    //           {item?.locationField || 'Erfahre mehr über uns'}
-    //         </Text>
-    //         <View
-    //           style={{
-    //             height: 50,
-    //             width: '15%',
-    //             backgroundColor: '#0096A438',
-    //             borderTopRightRadius: 10,
-    //             borderBottomRightRadius: 10,
-    //             justifyContent: 'center',
-    //             alignItems: 'center',
-    //           }}
-    //           activeOpacity={0.5}>
-    //           <Image
-    //             style={{height: 20, width: 24}}
-    //             resizeMode="contain"
-    //             source={require('../../assets/images/shiftArrow.png')}
-    //           />
-    //         </View>
-    //       </TouchableOpacity>
-    //     )}
-    //     {item?.embeddedCode !== '' ? (
-    //       <View style={[styles.jobDetailBox, styles.jobDetailBox1]}>
-    //         <WebView
-    //           scalesPageToFit={true}
-    //           bounces={false}
-    //           onLoad={syntheticEvent => {
-    //             const {nativeEvent} = syntheticEvent;
-    //             setLoading(nativeEvent.loading);
-    //           }}
-    //           javaScriptEnabled
-    //           style={{height: 60}}
-    //           source={{
-    //             html: `
-    //                     <!DOCTYPE html>
-    //                     <html>
-    //                       <body>
-    //                         <div id="baseDiv">${item?.embeddedCode}</div> 
-    //                       </body>
-    //                     </html>
-    //               `,
-    //           }}
-    //           automaticallyAdjustContentInsets={false}
-    //         />
-    //       </View>
-    //     ) : null}
-    //     <View style={[styles.jobDetailBox, styles.jobDetailBox1]}>
-    //       <Text style={[styles.titleText, {color: '#222'}]}>
-    //         {'Jobbeschreibung'}
-    //       </Text>
-    //       {/* <Text style={styles.aboutComText}>{item.jobDescription}</Text> */}
-    //       <RenderHTML
-    //         tagsStyles={{
-    //           p: {
-    //             marginVertical: 3, // Removes the vertical margin
-    //             color: '#646464',
-    //           },
-    //         }}
-    //         enableExperimentalMarginCollapsing={true}
-    //         source={{html: cleanedData}}
-    //       />
-    //       {/* <Text style={styles.titleText}>{'Über das Unternehmen'}</Text> */}
-    //       {/* <Text style={styles.aboutComText}>{item?.company?.companyDescription}</Text> */}
-    //       {/* <RenderHTML
-    //                     tagsStyles={{
-    //                         p: {
-    //                             marginVertical: 3, // Removes the vertical margin
-    //                             color: '#646464'
-    //                         }
-    //                     }}
-    //                     source={{ html: item?.company?.companyDescription }}
-    //                 /> */}
-    //       <Text style={[styles.titleText, {color: reCol().color.BDRCLR}]}>
-    //         {'Berufsbezeichnung'}
-    //       </Text>
-    //       <Text style={styles.aboutComText}>{item?.jobTitle}</Text>
-    //       {/* <Text style={styles.titleText}>{'Ihre Aufgaben'}</Text>
-    //                 <FlatList
-    //                     data={flatTasks}
-    //                     renderItem={renderItem}
-    //                     scrollEnabled={false}
-    //                     showsVerticalScrollIndicator={false}
-    //                 />
-    //                 <Text style={styles.titleText}>{'Wir wünschen}</Text>
-    //                 <FlatList
-    //                     data={flatWish}
-    //                     renderItem={renderItem}
-    //                     scrollEnabled={false}
-    //                     showsVerticalScrollIndicator={false}
-    //                 /> */}
-    //       {item?.jobImages?.length > 0 && (
-    //         <>
-    //           <Text style={[styles.titleText, {color: reCol().color.BDRCLR}]}>
-    //             {'Bilder-/Videogalerie'}
-    //           </Text>
-    //           {/* <FlatList
-    //             data={item?.jobImages}
-    //             renderItem={renderImage}
-    //             scrollEnabled={false}
-    //             showsVerticalScrollIndicator={false}
-    //             numColumns={2}
-    //           /> */}
-    //           <Image
-    //             style={{
-    //               height: 100,
-    //               width: 100,
-    //               borderRadius: 10,
-    //               alignSelf: 'center',
-    //             }}
-    //             resizeMode="cover"
-    //             source={{uri: Globals.BASE_URL + item.jobImages}}
-    //           />
-    //         </>
-    //       )}
-    //       {item?.videoLink != '' && (
-    //         <YoutubePlayer
-    //           height={230}
-    //           play={playing}
-    //           //   playList={videoIds}
-    //           // playList={['QRt7LjqJ45k', 'fHsa9DqmId8']}
-    //           videoId={videoId}
-    //           onChangeState={onStateChange}
-    //           webViewStyle={{
-    //             borderRadius: 20,
-    //             borderCurve: 'circular',
-    //             top: 30,
-    //             elevation: 10,
-    //           }}
-    //         />
-    //       )}
 
-    //       {/* <Text style={styles.titleText}>{'Wir bieten'}</Text>
-    //                 <FlatList
-    //                     data={flatOffer}
-    //                     renderItem={renderItem}
-    //                     scrollEnabled={false}
-    //                     showsVerticalScrollIndicator={false}
-    //                 /> */}
-    //       <Text style={[styles.titleText, {color: '#222'}]}>
-    //         {'Adresse'}
-    //       </Text>
-    //       <Text style={styles.aboutComText}>
-    //         {item.address} {item.zipCode}
-    //       </Text>
-    //       <Image source={Images.dividerLine} style={styles.lineDivider} />
-
-    //       {/* <FlatList
-    //                     data={item?.attachments}
-    //                     renderItem={renderDocs}
-    //                     scrollEnabled={false}
-    //                     showsVerticalScrollIndicator={false}
-    //                     numColumns={2}
-    //                 /> */}
-
-    //       {/* <Image source={Images.dividerLine} style={styles.lineDivider} /> */}
-
-    //       <View style={[styles.locView, {paddingVertical: 20}]}>
-    //         <Text
-    //           style={[
-    //             styles.titleText,
-    //             {paddingTop: 0, fontWeight: '400', color: reCol().color.BDRCLR},
-    //           ]}>
-    //           {'ID'}:
-    //         </Text>
-    //         <Text
-    //           style={[
-    //             styles.aboutComText,
-    //             {
-    //               paddingTop: 2,
-    //               fontWeight: '400',
-    //               paddingLeft: 2,
-    //               fontSize: 12,
-    //             },
-    //           ]}>
-    //           {item?._id?.slice(0, 8)}...
-    //         </Text>
-    //         <Divider
-    //           orientation="vertical"
-    //           alignSelf={'center'}
-    //           marginLeft={'10%'}
-    //         />
-    //         <Text
-    //           style={[
-    //             styles.titleText,
-    //             {
-    //               paddingTop: 0,
-    //               fontWeight: '400',
-    //               paddingLeft: '10%',
-    //               color: reCol().color.BDRCLR,
-    //             },
-    //           ]}>
-    //           {'Datum'}:
-    //         </Text>
-    //         <Text
-    //           style={[
-    //             styles.aboutComText,
-    //             {
-    //               paddingTop: 2,
-    //               fontWeight: '400',
-    //               paddingLeft: 5,
-    //               fontSize: 12,
-    //             },
-    //           ]}>
-    //           {originalDateString ? formattedDate : ''}
-    //         </Text>
-    //       </View>
-    //       <Image source={Images.dividerLine} style={styles.lineDivider} />
-
-    //       <TouchableOpacity
-    //         style={{
-    //           width: '100%',
-    //           alignSelf: 'center',
-    //           alignItems: 'center',
-    //           justifyContent: 'center',
-    //           height: 50,
-    //           backgroundColor: reCol().color.BTNCOLOR,
-    //           borderRadius: 10,
-    //           top: 15,
-    //         }}
-    //         activeOpacity={0.5}
-    //         onPress={() => {
-    //           setVisibleApply(true);
-    //         }}>
-    //         <Text
-    //           style={{
-    //             fontFamily: fontFamily.poppinsSeBold,
-    //             fontSize: 16,
-    //             color: '#fff',
-    //           }}>
-    //           {'Jetzt bewerben'}
-    //         </Text>
-    //       </TouchableOpacity>
-    //       <View style={{height: 40}} />
-    //     </View>
-    //   </View>
-    // );
   };
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -1329,10 +943,28 @@ const DetailsJobs = ({ navigation, route }) => {
     }
   };
   const isSaved = savedJobs.includes(item._id);
+
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getJobsDetails();
+    setRefreshing(false);
+  }
+
+
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground style={styles.container} source={Images.bgImage}>
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.container}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }>
+
           {!loading && (
             <TouchableHighlight underlayColor={'none'}>
               <View style={[styles.renderMainView, { width: '93%', flex: 1 }]}>
@@ -1550,9 +1182,7 @@ const styles = StyleSheet.create({
     height: height,
   },
   jobDetailBox: {
-    marginHorizontal: 15,
     paddingHorizontal: 15,
-    marginVertical: 25,
     paddingVertical: 15,
     backgroundColor: reCol().color.WHITE,
     borderRadius: 10,
@@ -1563,6 +1193,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
+    width: '100%',
   },
   jobDetailBox1: {
     flexDirection: 'column',

@@ -13,6 +13,7 @@ import {
   Linking,
   ActivityIndicator,
   Dimensions,
+  RefreshControl,
 } from 'react-native';
 import { Images } from '@/assets/images/images';
 import { fontFamily, reCol } from '@/utils/configuration';
@@ -35,6 +36,7 @@ import YoutubePlayer from 'react-native-youtube-iframe';
 import Share from 'react-native-share';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import FastImage from 'react-native-fast-image';
 
 
 const COMPANY_DESCRIPTION = 'company is a leading logistics and supply chain management organization dedicated to delivering safe, reliable, and cost-efficient cargo solutions. With years of industry experience, we specialize in transporting goods across multiple sectors including manufacturing, retail, construction, and consumer services. Our mission is to build strong connections between businesses and their customers by ensuring timely movement of goods with complete transparency.'
@@ -79,6 +81,7 @@ const DetailsCompany = ({ navigation, route }) => {
   const [loader, setLoader] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [showLoadImage, setShowLoadImage] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [companyJobList, setCompanyJobList] = useState([])
   const handleLoad = () => {
     setShowLoadImage(false);
@@ -87,7 +90,7 @@ const DetailsCompany = ({ navigation, route }) => {
   // console.log('company jobs list => ', companyJobList);
 
   // console.log('flagData ', flatData);
-  
+
 
 
   const fetchCompanyJobsList = async () => {
@@ -226,13 +229,29 @@ const DetailsCompany = ({ navigation, route }) => {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Image
-                  style={{ height: '100%', width: '100%', borderRadius: 5, borderWidth: 1, borderColor: '#ccc' }}
-                  resizeMode="cover"
-                  source={{
-                    uri: 'https://api.kundenzugang-recruiting.app/' + item?.companyId?.profileIcon,
+                <FastImage
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    borderRadius: 5,
+                    borderWidth: 1,
+                    borderColor: '#ccc',
                   }}
+                  resizeMode={FastImage.resizeMode.cover}
+                  source={
+                    item?.companyId?.profileIcon
+                      ? {
+                        uri:
+                          'https://api.kundenzugang-recruiting.app/' +
+                          item?.companyId?.profileIcon,
+                        priority: FastImage.priority.normal,
+                        cache: FastImage.cacheControl.immutable,
+                      }
+                      : require('../../assets/images/gallery.png')
+                  }
                 />
+
+
               </View>
 
               <Text
@@ -386,10 +405,20 @@ const DetailsCompany = ({ navigation, route }) => {
         }}
         activeOpacity={0.9}
       >
-        <Image
-          source={{ uri: 'https://api.kundenzugang-recruiting.app/' + item.file }}
+        <FastImage
+          source={
+            item?.file
+              ? {
+                uri:
+                  'https://api.kundenzugang-recruiting.app/' +
+                  item.file,
+                priority: FastImage.priority.normal,
+                cache: FastImage.cacheControl.web,
+              }
+              : require('../../assets/images/gallery.png')
+          }
           style={styles.camPic}
-          resizeMode="cover"
+          resizeMode={FastImage.resizeMode.cover}
         />
       </TouchableOpacity>
     );
@@ -631,15 +660,6 @@ const DetailsCompany = ({ navigation, route }) => {
       return html?.replace(/<p><br><\/p>/g, '');
     };
     const cleanedData = cleanHtmlContent(item?.description);
-    // const extractVideoId = url => {
-    //   const videoIdMatch = url.match(
-    //     /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)?|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
-    //   );
-
-    //   return videoIdMatch ? videoIdMatch[1] : null;
-    // };
-    // const videoIds = item?.videoLink?.map(extractVideoId);
-
     const extractVideoId = url => {
       const regex = /(?:v=|\/(?!.*\/)([a-zA-Z0-9_-]{11}))(?!.*\?.*\bindex\b)/;
       const match = url.match(regex);
@@ -669,7 +689,7 @@ const DetailsCompany = ({ navigation, route }) => {
             }
           }}
         >
-          <Text style={[styles.aboutComText, { color: '#222' }]}>
+          <Text numberOfLines={2} style={[styles.aboutComText, { color: '#222', width: '90%' }]}>
             {item?.websiteLink && item.websiteLink.trim() !== ''
               ? item.websiteLink
               : '--'}
@@ -690,7 +710,7 @@ const DetailsCompany = ({ navigation, route }) => {
               : '--'}
           </Text>
         </TouchableOpacity>
-        
+
 
 
         <Text style={[styles.titleText, { color: reCol().color.BDRCLR ? reCol().color.BDRCLR : '#0865b7ff' }]}>
@@ -877,13 +897,16 @@ const DetailsCompany = ({ navigation, route }) => {
           {'Gallery'}
         </Text>
 
-       
+
 
         <FlatList
           data={item?.companyImages}
           renderItem={renderImages}
           keyExtractor={index => index.toString()}
           numColumns={2}
+          ListEmptyComponent={<View>
+            <Text style={styles.titleText} >No Images </Text>
+          </View>}
         />
 
 
@@ -969,10 +992,25 @@ const DetailsCompany = ({ navigation, route }) => {
 
   console.log('companyProfile => ', flatData[0]);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getCompaniesDetails();
+    setRefreshing(false);
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={styles.container}>
       <ImageBackground style={styles.container} source={Images.bgImage}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        >
 
           {/* Company Header */}
           <View style={styles.jobDetailBox}>
@@ -1013,16 +1051,23 @@ const DetailsCompany = ({ navigation, route }) => {
 
             {/* Company Image */}
             <View style={styles.mainFlexView1}>
-              <Image
+              <FastImage
                 source={
-                  
-                     { uri: 'https://api.kundenzugang-recruiting.app/' + flatData[0]?.profileIcon }
-                    
+                  flatData[0]?.profileIcon
+                    ? {
+                      uri:
+                        'https://api.kundenzugang-recruiting.app/' +
+                        flatData[0]?.profileIcon,
+                      priority: FastImage.priority.normal,
+                      cache: FastImage.cacheControl.immutable,
+                    }
+                    : require('../../assets/images/gallery.png')
                 }
                 style={styles.headingImage}
-                resizeMode="cover"
+                resizeMode={FastImage.resizeMode.cover}
                 onLoad={handleLoad}
               />
+
             </View>
           </View>
 

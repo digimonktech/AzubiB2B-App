@@ -893,14 +893,16 @@ export const ModalApply: React.FC<ModalApplyProps> = ({
                         }}
                       />
                       <Text
+                        numberOfLines={2}
                         style={[
                           styles.labelText,
                           {
                             marginBottom: 0,
                             marginTop: 0,
                             alignSelf: 'flex-start',
+                            width: '80%',
                           },
-                        ]}>{`Bewerbungsunterlagen Datei(en)              auswählen (optional)`}</Text>
+                        ]}>{`Bewerbungsunterlagen Datei(en) auswählen (optional)`}</Text>
                     </TouchableOpacity>
                   )}
                   {selectedImage.length < 3 && selectedImage.length != 0 && (
@@ -1040,7 +1042,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
   const [isChecked, setIsChecked] = useState(false);
   const richRef: any = useRef();
 
-  // console.log('content => ', content);
+  console.log(' company content ', content);
   // console.log('coverLabel => ', coverLabel);
 
 
@@ -1048,7 +1050,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
     try {
       // let res = await getApiCall({ url: 'manage_content' });
       let res = await getApiCall1({ url: 'manage_content' });
-      // console.log('ContentData res mk => ', res.data);
+      console.log('ContentData res mk => ', res.data);
 
       if (res.status == 200) {
         setContent(res?.data?.appointment);
@@ -1355,6 +1357,7 @@ export const ModalAppointment: React.FC<ModalAppointmentProps> = ({
                   />
                   <TouchableOpacity onPress={() => blurContentEditor()}>
                     <Text style={styles.labelText}>{coverLabel}</Text>
+                    <Text style={styles.labelText}>{'Begleitschreiben'}</Text>
                   </TouchableOpacity>
                   <View
                     style={{

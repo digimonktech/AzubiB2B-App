@@ -18,6 +18,7 @@ import { addJobsFromCompany, removeJobsByCompanyId } from '@/redux/reducers/comp
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { addCompany, clearCompanyList, removeCompany } from '@/redux/reducers/ShowCompaniesList';
+import FastImage from 'react-native-fast-image'
 
 const { height: Screen_Height } = Dimensions.get('window')
 
@@ -325,17 +326,25 @@ const Companies = (props) => {
                         justifyContent: 'center',
                     }}
                 >
-                    <Image
+                    <FastImage
                         style={{ height: '100%', width: '100%', borderRadius: 10 }}
-                        resizeMode="cover"
+                        resizeMode={FastImage.resizeMode.cover}
                         onLoadEnd={() => setShowLoadImage(false)}
                         source={
                             item?.profileIcon === ''
                                 ? require('../../assets/images/gallery.png')
-                                : { uri: 'https://api.kundenzugang-recruiting.app/' + item?.profileIcon  }
+                                : {
+                                    uri:
+                                        'https://api.kundenzugang-recruiting.app/' +
+                                        item?.profileIcon,
+                                    priority: FastImage.priority.normal,
+                                    cache: FastImage.cacheControl.immutable,
+                                }
                         }
                     />
                 </View>
+
+
 
                 {/* Company Info */}
                 <TouchableOpacity
@@ -523,7 +532,7 @@ const Companies = (props) => {
             // let res = await getApiCall({ url: 'employer/company-detail/' + id });
             let res = await getApiCall({ url: `admin/company/id/${id}` });
 
-            console.log('getCompaniesDetails res => ', res);
+            // console.log('getCompaniesDetails res => ', res);
 
             if (res.status == 200) {
                 setCompanyJobs(res.data);
