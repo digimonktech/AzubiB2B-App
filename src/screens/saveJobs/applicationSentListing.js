@@ -32,7 +32,7 @@ const ApplicationSentListing = () => {
       });
 
       console.log('Bewerbungen list ', res);
-      
+
 
       if (res.status == 200) {
         console.log('ResponseDataofapplylistings', res.data);
@@ -78,6 +78,8 @@ const ApplicationSentListing = () => {
     try {
       setLoader(true);
       let res = await getApiCall({ url: 'admin/job/' + id });
+      console.log('job details ', res);
+
       if (res.status == 200) {
         setJobDetails(res.data);
       }
@@ -102,7 +104,7 @@ const ApplicationSentListing = () => {
   };
   const renderItem = ({ item }) => {
     console.log('job item ', item);
-    
+
     return (
       <TouchableHighlight underlayColor={'none'}>
         <View style={styles.renderMainView}>

@@ -113,7 +113,9 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
   const [coverLabel, setCoverLabel] = useState<any>([]);
   const [showPrivacy, setShowPrivacy] = useState<any>(false);
   const richRef: any = useRef();
-  const comId = useSelector((state: any) => state.companyId?.companyId);
+  // const comId = useSelector((state: any) => state.companyId?.companyId);
+  // console.log('comID ', comId);
+
   const [selectedImageShow, setSelectedImageShow] = useState<any>([]);
   const isfocused = useIsFocused();
   const { control, handleSubmit, setValue } = useForm({
@@ -176,7 +178,7 @@ export const ModalSaveApply: React.FC<ModalApplyProps> = ({
     body.append('email', values.Email);
     body.append('phone', values.Mobile || '');
     body.append('aboutMe', values.About || '');
-    body.append('companyId', comId);
+    body.append('companyId', applyData?.companyId?._id);
     body.append('coverLetter', 'content job details');
     // body.append('deviceId', deviceId);
     // { selectedImage ? body.append('attachment', selectedImage) : null }

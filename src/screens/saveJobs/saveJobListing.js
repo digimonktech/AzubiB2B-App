@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { ModalApply, ModalSaveApply } from '@/component/Modal';
 import { useSelector } from 'react-redux';
+import FastImage from 'react-native-fast-image';
 
 const SaveJobListing = () => {
   const [flatData, setFlatData] = useState([]);
@@ -88,6 +89,8 @@ const SaveJobListing = () => {
     try {
       setLoader(true);
       let res = await getApiCall({ url: 'admin/job/' + id });
+      console.log('getJobsDetails res ', res);
+
       if (res.status == 200) {
         setJobDetails(res.data);
       }
@@ -134,17 +137,22 @@ const SaveJobListing = () => {
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                <Image
+
+
+                <FastImage
                   style={{ height: '100%', width: '100%', borderRadius: 10 }}
-                  resizeMode="cover"
-                  source={{
-                    uri:
-                      item?.companyId?.profileIcon
-                        ? 'https://api.kundenzugang-recruiting.app/' + item.companyId.profileIcon
-                        : undefined,
-                  }}
+                  resizeMode={FastImage.resizeMode.cover}
                   defaultSource={Images.fallbackLogo}
+                  source={{
+                    uri: item?.companyId?.profileIcon
+                      ? 'https://api.kundenzugang-companyjob.app/' +
+                      item.companyId.profileIcon
+                      : undefined,
+                    priority: FastImage.priority.high,
+                    cache: FastImage.cacheControl.web,
+                  }}
                 />
+
               </View>
 
               <Text
@@ -286,7 +294,7 @@ const SaveJobListing = () => {
             data={flatData}
             renderItem={renderItem}
             showsVerticalScrollIndicator={false}
-            ListEmptyComponent={<View 
+            ListEmptyComponent={<View
               style={{
                 flex: 1,
                 justifyContent: 'center',
